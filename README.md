@@ -27,9 +27,26 @@ Gotowe artefakty po kompilacji: `dist/code.js`, `dist/ui.html`. Manifest wskazuj
 
 ## Architektura
 
+Rodzeństwo jest wybierane sekwencyjnie: po ustaleniu liczby dzieci każde kolejne żądanie otrzymuje `selectedSiblings` z nazwami i ID wcześniejszych wyborów. Pozwala to rozróżnić np. „jeden button i jeden input” od „dwa buttony”. Powtórzenia nie są blokowane, jeśli wymaga ich prompt. Liczba wywołań to jedno na decyzje kontenera/slotu oraz jedno na każde nowe dziecko. Panel „Struktura wyniku” pokazuje również wybrane komponenty w `trace`. Testy sprawdzają przekazywanie kontekstu na atrapach; jakość wyborów rzeczywistego JEV wymaga testu z biblioteką.
+
 `Figma UI → snapshot + katalog → lokalny backend → decyzje JEV → plan → walidacja → Figma renderer`
 
-**JEV jest modelem decyzyjnym, nie generatorem JSON/tekstu.** Backend zadaje pytania typu Choice z zamkniętą listą odpowiedzi. Dla każdego kontenera wybiera kierunek, odstęp i liczbę dzieci, a następnie typ każdego dziecka. Kolejne pytania otrzymują aktualne drzewo oraz położenie kontenera. Komponenty biblioteki są liśćmi: ich wnętrze pozostaje zdefiniowane przez bibliotekę. Cały wariant Card może już zawierać Photo, Text i Button.
+**JEV jest modelem decyzyjnym, nie generatorem JSON/tekstu.** Backend zadaje pytania typu Choice z zamkniętą listą odpowiedzi. Dla każdego kontenera wybiera kierunek i liczbę dzieci, a następnie typ każdego dziecka. Wybiera również `width` i `height`: `FILL` lub `HUG`. Kolejne pytania otrzymują aktualne drzewo oraz położenie kontenera. Komponenty z natywnym slotem `Content` mogą otrzymać kolejne dzieci, także komponenty z własnymi slotami. Pozostałe komponenty są liśćmi.
+
+## Sloty Content
+
+Główna techniczna ramka planera i renderera to jeden `FigmaJev` (ścieżka `technical-root`); nie powstaje dodatkowy `Generated content`. Nie jest komponentem Layout z biblioteki. Pytania o liczbę i typ dzieci wyraźnie rozróżniają te role: przy żądaniu komponentu Layout model powinien wybrać jego ID z katalogu i zaplanować potomków w slocie Content. Techniczna ramka nadal pozostaje w wyniku; nie zastępuje komponentu biblioteki.
+
+Przy tworzeniu oraz dodawaniu dzieci width/height mają trzy opcje: `KEEP` (bez zmian), `HUG`, `FILL`. Instrukcje preferują `KEEP`, dopóki prompt nie prosi o zmianę konkretnej osi konkretnego dziecka. Przykład: przycisk może mieć `width: FILL` i `height: KEEP`, zachowując standardową wysokość biblioteki. Renderer zachowuje rozmiar i tryb skalowania również wtedy, gdy slot automatycznie rozciąga dziecko przy wstawieniu. Dla nowych natywnych kontenerów KEEP zachowuje początkowy Hug; istniejące elementy nadal mają opcję `keep` w planie edycji. Pod rodzicem Hug dziecko może wybrać KEEP lub HUG (Fill nie jest oferowane).
+
+Przed planowaniem plugin odczytuje definicje komponentów wybranej biblioteki (import zdalnych definicji odbywa się w partiach po 6). Rozpoznaje natywne `SlotNode` o nazwie warstwy lub właściwości `Content`, bez rozróżniania wielkości liter. Zwykła ramka nazwana Content wewnątrz instancji nie jest slotem — należy przygotować prawdziwy slot w komponencie głównym i opublikować bibliotekę.
+
+- Tworzenie: `Utwórz Card i dodaj do jego Content przycisk primary.` Plan zawiera `slots: [{ path: [0], children: [...] }]`; ścieżka jest odczytana z definicji, nie zgadywana z nazwy.
+- Edycja: przypnij instancję Card/Layout i wpisz `Dodaj button primary do Content`. Model wybiera dodawanie i slot docelowy; renderer dopisuje dzieci na końcu. Istniejąca zawartość, ID instancji i połączenie z biblioteką pozostają zachowane.
+- Jedna edycja wykonuje albo dodawanie, albo zmiany właściwości. Nie zastępuje ani nie usuwa istniejących dzieci. Nie odłącza instancji i nie zmienia głównego komponentu.
+- Zachowane są limity drzewa oraz do 4 nowych dzieci na slot. Kontekst zawiera pojemność i preferowane komponenty slotu. Renderer kontroluje naruszenia ograniczeń Figmy; przy błędzie usuwa tylko nowo dodane dzieci. Testy używają atrap API; obsługę trzeba sprawdzić na rzeczywistym slocie biblioteki.
+
+Paddingi i odstępy nie są decyzjami modelu. Nowe natywne kontenery mają je ustawione na zero; istniejące warstwy i komponenty biblioteki zachowują swoje ustawienia. Nowy layout powstaje wewnątrz ramki auto layout `FigmaJev` z szerokością Hug i stałą wysokością 480 px. Jej szerokość dopasowuje się do zawartości, główny kontener ma wybór KEEP/HUG na obu osiach (KEEP zachowuje width Hug i height 480 px). Fill jest dostępne tylko dla dzieci z odpowiednim rodzicem. Na osi, na której rodzic ma Hug, nowe dzieci otrzymują Hug, aby uniknąć kołowej zależności rozmiarów. W edycji model dostaje tylko opcje zgodne z bieżącym układem: Fill wymaga rodzica z auto layoutem i rozmiarem innym niż Hug; Hug wymaga tekstu albo auto layoutu bez dzieci Fill na danej osi. Gdy komponent biblioteki nie obsługuje Hug, renderer zachowuje jego rozmiar i pokazuje komunikat.
 
 Przykład planu renderera:
 
@@ -37,12 +54,12 @@ Przykład planu renderera:
 {
   "mode": "create",
   "tree": {
-    "type": "container", "name": "Layout", "direction": "VERTICAL", "gap": 16,
+    "type": "container", "name": "Layout", "direction": "VERTICAL", "width": "FILL", "height": "HUG",
     "children": [
-      { "type": "component", "componentId": "key-of-card-variant" },
-      { "type": "container", "direction": "HORIZONTAL", "gap": 8, "children": [
-        { "type": "component", "componentId": "key-of-accent-button" },
-        { "type": "component", "componentId": "key-of-primary-button" }
+      { "type": "component", "componentId": "key-of-card-variant", "width": "FILL", "height": "HUG" },
+      { "type": "container", "direction": "HORIZONTAL", "width": "FILL", "height": "HUG", "children": [
+        { "type": "component", "componentId": "key-of-accent-button", "width": "HUG", "height": "HUG" },
+        { "type": "component", "componentId": "key-of-primary-button", "width": "HUG", "height": "HUG" }
       ] }
     ]
   }
@@ -53,8 +70,7 @@ Edycja przesyła aktualny snapshot: ID, hierarchię, tekst, wymiary, auto layout
 
 ## Zakres pierwszej wersji
 
-- Edycja obsługuje treść tekstów, kierunek i odstępy istniejącego auto layoutu oraz właściwości instancji TEXT, BOOLEAN i VARIANT. Zachowuje ID edytowanego elementu. Nie dodaje, nie usuwa i nie przestawia warstw w trybie edycji.
-- Nie wstawia nowych dzieci do środka instancji i nie odłącza instancji. Obsługa slotów wymaga osobnego kontraktu z biblioteką.
+- Edycja obsługuje treść tekstów, kierunek auto layoutu, width/height (Fill/Hug), właściwości instancji TEXT, BOOLEAN i VARIANT oraz dopisywanie dzieci do natywnych slotów Content. Zachowuje ID edytowanej instancji. Nie usuwa i nie przestawia istniejących warstw.
 - Treści w cudzysłowach i istniejące teksty są kandydatami dla JEV; model nie tworzy dowolnego copy. Nowe instancje zachowują domyślne teksty biblioteki; po przypięciu można zmienić ich właściwości tekstowe.
 - Kolor accent/primary jest wybierany jako rzeczywisty wariant biblioteki. Brak takiego wariantu oznacza brak tej opcji; renderer nie wymyśla tokenów.
 - Photo musi istnieć jako komponent biblioteki. Brak generatora obrazów i pobierania zdjęć.
@@ -65,7 +81,7 @@ Edycja przesyła aktualny snapshot: ID, hierarchię, tekst, wymiary, auto layout
 
 ## Bezpieczeństwo i testy
 
-Backend nasłuchuje tylko na `127.0.0.1` i wymaga tokenu parowania. Klucz DefAPI i token REST Figmy pozostają w `.env`, ignorowanym przez Git. Token połączenia nie jest trwale zapisywany przez UI. Do DefAPI trafiają prompt, katalog i — wyłącznie w trybie edycji — przypięte poddrzewo. Serwer nie loguje treści ani kluczy.
+Backend nasłuchuje tylko na `127.0.0.1` i wymaga tokenu parowania. Klucz DefAPI i token REST Figmy pozostają w `.env`, ignorowanym przez Git. Token połączenia FIGMAJEV_TOKEN i ostatni adres biblioteki zapisują się automatycznie w `figma.clientStorage` na urządzeniu użytkownika i wracają po uruchomieniu wtyczki. Można je usunąć przyciskiem „Zapomnij zapisane dane”. Katalog biblioteki nadal pobiera się przyciskiem „Dodaj”. Dane połączenia nie są zapisywane w dokumencie Figmy. Do DefAPI trafiają prompt, katalog i — wyłącznie w trybie edycji — przypięte poddrzewo. Pełne requesty i response są zapisywane jako JSONL w `logs/defapi.log`; pliki `.log` są ignorowane przez Git. Klucze i nagłówki autoryzacji nie trafiają do logu.
 
 `npm run typecheck`, `npm run build`, `npm test`.
 

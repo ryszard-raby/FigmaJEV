@@ -15,7 +15,7 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
   const actual = Buffer.from(req.headers.authorization || '');
   const expected = Buffer.from(`Bearer ${token}`);
-  if (actual.length !== expected.length || !timingSafeEqual(actual, expected)) return send(401, { error: 'Nieprawidłowy token połączenia.' });
+  if (actual.length !== expected.length || !timingSafeEqual(actual, expected)) return send(401, { error: 'Token lokalnego serwera nie pasuje. Wklej we wtyczce wartość FIGMAJEV_TOKEN z głównego pliku .env (nie FIGMA_ACCESS_TOKEN). Po zmianie .env uruchom serwer ponownie.' });
   if (req.method !== 'POST' || !['/plan', '/library'].includes(req.url)) return send(404, { error: 'Nieznana operacja.' });
   if (busy) return send(429, { error: 'Serwer przetwarza poprzednie żądanie.' });
   busy = true;

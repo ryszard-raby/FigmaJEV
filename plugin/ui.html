@@ -21,35 +21,63 @@
   <details id="result" hidden><summary>Struktura wyniku</summary><pre id="tree"></pre></details>
   <details><summary>Połączenie i biblioteki</summary>
     <label for="token">Token lokalnego serwera</label><input id="token" type="password" autocomplete="off" placeholder="FIGMAJEV_TOKEN z .env">
-    <p class="hint">Token jest przechowywany tylko do zamknięcia wtyczki. Serwer: localhost:3847.</p>
+    <p class="hint">FIGMAJEV_TOKEN i adres biblioteki są zapamiętywane na tym urządzeniu. Serwer: localhost:3847.</p>
     <label for="fileKey">Klucz lub URL pliku biblioteki</label>
     <div class="row"><input id="fileKey" placeholder="figma.com/design/…"><button id="import" type="button">Dodaj</button></div>
+    <button id="forget" type="button">Zapomnij zapisane dane</button>
+    <p class="hint" id="settingsStatus" role="status"></p>
     <p class="hint">Wymaga FIGMA_ACCESS_TOKEN na serwerze. Figma nie udostępnia wtyczkom pełnej listy komponentów włączonych bibliotek.</p>
   </details>
-  <footer class="hint">Prompt, katalog wybranej biblioteki i kontekst przypiętego elementu są wysyłane do DefAPI. Teksty wpisuj w cudzysłowach. Edycja obsługuje teksty, warianty, widoczność przez właściwości i auto layout.</footer>
+  <footer class="hint">Prompt, katalog wybranej biblioteki i kontekst przypiętego elementu są wysyłane do DefAPI. Teksty wpisuj w cudzysłowach. Możesz dodawać dzieci do natywnych slotów Content w Card / Layout.</footer>
 </main>
 <script>
 const $ = id => document.getElementById(id);
 const send = (type, data = {}) => parent.postMessage({ pluginMessage: { type, ...data } }, '*');
 let busy = false, pinned = false, hasSelection = false, libraries = [];
+let libraryAckTimer;
+let planWarnings = [];
+const settingsDirty = { token: false, libraryUrl: false };
+for (const [id, key] of [['token', 'token'], ['fileKey', 'libraryUrl']]) {
+  $(id).oninput = () => {
+    settingsDirty[key] = true;
+    $('settingsStatus').textContent = '';
+    send('save-settings', { [key]: $(id).value });
+  };
+}
+$('forget').onclick = () => {
+  $('token').value = ''; $('fileKey').value = '';
+  settingsDirty.token = settingsDirty.libraryUrl = true;
+  send('save-settings', { token: '', libraryUrl: '' });
+};
+function saveConnection() {
+  send('save-settings', { token: $('token').value, libraryUrl: $('fileKey').value });
+}
 function status(text, error = false) { $('status').textContent = text; $('status').className = error ? 'error' : ''; }
 function setBusy(value) {
+  if (!value) clearTimeout(libraryAckTimer);
   busy = value;
-  for (const id of ['generate','scan','import','library','prompt','fileKey','token']) $(id).disabled = value;
+  for (const id of ['generate','scan','import','library','prompt','fileKey','token','forget']) $(id).disabled = value;
   $('pin').disabled = value || !hasSelection;
   $('generate').disabled = value || !libraries.length;
 }
 async function api(path, body) {
   const token = $('token').value.trim();
   if (!token) throw new Error('Otwórz „Połączenie i biblioteki” i wpisz token serwera.');
-  let response;
-  try { response = await fetch('http://localhost:3847' + path, {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), path === '/library' ? 45000 : 190000);
+  try {
+  const response = await fetch('http://localhost:3847' + path, {
     method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-    body: JSON.stringify(body), signal: AbortSignal.timeout(600000)
-  }); } catch (e) { throw new Error('Brak odpowiedzi serwera. Uruchom npm start i sprawdź połączenie.'); }
+    body: JSON.stringify(body), signal: controller.signal
+  });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'Błąd serwera.');
   return data;
+  } catch (error) {
+    if (controller.signal.aborted) throw new Error('Przekroczono czas oczekiwania na serwer. Spróbuj ponownie.');
+    if (error instanceof TypeError) throw new Error('Nie można połączyć się z localhost:3847. Sprawdź, czy npm start działa.');
+    throw error;
+  } finally { clearTimeout(timeout); }
 }
 function fail(error) { send('cancel'); setBusy(false); status(error.message || String(error), true); }
 $('pin').onclick = () => send('pin');
@@ -57,14 +85,22 @@ $('scan').onclick = () => { setBusy(true); status('Skanowanie pliku…'); send('
 $('form').onsubmit = event => {
   event.preventDefault(); if (busy || !$('prompt').value.trim()) return;
   if (!$('token').value.trim()) { status('Wpisz token w sekcji „Połączenie i biblioteki”.', true); return; }
+  saveConnection();
   setBusy(true); $('result').hidden = true; status('Przygotowywanie kontekstu…');
   send('prepare', { prompt: $('prompt').value.trim(), libraryId: $('library').value });
 };
 $('import').onclick = async () => {
+  saveConnection();
   const value = $('fileKey').value.trim();
   const fileKey = value.match(/figma\.com\/(?:design|file)\/([a-zA-Z0-9_-]+)/)?.[1] || value;
   setBusy(true); status('Wczytywanie opublikowanej biblioteki…');
-  try { const data = await api('/library', { fileKey }); send('library', { fileKey, components: data.components }); }
+  try {
+    const data = await api('/library', { fileKey });
+    if (!Array.isArray(data.components)) throw new Error('Serwer zwrócił nieprawidłowy katalog biblioteki.');
+    status(`Pobrano ${data.components.length} komponentów. Dodawanie do listy bibliotek…`);
+    libraryAckTimer = setTimeout(() => fail(new Error('Figma nie potwierdziła dodania biblioteki. Zamknij i uruchom wtyczkę ponownie po npm run build.')), 10000);
+    send('library', { fileKey, components: data.components });
+  }
   catch (error) { fail(error); }
 };
 function catalogHint() {
@@ -73,8 +109,13 @@ function catalogHint() {
 }
 $('library').onchange = catalogHint;
 window.onmessage = async event => {
-  if (event.source !== parent) return;
-  const m = event.data.pluginMessage; if (!m) return;
+  // Figma forwards sandbox messages; MessageEvent.source need not equal parent.
+  const m = event.data?.pluginMessage; if (!m || typeof m.type !== 'string') return;
+  if (m.type === 'settings') {
+    if (!settingsDirty.token) $('token').value = m.token || '';
+    if (!settingsDirty.libraryUrl) $('fileKey').value = m.libraryUrl || '';
+  }
+  if (m.type === 'settings-error') $('settingsStatus').textContent = m.error;
   if (m.type === 'libraries') {
     const selected = m.selected || $('library').value; libraries = m.libraries;
     $('library').replaceChildren(...libraries.map(l => { const o = document.createElement('option'); o.value = l.id; o.textContent = l.name; return o; }));
@@ -88,15 +129,18 @@ window.onmessage = async event => {
     $('pin').disabled = busy || !hasSelection; $('generate').textContent = pinned ? 'Zmień przypięty element' : 'Utwórz layout';
     document.querySelector('label[for="prompt"]').textContent = pinned ? 'Co chcesz zmienić?' : 'Co chcesz stworzyć?';
   }
+  if (m.type === 'progress') status(m.text);
   if (m.type === 'prepared') {
+    planWarnings = [];
     status('JEV podejmuje decyzje…');
     try {
       const plan = await api('/plan', m.input);
-      $('tree').textContent = JSON.stringify(plan.mode === 'create' ? plan.tree : plan.operations, null, 2);
+      planWarnings = plan.warnings || [];
+      $('tree').textContent = JSON.stringify(plan, null, 2);
       $('result').hidden = false; status('Stosowanie zmian w Figmie…'); send('apply', { plan });
     } catch (error) { fail(error); }
   }
-  if (m.type === 'done') { setBusy(false); status('Gotowe. Zmianę możesz cofnąć w Figmie.'); }
+  if (m.type === 'done') { setBusy(false); status(['Gotowe. Zmianę możesz cofnąć w Figmie.', ...planWarnings, ...(m.warnings || [])].join('\n')); }
   if (m.type === 'error') fail(new Error(m.error));
 };
 send('init');
