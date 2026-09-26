@@ -1,0 +1,1011 @@
+{"catalog": [
+                {
+                    "id": "1ce2645580e67371f99ff476332ab42ba144a3a4",
+                    "key": "1ce2645580e67371f99ff476332ab42ba144a3a4",
+                    "name": "Frame 1 / Property 1=allegro",
+                    "description": "",
+                    "nodeId": "1:29",
+                    "slots": []
+                },
+                {
+                    "id": "a8b37afe760b23a33ae8adeddd8e728b14776b05",
+                    "key": "a8b37afe760b23a33ae8adeddd8e728b14776b05",
+                    "name": "Frame 1 / Energy label",
+                    "description": "",
+                    "nodeId": "1:51",
+                    "slots": []
+                },
+                {
+                    "id": "6d98818a7af1ae5abf7e1560afb8137575b9d615",
+                    "key": "6d98818a7af1ae5abf7e1560afb8137575b9d615",
+                    "name": "Frame 1 / Assistant",
+                    "description": "",
+                    "nodeId": "1:23",
+                    "slots": []
+                },
+                {
+                    "id": "3aad26f22e9d3354a698dd99cb28679ce5fbd8fd",
+                    "key": "3aad26f22e9d3354a698dd99cb28679ce5fbd8fd",
+                    "name": "Icons / Cart fill",
+                    "description": "",
+                    "nodeId": "1:8",
+                    "slots": []
+                },
+                {
+                    "id": "56fae6055e9422f0755409c2baba2a41e4bebb55",
+                    "key": "56fae6055e9422f0755409c2baba2a41e4bebb55",
+                    "name": "Icons / Setting",
+                    "description": "",
+                    "nodeId": "1:14",
+                    "slots": []
+                },
+                {
+                    "id": "39acfa6234010adbe3438389b7b85cac29984c7a",
+                    "key": "39acfa6234010adbe3438389b7b85cac29984c7a",
+                    "name": "Icons / Delivery",
+                    "description": "",
+                    "nodeId": "1:43",
+                    "slots": []
+                },
+                {
+                    "id": "2f5ebf0cb3594c75747c0a8f817b2492aba41720",
+                    "key": "2f5ebf0cb3594c75747c0a8f817b2492aba41720",
+                    "name": "Icons / Star",
+                    "description": "",
+                    "nodeId": "1:57",
+                    "slots": []
+                },
+                {
+                    "id": "f663b811db6164fc1588ed66f5d63cfd21b73f40",
+                    "key": "f663b811db6164fc1588ed66f5d63cfd21b73f40",
+                    "name": "Icons / Send",
+                    "description": "",
+                    "nodeId": "1:59",
+                    "slots": []
+                },
+                {
+                    "id": "a55ef27a30b05fae69d762650fd6caa121cabff9",
+                    "key": "a55ef27a30b05fae69d762650fd6caa121cabff9",
+                    "name": "Input - text",
+                    "description": "Input text",
+                    "nodeId": "1:89",
+                    "slots": []
+                },
+                {
+                    "id": "094dc8231f2799f290fd454dde82be190dad337b",
+                    "key": "094dc8231f2799f290fd454dde82be190dad337b",
+                    "name": "Frame 1 / Ceneo Logo",
+                    "description": "",
+                    "nodeId": "1:68",
+                    "slots": []
+                },
+                {
+                    "id": "74e71682f5f4f9c0f4b332c20adf48ef2d99fa19",
+                    "key": "74e71682f5f4f9c0f4b332c20adf48ef2d99fa19",
+                    "name": "Icons / User",
+                    "description": "",
+                    "nodeId": "1:79",
+                    "slots": []
+                },
+                {
+                    "id": "69cbe25f9db434c820b1b847ec4e31be59c5b75a",
+                    "key": "69cbe25f9db434c820b1b847ec4e31be59c5b75a",
+                    "name": "Icons / Search plus",
+                    "description": "",
+                    "nodeId": "1:62",
+                    "slots": []
+                },
+                {
+                    "id": "48795f070923ea35ea285be9a8de6925f768940a",
+                    "key": "48795f070923ea35ea285be9a8de6925f768940a",
+                    "name": "Product",
+                    "description": "",
+                    "nodeId": "1:599",
+                    "slots": []
+                },
+                {
+                    "id": "8029f0b5444e446435162c0317caab4ea05ab405",
+                    "key": "8029f0b5444e446435162c0317caab4ea05ab405",
+                    "name": "Icons / Set",
+                    "description": "",
+                    "nodeId": "1:91",
+                    "slots": []
+                },
+                {
+                    "id": "93ad2bd802c0f2c4717911cbeacec44887fa2ba6",
+                    "key": "93ad2bd802c0f2c4717911cbeacec44887fa2ba6",
+                    "name": "Frame 1 / Property 1=Darmowa wysyłka",
+                    "description": "",
+                    "nodeId": "1:318",
+                    "slots": []
+                },
+                {
+                    "id": "9458a098a620f24e92790700e9a79aa8b38dae32",
+                    "key": "9458a098a620f24e92790700e9a79aa8b38dae32",
+                    "name": "Frame 1 / Property 1=Kupione ostatnio",
+                    "description": "",
+                    "nodeId": "1:322",
+                    "slots": []
+                },
+                {
+                    "id": "9800a2d4456d22a7049f45544c2f8187e7dc48fa",
+                    "key": "9800a2d4456d22a7049f45544c2f8187e7dc48fa",
+                    "name": "Offer - compact / Property 1=Default",
+                    "description": "",
+                    "nodeId": "1:696",
+                    "slots": []
+                },
+                {
+                    "id": "ae62133c4c8aa1eb9b32ffa25c9c94c3b55937a5",
+                    "key": "ae62133c4c8aa1eb9b32ffa25c9c94c3b55937a5",
+                    "name": "Button / Variant=Outline, Size=Default",
+                    "description": "Button outline",
+                    "nodeId": "1:372",
+                    "slots": []
+                },
+                {
+                    "id": "b8bffda1b7d02daedd8445fb8d09a7cb22cf0a6f",
+                    "key": "b8bffda1b7d02daedd8445fb8d09a7cb22cf0a6f",
+                    "name": "Button / Variant=Primary, Size=Small",
+                    "description": "Button primary small",
+                    "nodeId": "1:375",
+                    "slots": []
+                },
+                {
+                    "id": "c7f5c0e43df8c13ee130a20f930019375a12e8b1",
+                    "key": "c7f5c0e43df8c13ee130a20f930019375a12e8b1",
+                    "name": "Icons / Filtr",
+                    "description": "",
+                    "nodeId": "1:910",
+                    "slots": []
+                },
+                {
+                    "id": "f222897da3e3967006b2074fbb1717dec788047d",
+                    "key": "f222897da3e3967006b2074fbb1717dec788047d",
+                    "name": "Ceneo Header / Property 1=Desktop",
+                    "description": "",
+                    "nodeId": "1:919",
+                    "slots": []
+                },
+                {
+                    "id": "f7e78ec9bbeb2e3a406d4e09935c7a408bdafd9a",
+                    "key": "f7e78ec9bbeb2e3a406d4e09935c7a408bdafd9a",
+                    "name": "Frame 1 / Property 1=Wysyłka w 1 dzień",
+                    "description": "",
+                    "nodeId": "1:319",
+                    "slots": []
+                },
+                {
+                    "id": "fa15cd24fb6649ebfc4cea551570f6e536bd4324",
+                    "key": "fa15cd24fb6649ebfc4cea551570f6e536bd4324",
+                    "name": "Ceneo Header / Property 1=Mobile",
+                    "description": "",
+                    "nodeId": "1:920",
+                    "slots": []
+                },
+                {
+                    "id": "124b3cfe6e066e91f5317a26c75871e0365ce26d",
+                    "key": "124b3cfe6e066e91f5317a26c75871e0365ce26d",
+                    "name": "Button / Variant=Gray, Size=Small",
+                    "description": "Button gray small",
+                    "nodeId": "1:379",
+                    "slots": []
+                },
+                {
+                    "id": "18089a66da7b718a046bd5b5564851c379d9798a",
+                    "key": "18089a66da7b718a046bd5b5564851c379d9798a",
+                    "name": "Button / Variant=Accent, Size=Small",
+                    "description": "Button accent small",
+                    "nodeId": "1:376",
+                    "slots": []
+                },
+                {
+                    "id": "1a6ae2758aa3f6519039f5ddbe93ef9d2b266d63",
+                    "key": "1a6ae2758aa3f6519039f5ddbe93ef9d2b266d63",
+                    "name": "Icons / More",
+                    "description": "",
+                    "nodeId": "1:1021",
+                    "slots": []
+                },
+                {
+                    "id": "0156a2a0bed6dfdc8cba87a05cd6ef1b6a732046",
+                    "key": "0156a2a0bed6dfdc8cba87a05cd6ef1b6a732046",
+                    "name": "Text / Size=3xl, Weight=Bold, Type=Heading",
+                    "description": "",
+                    "nodeId": "1:453",
+                    "slots": []
+                },
+                {
+                    "id": "18c4384ab709b577de04d5358b21cd922593711a",
+                    "key": "18c4384ab709b577de04d5358b21cd922593711a",
+                    "name": "Table",
+                    "description": "",
+                    "nodeId": "1:1028",
+                    "slots": []
+                },
+                {
+                    "id": "21cc24e7e0804780be2255b19caf1db5108435b6",
+                    "key": "21cc24e7e0804780be2255b19caf1db5108435b6",
+                    "name": "Text / Size=lg, Weight=Normal, Type=Text",
+                    "description": "",
+                    "nodeId": "1:446",
+                    "slots": []
+                },
+                {
+                    "id": "404ec52fcd6c171acdc7ff2b222aa5aadf7a5bfd",
+                    "key": "404ec52fcd6c171acdc7ff2b222aa5aadf7a5bfd",
+                    "name": "Price",
+                    "description": "",
+                    "nodeId": "1:468",
+                    "slots": []
+                },
+                {
+                    "id": "87a70358ab0fbb3567ef60992cf597a80c6dfd6e",
+                    "key": "87a70358ab0fbb3567ef60992cf597a80c6dfd6e",
+                    "name": "Text / Size=2xl, Weight=Bold, Type=Heading",
+                    "description": "",
+                    "nodeId": "1:451",
+                    "slots": []
+                },
+                {
+                    "id": "efe28aab95a05b32e3f3904c0e06bffce44833ce",
+                    "key": "efe28aab95a05b32e3f3904c0e06bffce44833ce",
+                    "name": "Offer / Property 1=Default",
+                    "description": "",
+                    "nodeId": "1:1070",
+                    "slots": []
+                },
+                {
+                    "id": "409a3053db8c18fa80e046aecfce3770a5de1864",
+                    "key": "409a3053db8c18fa80e046aecfce3770a5de1864",
+                    "name": "Layout / Property 1=Desktop",
+                    "description": "",
+                    "nodeId": "1:1040",
+                    "slots": [
+                        {
+                            "path": [
+                                0
+                            ],
+                            "name": "Content",
+                            "width": "FILL",
+                            "height": "HUG",
+                            "existingChildren": [],
+                            "capacity": 4,
+                            "preferredValues": []
+                        }
+                    ]
+                },
+                {
+                    "id": "898451a9884a34055bbfe4752e85083c98364a2f",
+                    "key": "898451a9884a34055bbfe4752e85083c98364a2f",
+                    "name": "Container / Property 1=Vertical",
+                    "description": "",
+                    "nodeId": "1:1055",
+                    "slots": [
+                        {
+                            "path": [
+                                0
+                            ],
+                            "name": "Content",
+                            "width": "FILL",
+                            "height": "FILL",
+                            "existingChildren": [],
+                            "capacity": 4,
+                            "preferredValues": []
+                        }
+                    ]
+                },
+                {
+                    "id": "e98d7ff4106c5031a08c5afd4c5f0a85967931b2",
+                    "key": "e98d7ff4106c5031a08c5afd4c5f0a85967931b2",
+                    "name": "Radio / Property 1=Checked",
+                    "description": "",
+                    "nodeId": "1:1062",
+                    "slots": []
+                },
+                {
+                    "id": "2013a10b3ff536bfaefea6ca9f82bb791cdba531",
+                    "key": "2013a10b3ff536bfaefea6ca9f82bb791cdba531",
+                    "name": "Card / Style=Gray",
+                    "description": "",
+                    "nodeId": "1:1048",
+                    "slots": [
+                        {
+                            "path": [
+                                0
+                            ],
+                            "name": "Content",
+                            "width": "FILL",
+                            "height": "HUG",
+                            "existingChildren": [],
+                            "capacity": 4,
+                            "preferredValues": []
+                        }
+                    ]
+                },
+                {
+                    "id": "cd5e464b2c0ca6d83b5c88f95714e747033301b3",
+                    "key": "cd5e464b2c0ca6d83b5c88f95714e747033301b3",
+                    "name": "Frame 1 / Icon=Ranking",
+                    "description": "",
+                    "nodeId": "1:679",
+                    "slots": []
+                },
+                {
+                    "id": "9aea67835e7bb0c40efba58f55d7c81cd626bf5d",
+                    "key": "9aea67835e7bb0c40efba58f55d7c81cd626bf5d",
+                    "name": "Photo / Property 1=Default",
+                    "description": "",
+                    "nodeId": "1:424",
+                    "slots": []
+                },
+                {
+                    "id": "0f6ab916e7d25f8006205a0441e85791f4272cdb",
+                    "key": "0f6ab916e7d25f8006205a0441e85791f4272cdb",
+                    "name": "Frame 1 / Icon=ZO",
+                    "description": "",
+                    "nodeId": "1:675",
+                    "slots": []
+                },
+                {
+                    "id": "37cc8f6f45ce1a7cfb46ec1c45e7f552cbbbffab",
+                    "key": "37cc8f6f45ce1a7cfb46ec1c45e7f552cbbbffab",
+                    "name": "Frame 1 / Icon=Handshake",
+                    "description": "",
+                    "nodeId": "1:677",
+                    "slots": []
+                },
+                {
+                    "id": "3ade006fc3759584749981e86c64c3b2d027dadd",
+                    "key": "3ade006fc3759584749981e86c64c3b2d027dadd",
+                    "name": "Frame 1 / Property 1=deluxry",
+                    "description": "",
+                    "nodeId": "1:34",
+                    "slots": []
+                },
+                {
+                    "id": "121f1209dd123f50ac28b2e1aa1d9f378367fdc8",
+                    "key": "121f1209dd123f50ac28b2e1aa1d9f378367fdc8",
+                    "name": "Text / Size=xs, Weight=Bold, Type=Text",
+                    "description": "",
+                    "nodeId": "1:441",
+                    "slots": []
+                },
+                {
+                    "id": "5049afcf030173b098eeeea8ecbdb7c901ade7bf",
+                    "key": "5049afcf030173b098eeeea8ecbdb7c901ade7bf",
+                    "name": "Frame 1 / Property 1=media expert",
+                    "description": "",
+                    "nodeId": "1:32",
+                    "slots": []
+                },
+                {
+                    "id": "6ac0124233a168aabdeafb284e4a180092783d21",
+                    "key": "6ac0124233a168aabdeafb284e4a180092783d21",
+                    "name": "Frame 1 / Property 1=partner",
+                    "description": "",
+                    "nodeId": "1:35",
+                    "slots": []
+                },
+                {
+                    "id": "751a1acf9b3eb27512ded25128b31fc70843031a",
+                    "key": "751a1acf9b3eb27512ded25128b31fc70843031a",
+                    "name": "Frame 1 / Icon=ZO ext",
+                    "description": "",
+                    "nodeId": "1:676",
+                    "slots": []
+                },
+                {
+                    "id": "7585d5ceaba7cf3080fa1375142df0f2e97f5ba8",
+                    "key": "7585d5ceaba7cf3080fa1375142df0f2e97f5ba8",
+                    "name": "Text / Size=base, Weight=Normal, Type=Text",
+                    "description": "",
+                    "nodeId": "1:444",
+                    "slots": []
+                },
+                {
+                    "id": "8f54b3e89578138b0db8978e032a61711fc9c5c4",
+                    "key": "8f54b3e89578138b0db8978e032a61711fc9c5c4",
+                    "name": "Text / Size=2xl, Weight=Normal, Type=Heading",
+                    "description": "",
+                    "nodeId": "1:450",
+                    "slots": []
+                },
+                {
+                    "id": "99aeff76b38bfcd28c3d8b3c4e09f92b88d4b4a7",
+                    "key": "99aeff76b38bfcd28c3d8b3c4e09f92b88d4b4a7",
+                    "name": "Frame 1 / Property 1=media markt",
+                    "description": "",
+                    "nodeId": "1:31",
+                    "slots": []
+                },
+                {
+                    "id": "94659345cc620404a2a27057a75b4eb60af69bae",
+                    "key": "94659345cc620404a2a27057a75b4eb60af69bae",
+                    "name": "Text / Size=3xl, Weight=Normal, Type=Heading",
+                    "description": "",
+                    "nodeId": "1:452",
+                    "slots": []
+                },
+                {
+                    "id": "974534b0c81954b266a3de189fca22c29cb25e36",
+                    "key": "974534b0c81954b266a3de189fca22c29cb25e36",
+                    "name": "Text / Size=sm, Weight=Normal, Type=Text",
+                    "description": "",
+                    "nodeId": "1:442",
+                    "slots": []
+                },
+                {
+                    "id": "baf2cda5d824dc3c3ae8cdc9d0f866d12c416ed7",
+                    "key": "baf2cda5d824dc3c3ae8cdc9d0f866d12c416ed7",
+                    "name": "Frame 1 / Icon=Ranking ext",
+                    "description": "",
+                    "nodeId": "1:680",
+                    "slots": []
+                },
+                {
+                    "id": "c78090aab14fbb085256d70c0b2c32abc72f633a",
+                    "key": "c78090aab14fbb085256d70c0b2c32abc72f633a",
+                    "name": "Frame 1 / Property 1=morele",
+                    "description": "",
+                    "nodeId": "1:33",
+                    "slots": []
+                },
+                {
+                    "id": "ac734bb99e7cf980ee68b18c49b5019d92859e21",
+                    "key": "ac734bb99e7cf980ee68b18c49b5019d92859e21",
+                    "name": "Text / Size=xs, Weight=Normal, Type=Text",
+                    "description": "",
+                    "nodeId": "1:440",
+                    "slots": []
+                },
+                {
+                    "id": "f3b03d868a9a5e313aaa5c10ed54b0a614c6dbdb",
+                    "key": "f3b03d868a9a5e313aaa5c10ed54b0a614c6dbdb",
+                    "name": "Frame 1 / Icon=Handshake ex",
+                    "description": "",
+                    "nodeId": "1:678",
+                    "slots": []
+                },
+                {
+                    "id": "e74b041cbd5e1d02cbe6f5223fdc47bfe78e9ede",
+                    "key": "e74b041cbd5e1d02cbe6f5223fdc47bfe78e9ede",
+                    "name": "Frame 1 / Property 1=best store",
+                    "description": "",
+                    "nodeId": "1:30",
+                    "slots": []
+                },
+                {
+                    "id": "e313b4634bfcd462609c7bd84a6ee8e4b37039de",
+                    "key": "e313b4634bfcd462609c7bd84a6ee8e4b37039de",
+                    "name": "Text / Size=sm, Weight=Bold, Type=Text",
+                    "description": "",
+                    "nodeId": "1:443",
+                    "slots": []
+                },
+                {
+                    "id": "e97d17d9d4474d5952141f961231ad1f738f4a80",
+                    "key": "e97d17d9d4474d5952141f961231ad1f738f4a80",
+                    "name": "Text / Size=lg, Weight=Bold, Type=Text",
+                    "description": "",
+                    "nodeId": "1:447",
+                    "slots": []
+                },
+                {
+                    "id": "03b16ca77a11e4f74052c7fb2339977006dc91cf",
+                    "key": "03b16ca77a11e4f74052c7fb2339977006dc91cf",
+                    "name": "Icons / Chart",
+                    "description": "",
+                    "nodeId": "1:1246",
+                    "slots": []
+                },
+                {
+                    "id": "130d6f4dbda181839eb65210ede7b9f732665b86",
+                    "key": "130d6f4dbda181839eb65210ede7b9f732665b86",
+                    "name": "Icons / Comment",
+                    "description": "",
+                    "nodeId": "1:1238",
+                    "slots": []
+                },
+                {
+                    "id": "773a493899a9c2acffb12b18756c0b6fdcff19ee",
+                    "key": "773a493899a9c2acffb12b18756c0b6fdcff19ee",
+                    "name": "Icons / Contact",
+                    "description": "",
+                    "nodeId": "1:1240",
+                    "slots": []
+                },
+                {
+                    "id": "792a9fd8b72122e248e127cf4883bd44ba272431",
+                    "key": "792a9fd8b72122e248e127cf4883bd44ba272431",
+                    "name": "Icons / Contact phone",
+                    "description": "",
+                    "nodeId": "1:1257",
+                    "slots": []
+                },
+                {
+                    "id": "7adccc63b38600ffb19fa8a1b2f6f0d50782f354",
+                    "key": "7adccc63b38600ffb19fa8a1b2f6f0d50782f354",
+                    "name": "Icon",
+                    "description": "",
+                    "nodeId": "1:913",
+                    "slots": []
+                },
+                {
+                    "id": "ae642b712f41bb9d5eb6b8cfa91f031523b81622",
+                    "key": "ae642b712f41bb9d5eb6b8cfa91f031523b81622",
+                    "name": "Icons / Cart plus",
+                    "description": "",
+                    "nodeId": "1:345",
+                    "slots": []
+                },
+                {
+                    "id": "1c85fe2caf4333e3b6bbb581a38fdec394e59d10",
+                    "key": "1c85fe2caf4333e3b6bbb581a38fdec394e59d10",
+                    "name": "Icons / minus",
+                    "description": "",
+                    "nodeId": "1:1255",
+                    "slots": []
+                },
+                {
+                    "id": "2112cfdaba6579ea21c39ddf68b3e8e7777dd08f",
+                    "key": "2112cfdaba6579ea21c39ddf68b3e8e7777dd08f",
+                    "name": "Icons / Search check",
+                    "description": "",
+                    "nodeId": "1:1251",
+                    "slots": []
+                },
+                {
+                    "id": "230511097a2f1c252bd20b789aa17a6a85b6911e",
+                    "key": "230511097a2f1c252bd20b789aa17a6a85b6911e",
+                    "name": "Icons / Campain",
+                    "description": "",
+                    "nodeId": "1:312",
+                    "slots": []
+                },
+                {
+                    "id": "24c41bd80395fbff512bbcd0d5cbe9eade9a58e6",
+                    "key": "24c41bd80395fbff512bbcd0d5cbe9eade9a58e6",
+                    "name": "Icons / Search",
+                    "description": "",
+                    "nodeId": "1:1263",
+                    "slots": []
+                },
+                {
+                    "id": "2a1662318229a2248dc9878f5e6f62c21792c1e1",
+                    "key": "2a1662318229a2248dc9878f5e6f62c21792c1e1",
+                    "name": "Icons / Incognito",
+                    "description": "",
+                    "nodeId": "1:1277",
+                    "slots": []
+                },
+                {
+                    "id": "2b525a3ad76d4ab8f51c11f1a9c41a71340a5a2c",
+                    "key": "2b525a3ad76d4ab8f51c11f1a9c41a71340a5a2c",
+                    "name": "Icons / Thumb",
+                    "description": "",
+                    "nodeId": "1:1274",
+                    "slots": []
+                },
+                {
+                    "id": "35d220094dc0b43e5eaf0ff0e3278922b8ba913b",
+                    "key": "35d220094dc0b43e5eaf0ff0e3278922b8ba913b",
+                    "name": "Icons / Cards",
+                    "description": "",
+                    "nodeId": "1:1272",
+                    "slots": []
+                },
+                {
+                    "id": "58ce53f705b3c6fa8ca7993046ac25eeaa8258cd",
+                    "key": "58ce53f705b3c6fa8ca7993046ac25eeaa8258cd",
+                    "name": "Icons / Angle right",
+                    "description": "",
+                    "nodeId": "1:693",
+                    "slots": []
+                },
+                {
+                    "id": "5d6ac9a9ab193b89a6bc29f6395c226df6450f1b",
+                    "key": "5d6ac9a9ab193b89a6bc29f6395c226df6450f1b",
+                    "name": "Icons / Note",
+                    "description": "",
+                    "nodeId": "1:1267",
+                    "slots": []
+                },
+                {
+                    "id": "61b1dd908df24c081dde2fdfb0fde1107fe70c46",
+                    "key": "61b1dd908df24c081dde2fdfb0fde1107fe70c46",
+                    "name": "Icons / Check",
+                    "description": "",
+                    "nodeId": "1:1284",
+                    "slots": []
+                },
+                {
+                    "id": "7725a464fba4e91a4322fdab26d769048d211f16",
+                    "key": "7725a464fba4e91a4322fdab26d769048d211f16",
+                    "name": "Icons / Arrow",
+                    "description": "",
+                    "nodeId": "1:1299",
+                    "slots": []
+                },
+                {
+                    "id": "6fb0799922a52df5f84935225d3515d938fcf1e9",
+                    "key": "6fb0799922a52df5f84935225d3515d938fcf1e9",
+                    "name": "Icons / Handshake",
+                    "description": "",
+                    "nodeId": "1:1301",
+                    "slots": []
+                },
+                {
+                    "id": "7f97defdafe44d0aa8e09735953f7daa71952bc4",
+                    "key": "7f97defdafe44d0aa8e09735953f7daa71952bc4",
+                    "name": "Icons / Ranking",
+                    "description": "",
+                    "nodeId": "1:1288",
+                    "slots": []
+                },
+                {
+                    "id": "9f7f3b1e51dcf31fe20c1ceb13c877a069154a48",
+                    "key": "9f7f3b1e51dcf31fe20c1ceb13c877a069154a48",
+                    "name": "Icons / Box",
+                    "description": "",
+                    "nodeId": "1:119",
+                    "slots": []
+                },
+                {
+                    "id": "a3d098c8b3228fb9141f1a3731b4583c9ce8fc74",
+                    "key": "a3d098c8b3228fb9141f1a3731b4583c9ce8fc74",
+                    "name": "Icons / Search alt",
+                    "description": "",
+                    "nodeId": "1:1286",
+                    "slots": []
+                },
+                {
+                    "id": "adb690cdab5b8499a2cc3b3bd5fcda029842af2b",
+                    "key": "adb690cdab5b8499a2cc3b3bd5fcda029842af2b",
+                    "name": "Icons / VS",
+                    "description": "",
+                    "nodeId": "1:1310",
+                    "slots": []
+                },
+                {
+                    "id": "cfe67b7ec06770e8e59280a758d5ed9ec2e7d29a",
+                    "key": "cfe67b7ec06770e8e59280a758d5ed9ec2e7d29a",
+                    "name": "Icons / Angle down",
+                    "description": "",
+                    "nodeId": "1:672",
+                    "slots": []
+                },
+                {
+                    "id": "d07eeece33ab47b9a4c239bc379d205e7e7abcda",
+                    "key": "d07eeece33ab47b9a4c239bc379d205e7e7abcda",
+                    "name": "Icons / Loader",
+                    "description": "",
+                    "nodeId": "1:1308",
+                    "slots": []
+                },
+                {
+                    "id": "d1711f89b33ac872650d990b51b5372947ce60a7",
+                    "key": "d1711f89b33ac872650d990b51b5372947ce60a7",
+                    "name": "Icons / Cart empty",
+                    "description": "",
+                    "nodeId": "1:1315",
+                    "slots": []
+                },
+                {
+                    "id": "ee5654051a3d22023d3ca4671e5f0f2628a4b2dd",
+                    "key": "ee5654051a3d22023d3ca4671e5f0f2628a4b2dd",
+                    "name": "Icons / Plus",
+                    "description": "",
+                    "nodeId": "1:1324",
+                    "slots": []
+                },
+                {
+                    "id": "fd1ff9565270d4e89dc57fed9c0f5d818b0d5d09",
+                    "key": "fd1ff9565270d4e89dc57fed9c0f5d818b0d5d09",
+                    "name": "Icons / ZO",
+                    "description": "",
+                    "nodeId": "1:1321",
+                    "slots": []
+                },
+                {
+                    "id": "2940552b4c5a7007d648bdca6c1b6ea215a3ccdc",
+                    "key": "2940552b4c5a7007d648bdca6c1b6ea215a3ccdc",
+                    "name": "Frame 1 / Property 1=Promo tekst",
+                    "description": "",
+                    "nodeId": "1:323",
+                    "slots": []
+                },
+                {
+                    "id": "f062509d38ef07ad2996062a0b8e95cec7e961c0",
+                    "key": "f062509d38ef07ad2996062a0b8e95cec7e961c0",
+                    "name": "Layout / Property 1=Mobile",
+                    "description": "",
+                    "nodeId": "1:1039",
+                    "slots": [
+                        {
+                            "path": [
+                                0
+                            ],
+                            "name": "Content",
+                            "width": "FIXED",
+                            "height": "HUG",
+                            "existingChildren": [],
+                            "capacity": 4,
+                            "preferredValues": []
+                        }
+                    ]
+                },
+                {
+                    "id": "e7b03d02aceb78c43cd92112455ca7db42a07ab3",
+                    "key": "e7b03d02aceb78c43cd92112455ca7db42a07ab3",
+                    "name": "Frame 1 / Property 1=Deposit",
+                    "description": "",
+                    "nodeId": "1:321",
+                    "slots": []
+                },
+                {
+                    "id": "3ced1408613c9a3564e98985342937e82543c0e6",
+                    "key": "3ced1408613c9a3564e98985342937e82543c0e6",
+                    "name": "Text / Size=xl, Weight=Normal, Type=Text",
+                    "description": "",
+                    "nodeId": "1:448",
+                    "slots": []
+                },
+                {
+                    "id": "4bf2b69a173e3d2706e54573634257149c180cfc",
+                    "key": "4bf2b69a173e3d2706e54573634257149c180cfc",
+                    "name": "Text / Size=base, Weight=Bold, Type=Text",
+                    "description": "",
+                    "nodeId": "1:445",
+                    "slots": []
+                },
+                {
+                    "id": "77675d20e892cfcba8e16947ea90df41828e779b",
+                    "key": "77675d20e892cfcba8e16947ea90df41828e779b",
+                    "name": "Card / Style=Border bottom",
+                    "description": "",
+                    "nodeId": "1:1047",
+                    "slots": [
+                        {
+                            "path": [
+                                0
+                            ],
+                            "name": "Content",
+                            "width": "FILL",
+                            "height": "HUG",
+                            "existingChildren": [],
+                            "capacity": 4,
+                            "preferredValues": []
+                        }
+                    ]
+                },
+                {
+                    "id": "3743fee5430f8ec97ba174966e9ea77b09d41338",
+                    "key": "3743fee5430f8ec97ba174966e9ea77b09d41338",
+                    "name": "Icons / Recycle",
+                    "description": "",
+                    "nodeId": "1:124",
+                    "slots": []
+                },
+                {
+                    "id": "26285009c849a201a785d11bf28ec779d4545f24",
+                    "key": "26285009c849a201a785d11bf28ec779d4545f24",
+                    "name": "Icons / Sort",
+                    "description": "",
+                    "nodeId": "1:1326",
+                    "slots": []
+                },
+                {
+                    "id": "0b762731968181797de2db429bbaa6adbf5056b9",
+                    "key": "0b762731968181797de2db429bbaa6adbf5056b9",
+                    "name": "Button / Variant=Gray, Size=Default",
+                    "description": "Button gray",
+                    "nodeId": "1:374",
+                    "slots": []
+                },
+                {
+                    "id": "5844a1e6df34f53a5bc3e2287622eb78e84ba4b2",
+                    "key": "5844a1e6df34f53a5bc3e2287622eb78e84ba4b2",
+                    "name": "Label / Color=Primary, Style=Filled",
+                    "description": "",
+                    "nodeId": "1:113",
+                    "slots": []
+                },
+                {
+                    "id": "799b578c30c0606b692546ef1a144f46877614e8",
+                    "key": "799b578c30c0606b692546ef1a144f46877614e8",
+                    "name": "Icons / Compare",
+                    "description": "",
+                    "nodeId": "1:1332",
+                    "slots": []
+                },
+                {
+                    "id": "91e12d495a8535f5aac814211b1d88c866778581",
+                    "key": "91e12d495a8535f5aac814211b1d88c866778581",
+                    "name": "Icons / Alarm",
+                    "description": "",
+                    "nodeId": "1:99",
+                    "slots": []
+                },
+                {
+                    "id": "c68db8fc6dafeb2a9722b9667d2913246c1ce184",
+                    "key": "c68db8fc6dafeb2a9722b9667d2913246c1ce184",
+                    "name": "Icons / Heart",
+                    "description": "",
+                    "nodeId": "1:915",
+                    "slots": []
+                },
+                {
+                    "id": "d439c43fabf75324d14913145465e82c279b3c19",
+                    "key": "d439c43fabf75324d14913145465e82c279b3c19",
+                    "name": "Label / Color=Primary, Style=Plain",
+                    "description": "",
+                    "nodeId": "1:114",
+                    "slots": []
+                },
+                {
+                    "id": "d489fdab1711a0611c4ee32e9b34d74656e4e115",
+                    "key": "d489fdab1711a0611c4ee32e9b34d74656e4e115",
+                    "name": "Frame 1 / Property 1=1 dzień",
+                    "description": "",
+                    "nodeId": "1:320",
+                    "slots": []
+                },
+                {
+                    "id": "e652d64f18a89412c18a2479f62dc25ce165d327",
+                    "key": "e652d64f18a89412c18a2479f62dc25ce165d327",
+                    "name": "Icons / Trash",
+                    "description": "",
+                    "nodeId": "1:1342",
+                    "slots": []
+                },
+                {
+                    "id": "51d2850f6d67dee998fca7db1534852741a29c97",
+                    "key": "51d2850f6d67dee998fca7db1534852741a29c97",
+                    "name": "Container / Property 1=Horizontal",
+                    "description": "",
+                    "nodeId": "1:1054",
+                    "slots": [
+                        {
+                            "path": [
+                                0
+                            ],
+                            "name": "Content",
+                            "width": "FILL",
+                            "height": "FILL",
+                            "existingChildren": [],
+                            "capacity": 4,
+                            "preferredValues": []
+                        }
+                    ]
+                },
+                {
+                    "id": "8a8474c31e031040ba4d417a55bdc6e9462e9148",
+                    "key": "8a8474c31e031040ba4d417a55bdc6e9462e9148",
+                    "name": "Card / Style=Outlined",
+                    "description": "",
+                    "nodeId": "1:1046",
+                    "slots": [
+                        {
+                            "path": [
+                                0
+                            ],
+                            "name": "Content",
+                            "width": "FILL",
+                            "height": "HUG",
+                            "existingChildren": [],
+                            "capacity": 4,
+                            "preferredValues": []
+                        }
+                    ]
+                },
+                {
+                    "id": "b9dc914a299d28361e6c39bdb555ab10a73e85fe",
+                    "key": "b9dc914a299d28361e6c39bdb555ab10a73e85fe",
+                    "name": "Card / Style=White",
+                    "description": "",
+                    "nodeId": "1:1045",
+                    "slots": [
+                        {
+                            "path": [
+                                0
+                            ],
+                            "name": "Content",
+                            "width": "FILL",
+                            "height": "HUG",
+                            "existingChildren": [],
+                            "capacity": 4,
+                            "preferredValues": []
+                        }
+                    ]
+                },
+                {
+                    "id": "0ad697540eb0d60e36d962ee9208889363e1e263",
+                    "key": "0ad697540eb0d60e36d962ee9208889363e1e263",
+                    "name": "Checkbox / Property 1=Checked",
+                    "description": "",
+                    "nodeId": "1:1351",
+                    "slots": []
+                },
+                {
+                    "id": "1957a21493d8df3065a6c18417dc1cdf7920e3df",
+                    "key": "1957a21493d8df3065a6c18417dc1cdf7920e3df",
+                    "name": "Checkbox / Property 1=Default",
+                    "description": "",
+                    "nodeId": "1:1350",
+                    "slots": []
+                },
+                {
+                    "id": "278017679bc9eb7a84de1a4135effce59bd114c0",
+                    "key": "278017679bc9eb7a84de1a4135effce59bd114c0",
+                    "name": "Switch-alternative / Property 1=Checked",
+                    "description": "",
+                    "nodeId": "1:1359",
+                    "slots": []
+                },
+                {
+                    "id": "407d3f59a1fefc5f2928d7e60233229b2d4032ae",
+                    "key": "407d3f59a1fefc5f2928d7e60233229b2d4032ae",
+                    "name": "Switch-alternative / Property 1=Default",
+                    "description": "",
+                    "nodeId": "1:1358",
+                    "slots": []
+                },
+                {
+                    "id": "516b4106921e92e8025f01a6248b344c2891daad",
+                    "key": "516b4106921e92e8025f01a6248b344c2891daad",
+                    "name": "Text / Size=xl, Weight=Bold, Type=Text",
+                    "description": "",
+                    "nodeId": "1:449",
+                    "slots": []
+                },
+                {
+                    "id": "7f5e42ac8bda87824959135f44280f22665ff308",
+                    "key": "7f5e42ac8bda87824959135f44280f22665ff308",
+                    "name": "Button / Variant=Primary, Size=Default",
+                    "description": "Button primary",
+                    "nodeId": "1:370",
+                    "slots": []
+                },
+                {
+                    "id": "89639335e97d9d6cfa8458ab2a597959ad3ccfd9",
+                    "key": "89639335e97d9d6cfa8458ab2a597959ad3ccfd9",
+                    "name": "Button / Variant=Accent, Size=Default",
+                    "description": "Button accent",
+                    "nodeId": "1:371",
+                    "slots": []
+                },
+                {
+                    "id": "9267ac9a4750c1c1a5ec3b94aab48b1629d820b1",
+                    "key": "9267ac9a4750c1c1a5ec3b94aab48b1629d820b1",
+                    "name": "Radio / Property 1=Default",
+                    "description": "",
+                    "nodeId": "1:1061",
+                    "slots": []
+                },
+                {
+                    "id": "9d437c460936dec227956a7c3f78e191f1e0725c",
+                    "key": "9d437c460936dec227956a7c3f78e191f1e0725c",
+                    "name": "Button / Variant=Blank, Size=Default",
+                    "description": "Button blank",
+                    "nodeId": "1:373",
+                    "slots": []
+                },
+                {
+                    "id": "c2beddbd7d4826d559b6abe5d43b846711bfa3f9",
+                    "key": "c2beddbd7d4826d559b6abe5d43b846711bfa3f9",
+                    "name": "Button / Variant=Blank, Size=Small",
+                    "description": "Button blank small",
+                    "nodeId": "1:378",
+                    "slots": []
+                },
+                {
+                    "id": "c7b781860dcc5b1304feb839b87401713dafa088",
+                    "key": "c7b781860dcc5b1304feb839b87401713dafa088",
+                    "name": "Button / Variant=Outline, Size=Small",
+                    "description": "Button outline small",
+                    "nodeId": "1:377",
+                    "slots": []
+                }
+            ]
+}

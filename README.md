@@ -27,7 +27,13 @@ Gotowe artefakty po kompilacji: `dist/code.js`, `dist/ui.html`. Manifest wskazuj
 
 ## Architektura
 
-Rodzeństwo jest wybierane sekwencyjnie: po ustaleniu liczby dzieci każde kolejne żądanie otrzymuje `selectedSiblings` z nazwami i ID wcześniejszych wyborów. Pozwala to rozróżnić np. „jeden button i jeden input” od „dwa buttony”. Powtórzenia nie są blokowane, jeśli wymaga ich prompt. Liczba wywołań to jedno na decyzje kontenera/slotu oraz jedno na każde nowe dziecko. Panel „Struktura wyniku” pokazuje również wybrane komponenty w `trace`. Testy sprawdzają przekazywanie kontekstu na atrapach; jakość wyborów rzeczywistego JEV wymaga testu z biblioteką.
+Planowanie zaczyna się od rejestru wymagań semantycznych w `server/requirements.mjs`. JEV wybiera ich liczbę (maks. 32), a następnie zakresy tekstu źródłowego opisujące kolejne wystąpienia. To zamknięte pytania Choice, bez generowania swobodnego tekstu. Jawne ilości stają się osobnymi ID: np. dwa inputy to dwa wymagania, nawet jeśli wskazują ten sam fragment promptu. Interpretacja ilości i znaczenia nadal zależy od modelu; kod gwarantuje jednokrotne wykorzystanie każdego rozpoznanego ID.
+
+Planner rozwija każde poddrzewo przed wyborem kolejnego elementu rodzeństwa. Po wyborze elementu model przypisuje mu jedno pozostałe wymaganie albo oznacza komponent jako czysto strukturalny. Natywne kontenery nigdy nie konsumują wymagań; biblioteczne wrappery również nie powinny ich konsumować. Samo posiadanie slotu nie przesądza o roli komponentu. `requirementId` jest metadanymi planera i renderer go ignoruje.
+
+Przed pytaniem o liczbę lub typ dzieci planner przelicza `requiredRequirements`, `fulfilledRequirements`, `remainingRequirements` przez całe drzewo, włącznie z `slots[].children`. `plannedChildren` opisuje aktualne poddrzewo. Gdy wszystkie ID są spełnione, kod przerywa dodawanie dzieci, nawet jeśli wcześniejsza decyzja o ich liczbie była zawyżona. Nie porównuje typów komponentów: dwa buttony dla różnych celów pozostają dozwolone. Brak dopasowania, limity lub zbyt mała liczba dzieci skutkują ostrzeżeniem o niespełnionych wymaganiach, bez deklarowania pełnego sukcesu.
+
+W terminalu backendu każdemu krokowi towarzyszy `[planner]` z `currentPath`, wymaganiami, zaplanowanymi potomkami, `additionalChildren` i powodem zatrzymania. Te same dane są w `trace` panelu „Struktura wyniku”; kontekst żądań trafia też do istniejącego `logs/defapi.log`. Dochodzą do dwóch wywołań na analizę wymagań oraz jedno na przypisanie celu elementu. Nie ma dodatkowych automatycznych prób naprawczych. Przy dodawaniu do przypiętego slotu rejestr obejmuje żądane nowe elementy; istniejąca zawartość pozostaje w kontekście. Renderer i edycja samych właściwości pozostają bez zmian.
 
 `Figma UI → snapshot + katalog → lokalny backend → decyzje JEV → plan → walidacja → Figma renderer`
 

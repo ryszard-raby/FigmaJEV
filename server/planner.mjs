@@ -1,4 +1,5 @@
 import { choice } from './jev.mjs';
+import { extractRequirements, requirementState, logPlannerStep } from './requirements.mjs';
 
 const directions = { VERTICAL: 'Vertical stack', HORIZONTAL: 'Horizontal row' };
 const sizing = { KEEP: 'Leave unchanged: preserve the library/default size and resizing mode. Prefer unless the user explicitly requests resizing this axis.', HUG: 'Hug contents: size to content', FILL: 'Fill available space in parent' };
@@ -27,38 +28,46 @@ export async function plan(input, decide) {
 }
 
 async function create(input, decide, insertionSlot = null) {
+  const requiredRequirements = await extractRequirements(input, decide);
   const texts = textCandidates(input.prompt);
   const tree = { type: 'container', name: 'FigmaJev', direction: 'VERTICAL', width: 'KEEP', height: 'KEEP', children: [] };
   if (insertionSlot) { tree.width = insertionSlot.width === 'HUG' ? 'HUG' : 'FILL'; tree.height = insertionSlot.height === 'HUG' ? 'HUG' : 'FILL'; }
-  const queue = [{ node: tree, path: insertionSlot ? 'Content' : 'technical-root', depth: 0, slot: insertionSlot }];
   const trace = [];
   const warnings = [];
   let count = 1;
-  while (queue.length) {
-    const { node, path, depth, slot, owner } = queue.shift();
+  async function expand({ node, path, depth, slot, owner }) {
+    const coverage = () => requirementState(requiredRequirements, tree, node, input.catalog);
+    const debug = (additionalChildren, extra = {}) => {
+      const record = { currentPath: path, ...coverage(), additionalChildren, ...extra };
+      trace.push({ phase: 'requirements', ...record }); logPlannerStep(record);
+    };
+    if (!coverage().remainingRequirements.length) { debug(0, { reason: 'requirements-fulfilled' }); return; }
     const slots = Math.min(4, 32 - count, slot?.capacity ?? 4);
-    if (!slots) { trace.push({ path, reason: 'capacity-or-node-limit' }); continue; }
+    if (!slots) { debug(0, { reason: 'capacity-or-node-limit' }); return; }
     const scopeRules = slot
       ? `You are INSIDE the Content slot of ${owner?.name || 'the selected component'}. This component has ALREADY been instantiated. Choose its requested direct CONTENT, not another copy of the outer component. The component's existence does not mean its slot has been populated. Existing slot children: ${JSON.stringify(slot.existingChildren || [])}. Use zero only when no additional content belongs in THIS slot. Preserve existing children.`
       : libraryRules;
-    const state = { prompt: input.prompt, catalog: input.catalog, tree, context: input.context, currentPath: path, currentComponent: owner, contentSlot: slot, scopeRules, libraryRules };
-    const answers = await decide(state, {
+    const state = () => ({ prompt: input.prompt, catalog: input.catalog, tree, context: input.context, currentPath: path, currentComponent: owner, contentSlot: slot, scopeRules, libraryRules, ...coverage() });
+    const answers = await decide(state(), {
       ...(!slot ? { direction: choice(`Choose layout direction for container at ${path}.`, directions) } : {}),
       ...(depth === 0 && !slot ? {
         width: choice('Choose width of the single technical FigmaJev root on the page. KEEP preserves Hug. There is no outer frame, so Fill is unavailable.', { KEEP: sizing.KEEP, HUG: sizing.HUG }),
         height: choice('Choose height of the single technical FigmaJev root on the page. KEEP preserves fixed 480px; HUG sizes to contents. There is no outer frame, so Fill is unavailable. Prefer KEEP unless resizing is requested.', { KEEP: sizing.KEEP, HUG: sizing.HUG }),
       } : {}),
-      count: choice(`How many NEW immediate children should be added at ${path}? ${scopeRules}`, Object.fromEntries(Array.from({ length: slots + 1 }, (_, i) => [String(i), `${i} children`]))),
+      count: choice(`How many additional immediate children are needed for remainingRequirements ONLY? fulfilledRequirements includes descendants and other branches: never recreate them. Structural wrappers do not fulfill requirements. ${scopeRules}`, Object.fromEntries(Array.from({ length: slots + 1 }, (_, i) => [String(i), `${i} children`]))),
     });
     if (!slot) node.direction = answers.direction;
     if (depth === 0 && !slot) { node.width = answers.width; node.height = answers.height; }
     trace.push({ path, component: owner?.name, slot: slot?.name, ...answers });
+    debug(Number(answers.count));
     if (slot && Number(answers.count) === 0) warnings.push(`${owner?.name || 'Komponent'} / Content: JEV wybrał 0 nowych dzieci.`);
     const kinds = { text: 'Native text', ...Object.fromEntries(input.catalog.map(c => [c.id, `Library component: ${c.name}. ${c.description || ''}. Content slots: ${JSON.stringify(c.slots || [])}`])) };
     if (depth < 3) kinds.container = 'Plain native frame for grouping; NOT the library Layout component. Use only for an explicitly requested plain frame or grouping without a requested library component.';
     for (let i = 0; i < Number(answers.count); i++) {
+      if (!coverage().remainingRequirements.length) { debug(0, { reason: 'requirements-fulfilled' }); break; }
+      if (count >= 32) { debug(0, { reason: 'node-limit' }); break; }
       const questions = {};
-      questions[`child${i}`] = choice(`Choose ONLY the next element, child ${i + 1} of ${answers.count} at ${path}. Read selectedSiblings and fulfill the next still-unfulfilled item in the prompt. Do not repeat an already fulfilled control unless the user requests multiple copies. ${scopeRules}`, kinds);
+      questions[`child${i}`] = choice(`Choose ONLY the next element at ${path} for remainingRequirements. Read plannedChildren including descendants and fulfilledRequirements across the entire tree. Never recreate a fulfilled occurrence. Same-type components are allowed for distinct remaining IDs. Containers only group requirements. ${scopeRules}`, kinds);
       questions[`text${i}`] = choice(`If child ${i + 1} of ${path} is text, choose its exact copy.`, options(texts));
       for (const axis of ['width', 'height']) {
         const canFill = node[axis] === 'FILL' || (depth === 0 && !slot && axis === 'height' && node.height === 'KEEP');
@@ -71,7 +80,7 @@ async function create(input, decide, insertionSlot = null) {
         name: child.type === 'component' ? input.catalog.find(c => c.id === child.componentId)?.name : child.name,
         text: child.text
       }));
-      const children = await decide({ ...state, selectedSiblings, childIndex: i, expectedChildren: Number(answers.count) }, questions);
+      const children = await decide({ ...state(), selectedSiblings, childIndex: i, expectedChildren: Number(answers.count) }, questions);
       const kind = children[`child${i}`];
       trace.push({ path, childIndex: i, selected: kind, component: input.catalog.find(c => c.id === kind)?.name });
       const child = kind === 'container'
@@ -80,8 +89,27 @@ async function create(input, decide, insertionSlot = null) {
           : { type: 'component', componentId: kind };
       child.width = children[`width${i}`] || 'KEEP';
       child.height = children[`height${i}`] || 'KEEP';
+      const component = input.catalog.find(c => c.id === kind);
+      // Native containers never claim content. Library components are classified
+      // by purpose: having a slot alone does not make a semantic control a wrapper.
+      if (child.type !== 'container') {
+        const remaining = coverage().remainingRequirements;
+        const { requirement } = await decide({ ...state(), phase: 'requirement-claim', candidate: { ...child, componentName: component?.name, description: component?.description, contentSlots: component?.slots } }, {
+          requirement: choice('Which ONE remaining semantic occurrence does this concrete element implement? Match purpose, not just type. Choose none if it duplicates fulfilled content or serves no requested purpose. If it only contains/groups requested descendants, choose structural: wrappers never consume a requirement. A semantic control can have slots; classify its purpose, not the presence of slots.', {
+            none: 'No unmet requirement is implemented; do not add this element',
+            ...(child.type === 'component' ? { structural: 'Pure layout wrapper; not a semantic control/content element' } : {}),
+            ...Object.fromEntries(remaining.map(r => [r.id, `${r.purpose} (occurrence ${r.occurrence})`]))
+          })
+        });
+        if (requirement === 'none') { debug(0, { reason: 'unmatched-candidate', candidate: kind }); break; }
+        if (requirement !== 'structural') {
+          if (!remaining.some(r => r.id === requirement)) throw new Error('JEV claimed an unknown or already fulfilled requirement.');
+          child.requirementId = requirement;
+        } else if (child.type !== 'component') throw new Error('Text cannot be a structural wrapper.');
+      }
       node.children.push(child); count++;
-      if (child.type === 'container') queue.push({ node: child, path: `${path}/${i + 1}`, depth: depth + 1 });
+      debug(0, { reason: 'child-added', childIndex: i });
+      if (child.type === 'container') await expand({ node: child, path: `${path}/${i + 1}`, depth: depth + 1 });
       if (child.type === 'component' && depth < 3) {
         const component = input.catalog.find(c => c.id === kind);
         child.slots = [];
@@ -90,12 +118,16 @@ async function create(input, decide, insertionSlot = null) {
           if (!descriptor.capacity) { warnings.push(`${component.name} / Content: brak miejsca na nowe dzieci.`); continue; }
           const content = { path: descriptor.path, children: [] };
           child.slots.push(content);
-          queue.push({ node: { children: content.children, width: descriptor.width === 'HUG' ? 'HUG' : 'FILL', height: descriptor.height === 'HUG' ? 'HUG' : 'FILL' }, path: `${path}/${i + 1}/Content[${descriptor.path.join('.')}]`, depth: depth + 1, slot: descriptor, owner: { id: component.id, name: component.name } });
+          await expand({ node: { children: content.children, width: descriptor.width === 'HUG' ? 'HUG' : 'FILL', height: descriptor.height === 'HUG' ? 'HUG' : 'FILL' }, path: `${path}/${i + 1}/Content[${descriptor.path.join('.')}]`, depth: depth + 1, slot: descriptor, owner: { id: component.id, name: component.name } });
         }
       }
     }
+    debug(0, { reason: 'subtree-complete' });
   }
-  return { mode: 'create', tree, trace, warnings };
+  await expand({ node: tree, path: insertionSlot ? 'Content' : 'technical-root', depth: 0, slot: insertionSlot });
+  const finalCoverage = requirementState(requiredRequirements, tree, tree, input.catalog);
+  if (finalCoverage.remainingRequirements.length) warnings.push(`Unfulfilled requirements: ${finalCoverage.remainingRequirements.map(r => `${r.id}: ${r.purpose}`).join(', ')}`);
+  return { mode: 'create', tree, trace, warnings, ...finalCoverage };
 }
 
 async function edit(input, decide) {
@@ -113,7 +145,7 @@ async function edit(input, decide) {
       if (!target) throw new Error('Nieprawidłowy slot docelowy.');
       const result = await create(input, decide, target.contentSlot);
       if (!result.tree.children.length) throw new Error('JEV nie wybrał dzieci do dodania. Doprecyzuj prompt.');
-      return { mode: 'insert', targetId: input.context.targetId, parentId: target.id, children: result.tree.children };
+      return { ...result, mode: 'insert', targetId: input.context.targetId, parentId: target.id, children: result.tree.children };
     }
   }
   const texts = textCandidates(input.prompt, nodes);

@@ -1,7 +1,17 @@
-import test from 'node:test';
+import test, { mock } from 'node:test';
 import assert from 'node:assert/strict';
-import { plan, textCandidates } from '../server/planner.mjs';
+import { plan as trackedPlan, textCandidates } from '../server/planner.mjs';
 import { createJev, validateAnswers } from '../server/jev.mjs';
+mock.method(console, 'debug', () => {});
+
+// Existing layout fixtures isolate layout decisions. Requirement-specific
+// integration cases below use trackedPlan directly with explicit purposes.
+const plan = (input, decide) => trackedPlan(input, async (state, questions) => {
+  if (state.phase === 'requirements-count') return { total: '32' };
+  if (state.phase === 'requirements-grounding') return Object.fromEntries(Object.keys(questions).map(key => [key, 's0']));
+  if (state.phase === 'requirement-claim') return { requirement: state.candidate.contentSlots?.length ? 'structural' : state.remainingRequirements[0].id };
+  return decide(state, questions);
+});
 
 test('DefAPI endpoint, auth, model and typed response contract', async () => {
   const decide = createJev('test-key', async (url, req) => {
@@ -127,7 +137,7 @@ test('slot questions identify their owner and expose a zero-child decision', asy
     assert.doesNotMatch(questions.count.instructions, /add that component as one child/);
     return { count: '0' };
   });
-  assert.equal(result.trace.at(-1).count, '0');
+  assert.equal(result.trace.find(t => t.slot === 'Content').count, '0');
   assert.match(result.warnings[0], /0 nowych dzieci/);
 });
 

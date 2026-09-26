@@ -1,0 +1,3098 @@
+{
+  "source": {
+    "fileKey": "iCotPXnNLa5DV1OsJEgsio",
+    "url": "https://www.figma.com/design/iCotPXnNLa5DV1OsJEgsio/CeneoDesign",
+    "transport": "Figma MCP / use_figma"
+  },
+  "exportedAt": "2026-09-25T13:04:18.239Z",
+  "scope": "Catalog of local component definitions and variant sets on all current pages; includes IDs, keys, names, descriptions, dimensions, exposed property definitions, variant values and default variants. Does not include child layer trees or external library catalogs.",
+  "counts": {
+    "pages": 19,
+    "components": 154,
+    "componentSets": 19
+  },
+  "pages": [
+    {
+      "pageId": "63:34",
+      "pageName": "UI Elements",
+      "items": [
+        {
+          "id": "128:2642",
+          "key": "094dc8231f2799f290fd454dde82be190dad337b",
+          "name": "Ceneo Logo",
+          "type": "COMPONENT",
+          "parentId": "63:35",
+          "width": 101.80000305175781,
+          "height": 28,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "128:2716",
+          "key": "96ae1b8924c44b083084d86d5f5bc75809a23315",
+          "name": "Triggers",
+          "type": "COMPONENT_SET",
+          "parentId": "63:35",
+          "width": 209,
+          "height": 242,
+          "description": "",
+          "properties": {
+            "Property 1": {
+              "type": "VARIANT",
+              "defaultValue": "Darmowa wysyłka",
+              "variantOptions": [
+                "Darmowa wysyłka",
+                "Wysyłka w 1 dzień",
+                "Promo tekst",
+                "Kupione ostatnio",
+                "Deposit",
+                "1 dzień"
+              ]
+            }
+          },
+          "variantGroupProperties": {
+            "Property 1": {
+              "values": [
+                "Darmowa wysyłka",
+                "Wysyłka w 1 dzień",
+                "Promo tekst",
+                "Kupione ostatnio",
+                "Deposit",
+                "1 dzień"
+              ]
+            }
+          },
+          "defaultVariantId": "128:2675",
+          "variantIds": [
+            "128:2675",
+            "128:2717",
+            "344:7494",
+            "272:5046",
+            "128:3241",
+            "128:2745"
+          ]
+        },
+        {
+          "id": "128:2675",
+          "key": "93ad2bd802c0f2c4717911cbeacec44887fa2ba6",
+          "name": "Property 1=Darmowa wysyłka",
+          "type": "COMPONENT",
+          "parentId": "128:2716",
+          "width": 123,
+          "height": 20,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Darmowa wysyłka"
+          }
+        },
+        {
+          "id": "128:2717",
+          "key": "f7e78ec9bbeb2e3a406d4e09935c7a408bdafd9a",
+          "name": "Property 1=Wysyłka w 1 dzień",
+          "type": "COMPONENT",
+          "parentId": "128:2716",
+          "width": 124,
+          "height": 20,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Wysyłka w 1 dzień"
+          }
+        },
+        {
+          "id": "344:7494",
+          "key": "d489fdab1711a0611c4ee32e9b34d74656e4e115",
+          "name": "Property 1=1 dzień",
+          "type": "COMPONENT",
+          "parentId": "128:2716",
+          "width": 60,
+          "height": 20,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "1 dzień"
+          }
+        },
+        {
+          "id": "272:5046",
+          "key": "e7b03d02aceb78c43cd92112455ca7db42a07ab3",
+          "name": "Property 1=Deposit",
+          "type": "COMPONENT",
+          "parentId": "128:2716",
+          "width": 90,
+          "height": 20,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Deposit"
+          }
+        },
+        {
+          "id": "128:3241",
+          "key": "9458a098a620f24e92790700e9a79aa8b38dae32",
+          "name": "Property 1=Kupione ostatnio",
+          "type": "COMPONENT",
+          "parentId": "128:2716",
+          "width": 142,
+          "height": 20,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Kupione ostatnio"
+          }
+        },
+        {
+          "id": "128:2745",
+          "key": "2940552b4c5a7007d648bdca6c1b6ea215a3ccdc",
+          "name": "Property 1=Promo tekst",
+          "type": "COMPONENT",
+          "parentId": "128:2716",
+          "width": 167,
+          "height": 20,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Promo tekst"
+          }
+        },
+        {
+          "id": "96:1468",
+          "key": "129d313537a1eb57c46d5bbf2960b27f40b2c4b0",
+          "name": "Badges",
+          "type": "COMPONENT_SET",
+          "parentId": "63:35",
+          "width": 407,
+          "height": 67,
+          "description": "",
+          "properties": {
+            "Icon": {
+              "type": "VARIANT",
+              "defaultValue": "ZO",
+              "variantOptions": [
+                "ZO",
+                "Handshake",
+                "Ranking",
+                "ZO ext",
+                "Ranking ext",
+                "Handshake ex"
+              ]
+            }
+          },
+          "variantGroupProperties": {
+            "Icon": {
+              "values": [
+                "ZO",
+                "Handshake",
+                "Ranking",
+                "ZO ext",
+                "Ranking ext",
+                "Handshake ex"
+              ]
+            }
+          },
+          "defaultVariantId": "96:1694",
+          "variantIds": [
+            "96:1694",
+            "113:5838",
+            "96:1860",
+            "113:6038",
+            "96:1864",
+            "113:5931"
+          ]
+        },
+        {
+          "id": "96:1694",
+          "key": "0f6ab916e7d25f8006205a0441e85791f4272cdb",
+          "name": "Icon=ZO",
+          "type": "COMPONENT",
+          "parentId": "96:1468",
+          "width": 25,
+          "height": 25,
+          "description": "",
+          "variantProperties": {
+            "Icon": "ZO"
+          }
+        },
+        {
+          "id": "113:5838",
+          "key": "751a1acf9b3eb27512ded25128b31fc70843031a",
+          "name": "Icon=ZO ext",
+          "type": "COMPONENT",
+          "parentId": "96:1468",
+          "width": 74,
+          "height": 25,
+          "description": "",
+          "variantProperties": {
+            "Icon": "ZO ext"
+          }
+        },
+        {
+          "id": "96:1860",
+          "key": "37cc8f6f45ce1a7cfb46ec1c45e7f552cbbbffab",
+          "name": "Icon=Handshake",
+          "type": "COMPONENT",
+          "parentId": "96:1468",
+          "width": 25,
+          "height": 25,
+          "description": "",
+          "variantProperties": {
+            "Icon": "Handshake"
+          }
+        },
+        {
+          "id": "113:6038",
+          "key": "f3b03d868a9a5e313aaa5c10ed54b0a614c6dbdb",
+          "name": "Icon=Handshake ex",
+          "type": "COMPONENT",
+          "parentId": "96:1468",
+          "width": 75,
+          "height": 25,
+          "description": "",
+          "variantProperties": {
+            "Icon": "Handshake ex"
+          }
+        },
+        {
+          "id": "96:1864",
+          "key": "cd5e464b2c0ca6d83b5c88f95714e747033301b3",
+          "name": "Icon=Ranking",
+          "type": "COMPONENT",
+          "parentId": "96:1468",
+          "width": 25,
+          "height": 25,
+          "description": "",
+          "variantProperties": {
+            "Icon": "Ranking"
+          }
+        },
+        {
+          "id": "113:5931",
+          "key": "baf2cda5d824dc3c3ae8cdc9d0f866d12c416ed7",
+          "name": "Icon=Ranking ext",
+          "type": "COMPONENT",
+          "parentId": "96:1468",
+          "width": 61,
+          "height": 25,
+          "description": "",
+          "variantProperties": {
+            "Icon": "Ranking ext"
+          }
+        },
+        {
+          "id": "63:108",
+          "key": "0caecb314d74bfcf879909362e266f60294291a9",
+          "name": "Shops logotypes",
+          "type": "COMPONENT_SET",
+          "parentId": "63:35",
+          "width": 788,
+          "height": 72,
+          "description": "",
+          "properties": {
+            "Property 1": {
+              "type": "VARIANT",
+              "defaultValue": "allegro",
+              "variantOptions": [
+                "allegro",
+                "best store",
+                "media markt",
+                "media expert",
+                "morele",
+                "deluxry",
+                "partner"
+              ]
+            }
+          },
+          "variantGroupProperties": {
+            "Property 1": {
+              "values": [
+                "allegro",
+                "best store",
+                "media markt",
+                "media expert",
+                "morele",
+                "deluxry",
+                "partner"
+              ]
+            }
+          },
+          "defaultVariantId": "63:109",
+          "variantIds": [
+            "63:109",
+            "63:111",
+            "63:113",
+            "63:115",
+            "63:117",
+            "63:119",
+            "95:1365"
+          ]
+        },
+        {
+          "id": "63:109",
+          "key": "1ce2645580e67371f99ff476332ab42ba144a3a4",
+          "name": "Property 1=allegro",
+          "type": "COMPONENT",
+          "parentId": "63:108",
+          "width": 100,
+          "height": 40,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "allegro"
+          }
+        },
+        {
+          "id": "63:111",
+          "key": "e74b041cbd5e1d02cbe6f5223fdc47bfe78e9ede",
+          "name": "Property 1=best store",
+          "type": "COMPONENT",
+          "parentId": "63:108",
+          "width": 100,
+          "height": 40,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "best store"
+          }
+        },
+        {
+          "id": "63:113",
+          "key": "99aeff76b38bfcd28c3d8b3c4e09f92b88d4b4a7",
+          "name": "Property 1=media markt",
+          "type": "COMPONENT",
+          "parentId": "63:108",
+          "width": 100,
+          "height": 40,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "media markt"
+          }
+        },
+        {
+          "id": "63:115",
+          "key": "5049afcf030173b098eeeea8ecbdb7c901ade7bf",
+          "name": "Property 1=media expert",
+          "type": "COMPONENT",
+          "parentId": "63:108",
+          "width": 100,
+          "height": 40,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "media expert"
+          }
+        },
+        {
+          "id": "63:117",
+          "key": "c78090aab14fbb085256d70c0b2c32abc72f633a",
+          "name": "Property 1=morele",
+          "type": "COMPONENT",
+          "parentId": "63:108",
+          "width": 100,
+          "height": 40,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "morele"
+          }
+        },
+        {
+          "id": "63:119",
+          "key": "3ade006fc3759584749981e86c64c3b2d027dadd",
+          "name": "Property 1=deluxry",
+          "type": "COMPONENT",
+          "parentId": "63:108",
+          "width": 100,
+          "height": 40,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "deluxry"
+          }
+        },
+        {
+          "id": "95:1365",
+          "key": "6ac0124233a168aabdeafb284e4a180092783d21",
+          "name": "Property 1=partner",
+          "type": "COMPONENT",
+          "parentId": "63:108",
+          "width": 60,
+          "height": 24,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "partner"
+          }
+        },
+        {
+          "id": "63:122",
+          "key": "472e4a738ea1e1904b174cddf213b5479a14ea3c",
+          "name": "Sqare Logos",
+          "type": "COMPONENT_SET",
+          "parentId": "63:35",
+          "width": 362,
+          "height": 104,
+          "description": "",
+          "properties": {
+            "Property 1": {
+              "type": "VARIANT",
+              "defaultValue": "orlen",
+              "variantOptions": [
+                "orlen",
+                "ikea",
+                "adidas",
+                "4f"
+              ]
+            }
+          },
+          "variantGroupProperties": {
+            "Property 1": {
+              "values": [
+                "orlen",
+                "ikea",
+                "adidas",
+                "4f"
+              ]
+            }
+          },
+          "defaultVariantId": "63:123",
+          "variantIds": [
+            "63:123",
+            "63:126",
+            "63:129",
+            "63:132"
+          ]
+        },
+        {
+          "id": "63:123",
+          "key": "2d5db9a1d5aba75f23aba0d8777d9342495d6e58",
+          "name": "Property 1=orlen",
+          "type": "COMPONENT",
+          "parentId": "63:122",
+          "width": 70,
+          "height": 70,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "orlen"
+          }
+        },
+        {
+          "id": "63:126",
+          "key": "4d6b0c38fcf966164754e2d33c4884a22e3c33e2",
+          "name": "Property 1=adidas",
+          "type": "COMPONENT",
+          "parentId": "63:122",
+          "width": 70,
+          "height": 70,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "adidas"
+          }
+        },
+        {
+          "id": "63:129",
+          "key": "8bff6313268eb524b9a83221ce547dc0b0d0f8c2",
+          "name": "Property 1=ikea",
+          "type": "COMPONENT",
+          "parentId": "63:122",
+          "width": 70,
+          "height": 70,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "ikea"
+          }
+        },
+        {
+          "id": "63:132",
+          "key": "394ba403c97f84555ed1b189f4ce43dd81551125",
+          "name": "Property 1=4f",
+          "type": "COMPONENT",
+          "parentId": "63:122",
+          "width": 70,
+          "height": 70,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "4f"
+          }
+        },
+        {
+          "id": "128:2643",
+          "key": "a8b37afe760b23a33ae8adeddd8e728b14776b05",
+          "name": "Energy label",
+          "type": "COMPONENT",
+          "parentId": "63:35",
+          "width": 48,
+          "height": 26,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "63:141",
+          "key": "36e793986ca1657ff9bc252c5c74ef1c008d8ea7",
+          "name": "Favicon",
+          "type": "COMPONENT_SET",
+          "parentId": "63:35",
+          "width": 402,
+          "height": 82,
+          "description": "",
+          "properties": {
+            "Property 1": {
+              "type": "VARIANT",
+              "defaultValue": "morele",
+              "variantOptions": [
+                "media expert",
+                "deluxury",
+                "morele",
+                "ceneo",
+                "allegro",
+                "media markt"
+              ]
+            }
+          },
+          "variantGroupProperties": {
+            "Property 1": {
+              "values": [
+                "media expert",
+                "deluxury",
+                "morele",
+                "ceneo",
+                "allegro",
+                "media markt"
+              ]
+            }
+          },
+          "defaultVariantId": "63:142",
+          "variantIds": [
+            "63:142",
+            "63:144",
+            "63:146",
+            "63:148",
+            "63:150",
+            "63:152"
+          ]
+        },
+        {
+          "id": "63:142",
+          "key": "e2d8ca262380b11b5765cc5eb1dd130911fda24d",
+          "name": "Property 1=morele",
+          "type": "COMPONENT",
+          "parentId": "63:141",
+          "width": 48,
+          "height": 48,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "morele"
+          }
+        },
+        {
+          "id": "63:144",
+          "key": "88c19313bd0d3880a20ec065a41440609656316f",
+          "name": "Property 1=ceneo",
+          "type": "COMPONENT",
+          "parentId": "63:141",
+          "width": 48,
+          "height": 48,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "ceneo"
+          }
+        },
+        {
+          "id": "63:146",
+          "key": "d6afcc39d83ab9de947c891583299d471a267e9f",
+          "name": "Property 1=allegro",
+          "type": "COMPONENT",
+          "parentId": "63:141",
+          "width": 48,
+          "height": 48,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "allegro"
+          }
+        },
+        {
+          "id": "63:148",
+          "key": "a85813a4fc9281d5cb13f54b82bae2436b0d8cd7",
+          "name": "Property 1=media markt",
+          "type": "COMPONENT",
+          "parentId": "63:141",
+          "width": 48,
+          "height": 48,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "media markt"
+          }
+        },
+        {
+          "id": "63:150",
+          "key": "607be2fb1cab47dafc48d92b44ff53c2c568a1f9",
+          "name": "Property 1=media expert",
+          "type": "COMPONENT",
+          "parentId": "63:141",
+          "width": 48,
+          "height": 48,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "media expert"
+          }
+        },
+        {
+          "id": "63:152",
+          "key": "febd7d776032d2dcdc5f268138442af787854c93",
+          "name": "Property 1=deluxury",
+          "type": "COMPONENT",
+          "parentId": "63:141",
+          "width": 48,
+          "height": 48,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "deluxury"
+          }
+        },
+        {
+          "id": "128:2645",
+          "key": "6d98818a7af1ae5abf7e1560afb8137575b9d615",
+          "name": "Assistant",
+          "type": "COMPONENT",
+          "parentId": "63:35",
+          "width": 50,
+          "height": 50,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        }
+      ]
+    },
+    {
+      "pageId": "2:10",
+      "pageName": "Icons set",
+      "items": [
+        {
+          "id": "157:6",
+          "key": "74e71682f5f4f9c0f4b332c20adf48ef2d99fa19",
+          "name": "User",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:10",
+          "key": "2b525a3ad76d4ab8f51c11f1a9c41a71340a5a2c",
+          "name": "Thumb",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:17",
+          "key": "ae642b712f41bb9d5eb6b8cfa91f031523b81622",
+          "name": "Cart plus",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:24",
+          "key": "3aad26f22e9d3354a698dd99cb28679ce5fbd8fd",
+          "name": "Cart fill",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:28",
+          "key": "f663b811db6164fc1588ed66f5d63cfd21b73f40",
+          "name": "Send",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:38",
+          "key": "56fae6055e9422f0755409c2baba2a41e4bebb55",
+          "name": "Setting",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:45",
+          "key": "773a493899a9c2acffb12b18756c0b6fdcff19ee",
+          "name": "Contact",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:52",
+          "key": "792a9fd8b72122e248e127cf4883bd44ba272431",
+          "name": "Contact phone",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:58",
+          "key": "9f7f3b1e51dcf31fe20c1ceb13c877a069154a48",
+          "name": "Box",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:61",
+          "key": "7725a464fba4e91a4322fdab26d769048d211f16",
+          "name": "Arrow",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:66",
+          "key": "24c41bd80395fbff512bbcd0d5cbe9eade9a58e6",
+          "name": "Search",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:73",
+          "key": "69cbe25f9db434c820b1b847ec4e31be59c5b75a",
+          "name": "Search plus",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:78",
+          "key": "2112cfdaba6579ea21c39ddf68b3e8e7777dd08f",
+          "name": "Search check",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:81",
+          "key": "a3d098c8b3228fb9141f1a3731b4583c9ce8fc74",
+          "name": "Search alt",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:87",
+          "key": "5d6ac9a9ab193b89a6bc29f6395c226df6450f1b",
+          "name": "Note",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:90",
+          "key": "130d6f4dbda181839eb65210ede7b9f732665b86",
+          "name": "Comment",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:93",
+          "key": "d07eeece33ab47b9a4c239bc379d205e7e7abcda",
+          "name": "Loader",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:96",
+          "key": "2f5ebf0cb3594c75747c0a8f817b2492aba41720",
+          "name": "Star",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:108",
+          "key": "7f97defdafe44d0aa8e09735953f7daa71952bc4",
+          "name": "Ranking",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:116",
+          "key": "2a1662318229a2248dc9878f5e6f62c21792c1e1",
+          "name": "Incognito",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:119",
+          "key": "61b1dd908df24c081dde2fdfb0fde1107fe70c46",
+          "name": "Check",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:126",
+          "key": "d1711f89b33ac872650d990b51b5372947ce60a7",
+          "name": "Cart empty",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:129",
+          "key": "35d220094dc0b43e5eaf0ff0e3278922b8ba913b",
+          "name": "Cards",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:132",
+          "key": "cfe67b7ec06770e8e59280a758d5ed9ec2e7d29a",
+          "name": "Angle down",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "227:6302",
+          "key": "58ce53f705b3c6fa8ca7993046ac25eeaa8258cd",
+          "name": "Angle right",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:135",
+          "key": "03b16ca77a11e4f74052c7fb2339977006dc91cf",
+          "name": "Chart",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:138",
+          "key": "ee5654051a3d22023d3ca4671e5f0f2628a4b2dd",
+          "name": "Plus",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:141",
+          "key": "1c85fe2caf4333e3b6bbb581a38fdec394e59d10",
+          "name": "minus",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:147",
+          "key": "230511097a2f1c252bd20b789aa17a6a85b6911e",
+          "name": "Campain",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:156",
+          "key": "39acfa6234010adbe3438389b7b85cac29984c7a",
+          "name": "Delivery",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:160",
+          "key": "fd1ff9565270d4e89dc57fed9c0f5d818b0d5d09",
+          "name": "ZO",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:168",
+          "key": "6fb0799922a52df5f84935225d3515d938fcf1e9",
+          "name": "Handshake",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:176",
+          "key": "e652d64f18a89412c18a2479f62dc25ce165d327",
+          "name": "Trash",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:183",
+          "key": "26285009c849a201a785d11bf28ec779d4545f24",
+          "name": "Sort",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:187",
+          "key": "c7f5c0e43df8c13ee130a20f930019375a12e8b1",
+          "name": "Filtr",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:191",
+          "key": "c68db8fc6dafeb2a9722b9667d2913246c1ce184",
+          "name": "Heart",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:197",
+          "key": "adb690cdab5b8499a2cc3b3bd5fcda029842af2b",
+          "name": "VS",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:205",
+          "key": "799b578c30c0606b692546ef1a144f46877614e8",
+          "name": "Compare",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:212",
+          "key": "8029f0b5444e446435162c0317caab4ea05ab405",
+          "name": "Set",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:217",
+          "key": "91e12d495a8535f5aac814211b1d88c866778581",
+          "name": "Alarm",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "157:223",
+          "key": "1a6ae2758aa3f6519039f5ddbe93ef9d2b266d63",
+          "name": "More",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        },
+        {
+          "id": "272:5078",
+          "key": "3743fee5430f8ec97ba174966e9ea77b09d41338",
+          "name": "Recycle",
+          "type": "COMPONENT",
+          "parentId": "254:3948",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        }
+      ]
+    },
+    {
+      "pageId": "158:5246",
+      "pageName": "Icon",
+      "items": [
+        {
+          "id": "158:5262",
+          "key": "7adccc63b38600ffb19fa8a1b2f6f0d50782f354",
+          "name": "Icon",
+          "type": "COMPONENT",
+          "parentId": "158:5246",
+          "width": 24,
+          "height": 24,
+          "description": "",
+          "properties": {
+            "Icon#158:3": {
+              "type": "INSTANCE_SWAP",
+              "defaultValue": "157:217",
+              "preferredValues": [
+                {
+                  "type": "COMPONENT",
+                  "key": "91e12d495a8535f5aac814211b1d88c866778581"
+                }
+              ]
+            }
+          },
+          "variantProperties": null
+        }
+      ]
+    },
+    {
+      "pageId": "162:5435",
+      "pageName": "________________",
+      "items": []
+    },
+    {
+      "pageId": "199:2436",
+      "pageName": "Header",
+      "items": [
+        {
+          "id": "199:2649",
+          "key": "bb6f4c491eb520487427ca7442055d931cfd6f8b",
+          "name": "Ceneo Header",
+          "type": "COMPONENT_SET",
+          "parentId": "199:2436",
+          "width": 1440,
+          "height": 140,
+          "description": "",
+          "properties": {
+            "Property 1": {
+              "type": "VARIANT",
+              "defaultValue": "Desktop",
+              "variantOptions": [
+                "Desktop",
+                "Mobile"
+              ]
+            }
+          },
+          "variantGroupProperties": {
+            "Property 1": {
+              "values": [
+                "Desktop",
+                "Mobile"
+              ]
+            }
+          },
+          "defaultVariantId": "199:2477",
+          "variantIds": [
+            "199:2477",
+            "199:2650"
+          ]
+        },
+        {
+          "id": "199:2477",
+          "key": "f222897da3e3967006b2074fbb1717dec788047d",
+          "name": "Property 1=Desktop",
+          "type": "COMPONENT",
+          "parentId": "199:2649",
+          "width": 1400,
+          "height": 40,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Desktop"
+          }
+        },
+        {
+          "id": "199:2650",
+          "key": "fa15cd24fb6649ebfc4cea551570f6e536bd4324",
+          "name": "Property 1=Mobile",
+          "type": "COMPONENT",
+          "parentId": "199:2649",
+          "width": 1400,
+          "height": 40,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Mobile"
+          }
+        }
+      ]
+    },
+    {
+      "pageId": "108:1781",
+      "pageName": "Product",
+      "items": [
+        {
+          "id": "108:1875",
+          "key": "48795f070923ea35ea285be9a8de6925f768940a",
+          "name": "Product",
+          "type": "COMPONENT",
+          "parentId": "108:1781",
+          "width": 160,
+          "height": 366,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        }
+      ]
+    },
+    {
+      "pageId": "108:3621",
+      "pageName": "Table",
+      "items": [
+        {
+          "id": "108:3617",
+          "key": "18c4384ab709b577de04d5358b21cd922593711a",
+          "name": "Table",
+          "type": "COMPONENT",
+          "parentId": "108:3621",
+          "width": 1400,
+          "height": 37,
+          "description": "",
+          "properties": {},
+          "variantProperties": null
+        }
+      ]
+    },
+    {
+      "pageId": "138:3549",
+      "pageName": "Offer",
+      "items": [
+        {
+          "id": "226:3549",
+          "key": "206bc9e542a475d09e57af50ab159e804c00743e",
+          "name": "Offer",
+          "type": "COMPONENT_SET",
+          "parentId": "138:3549",
+          "width": 1472,
+          "height": 146,
+          "description": "",
+          "properties": {
+            "Property 1": {
+              "type": "VARIANT",
+              "defaultValue": "Default",
+              "variantOptions": [
+                "Default"
+              ]
+            }
+          },
+          "variantGroupProperties": {
+            "Property 1": {
+              "values": [
+                "Default"
+              ]
+            }
+          },
+          "defaultVariantId": "138:3701",
+          "variantIds": [
+            "138:3701"
+          ]
+        },
+        {
+          "id": "138:3701",
+          "key": "efe28aab95a05b32e3f3904c0e06bffce44833ce",
+          "name": "Property 1=Default",
+          "type": "COMPONENT",
+          "parentId": "226:3549",
+          "width": 1430,
+          "height": 104,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Default"
+          }
+        },
+        {
+          "id": "234:5457",
+          "key": "75107a71e542267795261ad856c6b42b97abdaa0",
+          "name": "Offer - compact",
+          "type": "COMPONENT_SET",
+          "parentId": "138:3549",
+          "width": 470,
+          "height": 338,
+          "description": "",
+          "properties": {
+            "Property 1": {
+              "type": "VARIANT",
+              "defaultValue": "Default",
+              "variantOptions": [
+                "Default",
+                "Variant2"
+              ]
+            }
+          },
+          "variantGroupProperties": {
+            "Property 1": {
+              "values": [
+                "Default",
+                "Variant2"
+              ]
+            }
+          },
+          "defaultVariantId": "234:5456",
+          "variantIds": [
+            "234:5456",
+            "347:7539"
+          ]
+        },
+        {
+          "id": "234:5456",
+          "key": "9800a2d4456d22a7049f45544c2f8187e7dc48fa",
+          "name": "Property 1=Default",
+          "type": "COMPONENT",
+          "parentId": "234:5457",
+          "width": 428,
+          "height": 143,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Default"
+          }
+        },
+        {
+          "id": "347:7539",
+          "key": "7e57c7abae377e5ddaa40dd1b248dbdc806fb2a5",
+          "name": "Property 1=Variant2",
+          "type": "COMPONENT",
+          "parentId": "234:5457",
+          "width": 428,
+          "height": 143,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Variant2"
+          }
+        }
+      ]
+    },
+    {
+      "pageId": "162:5436",
+      "pageName": "________________",
+      "items": []
+    },
+    {
+      "pageId": "35:4",
+      "pageName": "Layout",
+      "items": [
+        {
+          "id": "305:8306",
+          "key": "1df4e1623c593a38fe9d4e16a40c004c78a2a81f",
+          "name": "Layout",
+          "type": "COMPONENT_SET",
+          "parentId": "35:4",
+          "width": 1242,
+          "height": 252,
+          "description": "Layout is the main frame of a view.\nUse Layout as the root component when creating a new view or screen.\nDo not place Layout inside another Layout.\nBuild the main structure in this order: Layout → Component → Card → content elements.\nPlace the main content of the view inside the Card.\nUse Container inside the Card to organize and group content elements.",
+          "properties": {
+            "Content#305:0": {
+              "type": "SLOT",
+              "description": null,
+              "preferredValues": []
+            },
+            "Property 1": {
+              "type": "VARIANT",
+              "defaultValue": "Mobile",
+              "variantOptions": [
+                "Desktop",
+                "Mobile"
+              ]
+            }
+          },
+          "variantGroupProperties": {
+            "Property 1": {
+              "values": [
+                "Desktop",
+                "Mobile"
+              ]
+            }
+          },
+          "defaultVariantId": "305:8309",
+          "variantIds": [
+            "305:8309",
+            "35:5"
+          ]
+        },
+        {
+          "id": "305:8309",
+          "key": "f062509d38ef07ad2996062a0b8e95cec7e961c0",
+          "name": "Property 1=Mobile",
+          "type": "COMPONENT",
+          "parentId": "305:8306",
+          "width": 430,
+          "height": 100,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Mobile"
+          }
+        },
+        {
+          "id": "35:5",
+          "key": "409a3053db8c18fa80e046aecfce3770a5de1864",
+          "name": "Property 1=Desktop",
+          "type": "COMPONENT",
+          "parentId": "305:8306",
+          "width": 1200,
+          "height": 100,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Desktop"
+          }
+        }
+      ]
+    },
+    {
+      "pageId": "10:2",
+      "pageName": "Card",
+      "items": [
+        {
+          "id": "102:8",
+          "key": "2844a2ea434276c78209b6920326004eaba87d57",
+          "name": "Card",
+          "type": "COMPONENT_SET",
+          "parentId": "10:2",
+          "width": 1238,
+          "height": 182,
+          "description": "Start building every new component with Card.\nDo not place a Card inside another Card.\nCard provides the outer padding for the component.\nSet width to Fill by default.\nSet height to Hug by default.",
+          "properties": {
+            "Content#102:0": {
+              "type": "SLOT",
+              "description": null,
+              "preferredValues": []
+            },
+            "Style": {
+              "type": "VARIANT",
+              "defaultValue": "White",
+              "variantOptions": [
+                "White",
+                "Outlined",
+                "Gray",
+                "Border bottom"
+              ]
+            }
+          },
+          "variantGroupProperties": {
+            "Style": {
+              "values": [
+                "White",
+                "Outlined",
+                "Gray",
+                "Border bottom"
+              ]
+            }
+          },
+          "defaultVariantId": "6:87",
+          "variantIds": [
+            "6:87",
+            "102:4",
+            "247:10603",
+            "102:6"
+          ]
+        },
+        {
+          "id": "6:87",
+          "key": "b9dc914a299d28361e6c39bdb555ab10a73e85fe",
+          "name": "Style=White",
+          "type": "COMPONENT",
+          "parentId": "102:8",
+          "width": 279,
+          "height": 132,
+          "description": "",
+          "variantProperties": {
+            "Style": "White"
+          }
+        },
+        {
+          "id": "102:4",
+          "key": "8a8474c31e031040ba4d417a55bdc6e9462e9148",
+          "name": "Style=Outlined",
+          "type": "COMPONENT",
+          "parentId": "102:8",
+          "width": 281,
+          "height": 134,
+          "description": "",
+          "variantProperties": {
+            "Style": "Outlined"
+          }
+        },
+        {
+          "id": "247:10603",
+          "key": "77675d20e892cfcba8e16947ea90df41828e779b",
+          "name": "Style=Border bottom",
+          "type": "COMPONENT",
+          "parentId": "102:8",
+          "width": 279,
+          "height": 133,
+          "description": "",
+          "variantProperties": {
+            "Style": "Border bottom"
+          }
+        },
+        {
+          "id": "102:6",
+          "key": "2013a10b3ff536bfaefea6ca9f82bb791cdba531",
+          "name": "Style=Gray",
+          "type": "COMPONENT",
+          "parentId": "102:8",
+          "width": 279,
+          "height": 132,
+          "description": "",
+          "variantProperties": {
+            "Style": "Gray"
+          }
+        }
+      ]
+    },
+    {
+      "pageId": "305:8315",
+      "pageName": "Container",
+      "items": [
+        {
+          "id": "305:10108",
+          "key": "18a43085889a785082693cc0e8c5e2ae31f85a83",
+          "name": "Container",
+          "type": "COMPONENT_SET",
+          "parentId": "305:8315",
+          "width": 340,
+          "height": 262,
+          "description": "Containerarranges its content vertically or horizontally.\nPlace Containerinside a Component.\nPlace other UI elements inside Container.\nUse Containerto group related content and controls.\nDo not use Containeras the root element of a new component; use Component as the root instead.",
+          "properties": {
+            "Content#316:0": {
+              "type": "SLOT",
+              "description": null,
+              "preferredValues": []
+            },
+            "Property 1": {
+              "type": "VARIANT",
+              "defaultValue": "Horizontal",
+              "variantOptions": [
+                "Horizontal",
+                "Vertical"
+              ]
+            }
+          },
+          "variantGroupProperties": {
+            "Property 1": {
+              "values": [
+                "Horizontal",
+                "Vertical"
+              ]
+            }
+          },
+          "defaultVariantId": "305:10107",
+          "variantIds": [
+            "305:10107",
+            "305:10109"
+          ]
+        },
+        {
+          "id": "305:10107",
+          "key": "51d2850f6d67dee998fca7db1534852741a29c97",
+          "name": "Property 1=Horizontal",
+          "type": "COMPONENT",
+          "parentId": "305:10108",
+          "width": 298,
+          "height": 100,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Horizontal"
+          }
+        },
+        {
+          "id": "305:10109",
+          "key": "898451a9884a34055bbfe4752e85083c98364a2f",
+          "name": "Property 1=Vertical",
+          "type": "COMPONENT",
+          "parentId": "305:10108",
+          "width": 298,
+          "height": 100,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Vertical"
+          }
+        }
+      ]
+    },
+    {
+      "pageId": "13:6",
+      "pageName": "Button",
+      "items": [
+        {
+          "id": "13:15",
+          "key": "30739f5618895c5082198c5ff2807a344459f175",
+          "name": "Button",
+          "type": "COMPONENT_SET",
+          "parentId": "13:6",
+          "width": 1238,
+          "height": 294,
+          "description": "",
+          "properties": {
+            "Label#71:0": {
+              "type": "TEXT",
+              "defaultValue": "Button"
+            },
+            "Show Label#149:0": {
+              "type": "BOOLEAN",
+              "defaultValue": true
+            },
+            "Icon#367:21": {
+              "type": "INSTANCE_SWAP",
+              "defaultValue": "157:17",
+              "preferredValues": [
+                {
+                  "type": "COMPONENT",
+                  "key": "ae642b712f41bb9d5eb6b8cfa91f031523b81622"
+                }
+              ]
+            },
+            "Show Icon#367:42": {
+              "type": "BOOLEAN",
+              "defaultValue": true
+            },
+            "Show Icon Right#368:63": {
+              "type": "BOOLEAN",
+              "defaultValue": false
+            },
+            "Variant": {
+              "type": "VARIANT",
+              "defaultValue": "Primary",
+              "variantOptions": [
+                "Primary",
+                "Accent",
+                "Outline",
+                "Blank",
+                "Gray"
+              ]
+            },
+            "Size": {
+              "type": "VARIANT",
+              "defaultValue": "Default",
+              "variantOptions": [
+                "Small",
+                "Default"
+              ]
+            },
+            "Disabled": {
+              "type": "VARIANT",
+              "defaultValue": "False",
+              "variantOptions": [
+                "False",
+                "True"
+              ]
+            }
+          },
+          "variantGroupProperties": {
+            "Variant": {
+              "values": [
+                "Primary",
+                "Accent",
+                "Outline",
+                "Blank",
+                "Gray"
+              ]
+            },
+            "Size": {
+              "values": [
+                "Small",
+                "Default"
+              ]
+            },
+            "Disabled": {
+              "values": [
+                "False",
+                "True"
+              ]
+            }
+          },
+          "defaultVariantId": "13:7",
+          "variantIds": [
+            "13:7",
+            "13:9",
+            "13:11",
+            "13:13",
+            "147:82",
+            "27:86",
+            "27:94",
+            "27:102",
+            "27:110",
+            "147:86",
+            "27:50",
+            "27:58",
+            "27:66",
+            "27:74",
+            "147:90",
+            "27:118",
+            "27:126",
+            "27:134",
+            "27:142",
+            "147:94"
+          ]
+        },
+        {
+          "id": "13:7",
+          "key": "7f5e42ac8bda87824959135f44280f22665ff308",
+          "name": "Variant=Primary, Size=Default, Disabled=False",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 120,
+          "height": 40,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Primary",
+            "Size": "Default",
+            "Disabled": "False"
+          }
+        },
+        {
+          "id": "13:9",
+          "key": "89639335e97d9d6cfa8458ab2a597959ad3ccfd9",
+          "name": "Variant=Accent, Size=Default, Disabled=False",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 120,
+          "height": 40,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Accent",
+            "Size": "Default",
+            "Disabled": "False"
+          }
+        },
+        {
+          "id": "13:11",
+          "key": "ae62133c4c8aa1eb9b32ffa25c9c94c3b55937a5",
+          "name": "Variant=Outline, Size=Default, Disabled=False",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 122,
+          "height": 40,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Outline",
+            "Size": "Default",
+            "Disabled": "False"
+          }
+        },
+        {
+          "id": "13:13",
+          "key": "9d437c460936dec227956a7c3f78e191f1e0725c",
+          "name": "Variant=Blank, Size=Default, Disabled=False",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 120,
+          "height": 40,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Blank",
+            "Size": "Default",
+            "Disabled": "False"
+          }
+        },
+        {
+          "id": "147:82",
+          "key": "0b762731968181797de2db429bbaa6adbf5056b9",
+          "name": "Variant=Gray, Size=Default, Disabled=False",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 120,
+          "height": 40,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Gray",
+            "Size": "Default",
+            "Disabled": "False"
+          }
+        },
+        {
+          "id": "27:86",
+          "key": "d1f450837d67c724386dfd2b9a8caa1ce3f29ac2",
+          "name": "Variant=Primary, Size=Default, Disabled=True",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 120,
+          "height": 40,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Primary",
+            "Size": "Default",
+            "Disabled": "True"
+          }
+        },
+        {
+          "id": "27:94",
+          "key": "9813e6a92dc255a9bbdb28329d7066fdbaa3ab99",
+          "name": "Variant=Accent, Size=Default, Disabled=True",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 120,
+          "height": 40,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Accent",
+            "Size": "Default",
+            "Disabled": "True"
+          }
+        },
+        {
+          "id": "27:102",
+          "key": "0576c62202f526e542c02c1ef54f49add2e391b7",
+          "name": "Variant=Outline, Size=Default, Disabled=True",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 122,
+          "height": 40,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Outline",
+            "Size": "Default",
+            "Disabled": "True"
+          }
+        },
+        {
+          "id": "27:110",
+          "key": "3bb1655c7886146fe0472706c1d265edb7402df4",
+          "name": "Variant=Blank, Size=Default, Disabled=True",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 120,
+          "height": 40,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Blank",
+            "Size": "Default",
+            "Disabled": "True"
+          }
+        },
+        {
+          "id": "147:86",
+          "key": "619f5507b58470f84f6c1ef9c989c1a7e9aef82a",
+          "name": "Variant=Gray, Size=Default, Disabled=True",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 120,
+          "height": 40,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Gray",
+            "Size": "Default",
+            "Disabled": "True"
+          }
+        },
+        {
+          "id": "27:50",
+          "key": "b8bffda1b7d02daedd8445fb8d09a7cb22cf0a6f",
+          "name": "Variant=Primary, Size=Small, Disabled=False",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 114,
+          "height": 30,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Primary",
+            "Size": "Small",
+            "Disabled": "False"
+          }
+        },
+        {
+          "id": "27:58",
+          "key": "18089a66da7b718a046bd5b5564851c379d9798a",
+          "name": "Variant=Accent, Size=Small, Disabled=False",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 114,
+          "height": 30,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Accent",
+            "Size": "Small",
+            "Disabled": "False"
+          }
+        },
+        {
+          "id": "27:66",
+          "key": "c7b781860dcc5b1304feb839b87401713dafa088",
+          "name": "Variant=Outline, Size=Small, Disabled=False",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 116,
+          "height": 30,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Outline",
+            "Size": "Small",
+            "Disabled": "False"
+          }
+        },
+        {
+          "id": "27:74",
+          "key": "c2beddbd7d4826d559b6abe5d43b846711bfa3f9",
+          "name": "Variant=Blank, Size=Small, Disabled=False",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 114,
+          "height": 30,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Blank",
+            "Size": "Small",
+            "Disabled": "False"
+          }
+        },
+        {
+          "id": "147:90",
+          "key": "124b3cfe6e066e91f5317a26c75871e0365ce26d",
+          "name": "Variant=Gray, Size=Small, Disabled=False",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 114,
+          "height": 30,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Gray",
+            "Size": "Small",
+            "Disabled": "False"
+          }
+        },
+        {
+          "id": "27:118",
+          "key": "33acc9dd5ceb78d57c74abca5e61b729dda13996",
+          "name": "Variant=Primary, Size=Small, Disabled=True",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 114,
+          "height": 30,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Primary",
+            "Size": "Small",
+            "Disabled": "True"
+          }
+        },
+        {
+          "id": "27:126",
+          "key": "8d1e5f6a0175bffcd8e9be11d7786c96bee9dfb9",
+          "name": "Variant=Accent, Size=Small, Disabled=True",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 114,
+          "height": 30,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Accent",
+            "Size": "Small",
+            "Disabled": "True"
+          }
+        },
+        {
+          "id": "27:134",
+          "key": "487d00e3c641fc1bdcbc43e3faf9250e065e8d18",
+          "name": "Variant=Outline, Size=Small, Disabled=True",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 116,
+          "height": 30,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Outline",
+            "Size": "Small",
+            "Disabled": "True"
+          }
+        },
+        {
+          "id": "27:142",
+          "key": "9bc2571bd95f296cad541b81db3d809f929a2795",
+          "name": "Variant=Blank, Size=Small, Disabled=True",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 114,
+          "height": 30,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Blank",
+            "Size": "Small",
+            "Disabled": "True"
+          }
+        },
+        {
+          "id": "147:94",
+          "key": "b4527d375084c7e9e92a4c5ba24846ea75cb8d81",
+          "name": "Variant=Gray, Size=Small, Disabled=True",
+          "type": "COMPONENT",
+          "parentId": "13:15",
+          "width": 114,
+          "height": 30,
+          "description": "",
+          "variantProperties": {
+            "Variant": "Gray",
+            "Size": "Small",
+            "Disabled": "True"
+          }
+        }
+      ]
+    },
+    {
+      "pageId": "42:26",
+      "pageName": "Text",
+      "items": [
+        {
+          "id": "42:131",
+          "key": "a49c260ad3a4292df741bb1909f0c97bcbc865ba",
+          "name": "Text",
+          "type": "COMPONENT_SET",
+          "parentId": "42:26",
+          "width": 380,
+          "height": 314,
+          "description": "Use sm for regular body text.\nUse lg / bold for headings.\nUse lg / bold only when the text serves as a \nheading or title.\nOtherwise, prefer sm for text content.\nSet width to Fill by default.\nSet height to Hug by default.",
+          "properties": {
+            "Content#73:0": {
+              "type": "TEXT",
+              "defaultValue": "Text"
+            },
+            "Size": {
+              "type": "VARIANT",
+              "defaultValue": "xs",
+              "variantOptions": [
+                "xs",
+                "sm",
+                "lg",
+                "xl",
+                "2xl",
+                "3xl",
+                "base"
+              ]
+            },
+            "Weight": {
+              "type": "VARIANT",
+              "defaultValue": "Normal",
+              "variantOptions": [
+                "Normal",
+                "Bold"
+              ]
+            },
+            "Type": {
+              "type": "VARIANT",
+              "defaultValue": "Text",
+              "variantOptions": [
+                "Text",
+                "Heading"
+              ]
+            }
+          },
+          "variantGroupProperties": {
+            "Size": {
+              "values": [
+                "xs",
+                "sm",
+                "lg",
+                "xl",
+                "2xl",
+                "3xl",
+                "base"
+              ]
+            },
+            "Weight": {
+              "values": [
+                "Normal",
+                "Bold"
+              ]
+            },
+            "Type": {
+              "values": [
+                "Text",
+                "Heading"
+              ]
+            }
+          },
+          "defaultVariantId": "42:31",
+          "variantIds": [
+            "42:31",
+            "42:33",
+            "42:39",
+            "42:41",
+            "123:2",
+            "123:4",
+            "42:55",
+            "42:57",
+            "42:63",
+            "42:65",
+            "42:71",
+            "42:73",
+            "42:79",
+            "42:81"
+          ]
+        },
+        {
+          "id": "42:31",
+          "key": "ac734bb99e7cf980ee68b18c49b5019d92859e21",
+          "name": "Size=xs, Weight=Normal, Type=Text",
+          "type": "COMPONENT",
+          "parentId": "42:131",
+          "width": 154,
+          "height": 18,
+          "description": "",
+          "variantProperties": {
+            "Size": "xs",
+            "Weight": "Normal",
+            "Type": "Text"
+          }
+        },
+        {
+          "id": "42:33",
+          "key": "121f1209dd123f50ac28b2e1aa1d9f378367fdc8",
+          "name": "Size=xs, Weight=Bold, Type=Text",
+          "type": "COMPONENT",
+          "parentId": "42:131",
+          "width": 154,
+          "height": 18,
+          "description": "",
+          "variantProperties": {
+            "Size": "xs",
+            "Weight": "Bold",
+            "Type": "Text"
+          }
+        },
+        {
+          "id": "42:39",
+          "key": "974534b0c81954b266a3de189fca22c29cb25e36",
+          "name": "Size=sm, Weight=Normal, Type=Text",
+          "type": "COMPONENT",
+          "parentId": "42:131",
+          "width": 154,
+          "height": 20,
+          "description": "",
+          "variantProperties": {
+            "Size": "sm",
+            "Weight": "Normal",
+            "Type": "Text"
+          }
+        },
+        {
+          "id": "42:41",
+          "key": "e313b4634bfcd462609c7bd84a6ee8e4b37039de",
+          "name": "Size=sm, Weight=Bold, Type=Text",
+          "type": "COMPONENT",
+          "parentId": "42:131",
+          "width": 154,
+          "height": 20,
+          "description": "",
+          "variantProperties": {
+            "Size": "sm",
+            "Weight": "Bold",
+            "Type": "Text"
+          }
+        },
+        {
+          "id": "123:2",
+          "key": "7585d5ceaba7cf3080fa1375142df0f2e97f5ba8",
+          "name": "Size=base, Weight=Normal, Type=Text",
+          "type": "COMPONENT",
+          "parentId": "42:131",
+          "width": 154,
+          "height": 24,
+          "description": "",
+          "variantProperties": {
+            "Size": "base",
+            "Weight": "Normal",
+            "Type": "Text"
+          }
+        },
+        {
+          "id": "123:4",
+          "key": "4bf2b69a173e3d2706e54573634257149c180cfc",
+          "name": "Size=base, Weight=Bold, Type=Text",
+          "type": "COMPONENT",
+          "parentId": "42:131",
+          "width": 154,
+          "height": 24,
+          "description": "",
+          "variantProperties": {
+            "Size": "base",
+            "Weight": "Bold",
+            "Type": "Text"
+          }
+        },
+        {
+          "id": "42:55",
+          "key": "21cc24e7e0804780be2255b19caf1db5108435b6",
+          "name": "Size=lg, Weight=Normal, Type=Text",
+          "type": "COMPONENT",
+          "parentId": "42:131",
+          "width": 154,
+          "height": 18,
+          "description": "",
+          "variantProperties": {
+            "Size": "lg",
+            "Weight": "Normal",
+            "Type": "Text"
+          }
+        },
+        {
+          "id": "42:57",
+          "key": "e97d17d9d4474d5952141f961231ad1f738f4a80",
+          "name": "Size=lg, Weight=Bold, Type=Text",
+          "type": "COMPONENT",
+          "parentId": "42:131",
+          "width": 154,
+          "height": 18,
+          "description": "",
+          "variantProperties": {
+            "Size": "lg",
+            "Weight": "Bold",
+            "Type": "Text"
+          }
+        },
+        {
+          "id": "42:63",
+          "key": "3ced1408613c9a3564e98985342937e82543c0e6",
+          "name": "Size=xl, Weight=Normal, Type=Text",
+          "type": "COMPONENT",
+          "parentId": "42:131",
+          "width": 154,
+          "height": 24,
+          "description": "",
+          "variantProperties": {
+            "Size": "xl",
+            "Weight": "Normal",
+            "Type": "Text"
+          }
+        },
+        {
+          "id": "42:65",
+          "key": "516b4106921e92e8025f01a6248b344c2891daad",
+          "name": "Size=xl, Weight=Bold, Type=Text",
+          "type": "COMPONENT",
+          "parentId": "42:131",
+          "width": 154,
+          "height": 24,
+          "description": "",
+          "variantProperties": {
+            "Size": "xl",
+            "Weight": "Bold",
+            "Type": "Text"
+          }
+        },
+        {
+          "id": "42:71",
+          "key": "8f54b3e89578138b0db8978e032a61711fc9c5c4",
+          "name": "Size=2xl, Weight=Normal, Type=Heading",
+          "type": "COMPONENT",
+          "parentId": "42:131",
+          "width": 154,
+          "height": 28,
+          "description": "",
+          "variantProperties": {
+            "Size": "2xl",
+            "Weight": "Normal",
+            "Type": "Heading"
+          }
+        },
+        {
+          "id": "42:73",
+          "key": "87a70358ab0fbb3567ef60992cf597a80c6dfd6e",
+          "name": "Size=2xl, Weight=Bold, Type=Heading",
+          "type": "COMPONENT",
+          "parentId": "42:131",
+          "width": 154,
+          "height": 28,
+          "description": "",
+          "variantProperties": {
+            "Size": "2xl",
+            "Weight": "Bold",
+            "Type": "Heading"
+          }
+        },
+        {
+          "id": "42:79",
+          "key": "94659345cc620404a2a27057a75b4eb60af69bae",
+          "name": "Size=3xl, Weight=Normal, Type=Heading",
+          "type": "COMPONENT",
+          "parentId": "42:131",
+          "width": 154,
+          "height": 38,
+          "description": "",
+          "variantProperties": {
+            "Size": "3xl",
+            "Weight": "Normal",
+            "Type": "Heading"
+          }
+        },
+        {
+          "id": "42:81",
+          "key": "0156a2a0bed6dfdc8cba87a05cd6ef1b6a732046",
+          "name": "Size=3xl, Weight=Bold, Type=Heading",
+          "type": "COMPONENT",
+          "parentId": "42:131",
+          "width": 154,
+          "height": 38,
+          "description": "",
+          "variantProperties": {
+            "Size": "3xl",
+            "Weight": "Bold",
+            "Type": "Heading"
+          }
+        }
+      ]
+    },
+    {
+      "pageId": "65:124",
+      "pageName": "Input",
+      "items": [
+        {
+          "id": "243:6665",
+          "key": "f8fcd5a9f53d8cd511704469888849e3d6a17ea8",
+          "name": "Switch-alternative",
+          "type": "COMPONENT_SET",
+          "parentId": "65:124",
+          "width": 157,
+          "height": 88,
+          "description": "",
+          "properties": {
+            "Text#2:0": {
+              "type": "TEXT",
+              "defaultValue": "darmowa wysyłka"
+            },
+            "Property 1": {
+              "type": "VARIANT",
+              "defaultValue": "Default",
+              "variantOptions": [
+                "Default",
+                "Checked",
+                "Checked - disabled",
+                "Unchecked - disabled"
+              ]
+            }
+          },
+          "variantGroupProperties": {
+            "Property 1": {
+              "values": [
+                "Default",
+                "Checked",
+                "Checked - disabled",
+                "Unchecked - disabled"
+              ]
+            }
+          },
+          "defaultVariantId": "243:6666",
+          "variantIds": [
+            "243:6666",
+            "243:6672",
+            "243:6678",
+            "243:6684"
+          ]
+        },
+        {
+          "id": "243:6666",
+          "key": "407d3f59a1fefc5f2928d7e60233229b2d4032ae",
+          "name": "Property 1=Default",
+          "type": "COMPONENT",
+          "parentId": "243:6665",
+          "width": 157,
+          "height": 16,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Default"
+          }
+        },
+        {
+          "id": "243:6672",
+          "key": "278017679bc9eb7a84de1a4135effce59bd114c0",
+          "name": "Property 1=Checked",
+          "type": "COMPONENT",
+          "parentId": "243:6665",
+          "width": 157,
+          "height": 16,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Checked"
+          }
+        },
+        {
+          "id": "243:6678",
+          "key": "5b39478496bf8f8d11bfea6f1630638eb2ba1187",
+          "name": "Property 1=Checked - disabled",
+          "type": "COMPONENT",
+          "parentId": "243:6665",
+          "width": 157,
+          "height": 16,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Checked - disabled"
+          }
+        },
+        {
+          "id": "243:6684",
+          "key": "45b2365b93c70171eb5112742ce4c308bc035885",
+          "name": "Property 1=Unchecked - disabled",
+          "type": "COMPONENT",
+          "parentId": "243:6665",
+          "width": 157,
+          "height": 16,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Unchecked - disabled"
+          }
+        },
+        {
+          "id": "243:6621",
+          "key": "7774497f7c67fe95570c1f9c77f3d90872c055b0",
+          "name": "Radio",
+          "type": "COMPONENT_SET",
+          "parentId": "65:124",
+          "width": 143,
+          "height": 112,
+          "description": "",
+          "properties": {
+            "Text#2:0": {
+              "type": "TEXT",
+              "defaultValue": "darmowa wysyłka"
+            },
+            "Property 1": {
+              "type": "VARIANT",
+              "defaultValue": "Default",
+              "variantOptions": [
+                "Default",
+                "Checked",
+                "Checked disabled",
+                "Unchecked disabled",
+                "Hovered"
+              ]
+            }
+          },
+          "variantGroupProperties": {
+            "Property 1": {
+              "values": [
+                "Default",
+                "Checked",
+                "Checked disabled",
+                "Unchecked disabled",
+                "Hovered"
+              ]
+            }
+          },
+          "defaultVariantId": "243:6622",
+          "variantIds": [
+            "243:6622",
+            "243:6626",
+            "243:6630",
+            "243:6634",
+            "243:6638"
+          ]
+        },
+        {
+          "id": "243:6622",
+          "key": "9267ac9a4750c1c1a5ec3b94aab48b1629d820b1",
+          "name": "Property 1=Default",
+          "type": "COMPONENT",
+          "parentId": "243:6621",
+          "width": 143,
+          "height": 16,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Default"
+          }
+        },
+        {
+          "id": "243:6626",
+          "key": "3f4927ae1b3533c4e28c083fdbd9c550ce5ba50f",
+          "name": "Property 1=Hovered",
+          "type": "COMPONENT",
+          "parentId": "243:6621",
+          "width": 143,
+          "height": 16,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Hovered"
+          }
+        },
+        {
+          "id": "243:6630",
+          "key": "e98d7ff4106c5031a08c5afd4c5f0a85967931b2",
+          "name": "Property 1=Checked",
+          "type": "COMPONENT",
+          "parentId": "243:6621",
+          "width": 143,
+          "height": 16,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Checked"
+          }
+        },
+        {
+          "id": "243:6634",
+          "key": "6099610c783aefc899281585c71c7f4835dce42d",
+          "name": "Property 1=Unchecked disabled",
+          "type": "COMPONENT",
+          "parentId": "243:6621",
+          "width": 143,
+          "height": 16,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Unchecked disabled"
+          }
+        },
+        {
+          "id": "243:6638",
+          "key": "de8f73e9ccff9c3f4fdefec87d751d28fc4901eb",
+          "name": "Property 1=Checked disabled",
+          "type": "COMPONENT",
+          "parentId": "243:6621",
+          "width": 143,
+          "height": 16,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Checked disabled"
+          }
+        },
+        {
+          "id": "243:6642",
+          "key": "bf6a1b358883c2b817cc1677ee877133471f064c",
+          "name": "Checkbox",
+          "type": "COMPONENT_SET",
+          "parentId": "65:124",
+          "width": 143,
+          "height": 112,
+          "description": "",
+          "properties": {
+            "Text#2:0": {
+              "type": "TEXT",
+              "defaultValue": "darmowa wysyłka"
+            },
+            "Property 1": {
+              "type": "VARIANT",
+              "defaultValue": "Default",
+              "variantOptions": [
+                "Default",
+                "Checked",
+                "Checked disabled",
+                "Unchecked disabled",
+                "Hovered"
+              ]
+            }
+          },
+          "variantGroupProperties": {
+            "Property 1": {
+              "values": [
+                "Default",
+                "Checked",
+                "Checked disabled",
+                "Unchecked disabled",
+                "Hovered"
+              ]
+            }
+          },
+          "defaultVariantId": "243:6643",
+          "variantIds": [
+            "243:6643",
+            "243:6647",
+            "243:6651",
+            "243:6656",
+            "243:6660"
+          ]
+        },
+        {
+          "id": "243:6643",
+          "key": "1957a21493d8df3065a6c18417dc1cdf7920e3df",
+          "name": "Property 1=Default",
+          "type": "COMPONENT",
+          "parentId": "243:6642",
+          "width": 143,
+          "height": 16,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Default"
+          }
+        },
+        {
+          "id": "243:6647",
+          "key": "108edee160b87ee5abcce840e76934faa0a3d79d",
+          "name": "Property 1=Hovered",
+          "type": "COMPONENT",
+          "parentId": "243:6642",
+          "width": 143,
+          "height": 16,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Hovered"
+          }
+        },
+        {
+          "id": "243:6651",
+          "key": "0ad697540eb0d60e36d962ee9208889363e1e263",
+          "name": "Property 1=Checked",
+          "type": "COMPONENT",
+          "parentId": "243:6642",
+          "width": 143,
+          "height": 16,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Checked"
+          }
+        },
+        {
+          "id": "243:6656",
+          "key": "58259666ff8d1a3f291ef355202510ab78d04c02",
+          "name": "Property 1=Unchecked disabled",
+          "type": "COMPONENT",
+          "parentId": "243:6642",
+          "width": 143,
+          "height": 16,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Unchecked disabled"
+          }
+        },
+        {
+          "id": "243:6660",
+          "key": "fde22cb3defb52fb05596a4fc2a0286c2f98484e",
+          "name": "Property 1=Checked disabled",
+          "type": "COMPONENT",
+          "parentId": "243:6642",
+          "width": 143,
+          "height": 16,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Checked disabled"
+          }
+        },
+        {
+          "id": "65:125",
+          "key": "a55ef27a30b05fae69d762650fd6caa121cabff9",
+          "name": "Input - text",
+          "type": "COMPONENT",
+          "parentId": "65:124",
+          "width": 280,
+          "height": 40,
+          "description": "",
+          "properties": {
+            "Placeholder#69:0": {
+              "type": "TEXT",
+              "defaultValue": "Placeholder"
+            }
+          },
+          "variantProperties": null
+        }
+      ]
+    },
+    {
+      "pageId": "52:156",
+      "pageName": "Photo",
+      "items": [
+        {
+          "id": "247:15154",
+          "key": "16164fdc3c693d6b11b98c9d609ccc3c7960d040",
+          "name": "Photo",
+          "type": "COMPONENT_SET",
+          "parentId": "52:156",
+          "width": 322,
+          "height": 322,
+          "description": "",
+          "properties": {
+            "Property 1": {
+              "type": "VARIANT",
+              "defaultValue": "Default",
+              "variantOptions": [
+                "Default"
+              ]
+            }
+          },
+          "variantGroupProperties": {
+            "Property 1": {
+              "values": [
+                "Default"
+              ]
+            }
+          },
+          "defaultVariantId": "247:15028",
+          "variantIds": [
+            "247:15028"
+          ]
+        },
+        {
+          "id": "247:15028",
+          "key": "9aea67835e7bb0c40efba58f55d7c81cd626bf5d",
+          "name": "Property 1=Default",
+          "type": "COMPONENT",
+          "parentId": "247:15154",
+          "width": 280,
+          "height": 280,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Default"
+          }
+        }
+      ]
+    },
+    {
+      "pageId": "75:771",
+      "pageName": "Price",
+      "items": [
+        {
+          "id": "81:2",
+          "key": "404ec52fcd6c171acdc7ff2b222aa5aadf7a5bfd",
+          "name": "Price",
+          "type": "COMPONENT",
+          "parentId": "75:771",
+          "width": 127,
+          "height": 28,
+          "description": "",
+          "properties": {
+            "Show Prefix#81:0": {
+              "type": "BOOLEAN",
+              "defaultValue": true
+            }
+          },
+          "variantProperties": null
+        }
+      ]
+    },
+    {
+      "pageId": "79:1003",
+      "pageName": "Stars",
+      "items": [
+        {
+          "id": "79:1006",
+          "key": "86ce94565c17c6512ed08e1951273cfab2a47e7f",
+          "name": "Stars",
+          "type": "COMPONENT_SET",
+          "parentId": "79:1003",
+          "width": 215,
+          "height": 352,
+          "description": "",
+          "properties": {
+            "Reviews#91:0": {
+              "type": "TEXT",
+              "defaultValue": "(999)"
+            },
+            "Property 1": {
+              "type": "VARIANT",
+              "defaultValue": "Default - 5 star",
+              "variantOptions": [
+                "Default - 5 star",
+                "4 star",
+                "4.5 star",
+                "1.5 star",
+                "0 star - empty",
+                "Default - 5 star small",
+                "4 star - small",
+                "4.5 star - small",
+                "1.5 star - small",
+                "0 star - empty - small",
+                "Short"
+              ]
+            }
+          },
+          "variantGroupProperties": {
+            "Property 1": {
+              "values": [
+                "Default - 5 star",
+                "4 star",
+                "4.5 star",
+                "1.5 star",
+                "0 star - empty",
+                "Default - 5 star small",
+                "4 star - small",
+                "4.5 star - small",
+                "1.5 star - small",
+                "0 star - empty - small",
+                "Short"
+              ]
+            }
+          },
+          "defaultVariantId": "79:1007",
+          "variantIds": [
+            "79:1007",
+            "79:1019",
+            "79:1030",
+            "79:1037",
+            "79:1048",
+            "79:1055",
+            "79:1067",
+            "79:1078",
+            "79:1085",
+            "79:1096",
+            "205:5699"
+          ]
+        },
+        {
+          "id": "79:1007",
+          "key": "c492100d4a5a4f6258045a9f055876fa90157b44",
+          "name": "Property 1=Default - 5 star",
+          "type": "COMPONENT",
+          "parentId": "79:1006",
+          "width": 170,
+          "height": 20,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Default - 5 star"
+          }
+        },
+        {
+          "id": "79:1019",
+          "key": "4a3ec8dd05ad2c624baa952398084c50d9f0e522",
+          "name": "Property 1=4.5 star",
+          "type": "COMPONENT",
+          "parentId": "79:1006",
+          "width": 183,
+          "height": 20,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "4.5 star"
+          }
+        },
+        {
+          "id": "79:1030",
+          "key": "3c4b33683351eee1b5e2165e4b0d985623d7e633",
+          "name": "Property 1=4 star",
+          "type": "COMPONENT",
+          "parentId": "79:1006",
+          "width": 171,
+          "height": 20,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "4 star"
+          }
+        },
+        {
+          "id": "79:1037",
+          "key": "525722de7dc26c5efaffea2405507cac54ebd137",
+          "name": "Property 1=1.5 star",
+          "type": "COMPONENT",
+          "parentId": "79:1006",
+          "width": 181,
+          "height": 20,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "1.5 star"
+          }
+        },
+        {
+          "id": "79:1048",
+          "key": "45a91172aaa664a3f0198bb51f349a6077ef25a2",
+          "name": "Property 1=0 star - empty",
+          "type": "COMPONENT",
+          "parentId": "79:1006",
+          "width": 171,
+          "height": 20,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "0 star - empty"
+          }
+        },
+        {
+          "id": "79:1055",
+          "key": "0a6225780f9543a9ea433bf9e4967661d996d086",
+          "name": "Property 1=Default - 5 star small",
+          "type": "COMPONENT",
+          "parentId": "79:1006",
+          "width": 150,
+          "height": 20,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Default - 5 star small"
+          }
+        },
+        {
+          "id": "79:1067",
+          "key": "3549f714aa48d5322d0e29dd6f84a76eba24d096",
+          "name": "Property 1=4.5 star - small",
+          "type": "COMPONENT",
+          "parentId": "79:1006",
+          "width": 155,
+          "height": 16,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "4.5 star - small"
+          }
+        },
+        {
+          "id": "79:1078",
+          "key": "cbad80ee7bfa023fcfb5a3c092dda0adc7cad750",
+          "name": "Property 1=4 star - small",
+          "type": "COMPONENT",
+          "parentId": "79:1006",
+          "width": 144,
+          "height": 16,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "4 star - small"
+          }
+        },
+        {
+          "id": "79:1085",
+          "key": "28fefc4b5fc0da246032babf0f5213013ca43e55",
+          "name": "Property 1=1.5 star - small",
+          "type": "COMPONENT",
+          "parentId": "79:1006",
+          "width": 153,
+          "height": 16,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "1.5 star - small"
+          }
+        },
+        {
+          "id": "79:1096",
+          "key": "d532249f6b2d56d0cb7e4bbcd1c712e562558219",
+          "name": "Property 1=0 star - empty - small",
+          "type": "COMPONENT",
+          "parentId": "79:1006",
+          "width": 145,
+          "height": 16,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "0 star - empty - small"
+          }
+        },
+        {
+          "id": "205:5699",
+          "key": "cf0dc8fe903fb5625444f2a54eb303f6a7d6e5f4",
+          "name": "Property 1=Short",
+          "type": "COMPONENT",
+          "parentId": "79:1006",
+          "width": 83,
+          "height": 16,
+          "description": "",
+          "variantProperties": {
+            "Property 1": "Short"
+          }
+        }
+      ]
+    },
+    {
+      "pageId": "83:124",
+      "pageName": "Label",
+      "items": [
+        {
+          "id": "83:149",
+          "key": "b48e51fef20bc46879d2863dd070c3ae1b505faa",
+          "name": "Label",
+          "type": "COMPONENT_SET",
+          "parentId": "83:124",
+          "width": 126,
+          "height": 20,
+          "description": "",
+          "properties": {
+            "Show Icon#85:0": {
+              "type": "BOOLEAN",
+              "defaultValue": true
+            },
+            "Icon#85:3": {
+              "type": "INSTANCE_SWAP",
+              "defaultValue": "157:217",
+              "preferredValues": []
+            },
+            "Show Label#228:0": {
+              "type": "BOOLEAN",
+              "defaultValue": true
+            },
+            "Label#272:0": {
+              "type": "TEXT",
+              "defaultValue": "Label"
+            },
+            "Color": {
+              "type": "VARIANT",
+              "defaultValue": "Primary",
+              "variantOptions": [
+                "Primary"
+              ]
+            },
+            "Style": {
+              "type": "VARIANT",
+              "defaultValue": "Filled",
+              "variantOptions": [
+                "Filled",
+                "Plain"
+              ]
+            }
+          },
+          "variantGroupProperties": {
+            "Color": {
+              "values": [
+                "Primary"
+              ]
+            },
+            "Style": {
+              "values": [
+                "Filled",
+                "Plain"
+              ]
+            }
+          },
+          "defaultVariantId": "83:125",
+          "variantIds": [
+            "83:125",
+            "83:127"
+          ]
+        },
+        {
+          "id": "83:125",
+          "key": "5844a1e6df34f53a5bc3e2287622eb78e84ba4b2",
+          "name": "Color=Primary, Style=Filled",
+          "type": "COMPONENT",
+          "parentId": "83:149",
+          "width": 59,
+          "height": 20,
+          "description": "",
+          "variantProperties": {
+            "Color": "Primary",
+            "Style": "Filled"
+          }
+        },
+        {
+          "id": "83:127",
+          "key": "d439c43fabf75324d14913145465e82c279b3c19",
+          "name": "Color=Primary, Style=Plain",
+          "type": "COMPONENT",
+          "parentId": "83:149",
+          "width": 51,
+          "height": 20,
+          "description": "",
+          "variantProperties": {
+            "Color": "Primary",
+            "Style": "Plain"
+          }
+        }
+      ]
+    }
+  ]
+}
