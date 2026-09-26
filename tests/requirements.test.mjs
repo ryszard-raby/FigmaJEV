@@ -1,6 +1,6 @@
 import test, { mock } from 'node:test';
 import assert from 'node:assert/strict';
-import { plan } from '../server/planner.mjs';
+import { plan } from '../server/legacy-planner.mjs';
 import { extractRequirements, requirementState } from '../server/requirements.mjs';
 
 const debug = mock.method(console, 'debug', () => {});

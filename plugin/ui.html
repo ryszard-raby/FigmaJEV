@@ -10,15 +10,24 @@
   <div class="eyebrow">Z pomysłu do komponentu</div>
   <div class="selection" id="selection"><span id="selected">Zaznacz element, aby go przypiąć</span><button id="pin" disabled>Przypnij</button></div>
   <form id="form">
-    <label for="prompt">Co chcesz stworzyć?</label>
-    <textarea id="prompt" maxlength="4000" required placeholder='Karta produktu ze zdjęciem, tekstem „Nowa kolekcja” i przyciskami accent oraz primary.'></textarea>
+    <label for="prompt">Polecenie edycji przypiętego elementu</label>
+    <textarea id="prompt" maxlength="4000" placeholder='Przypnij element i wpisz np. „dodaj przycisk”, „usuń przycisk” lub „zrób większy tekst”.'></textarea>
+    <label for="structure">Struktura projektu</label>
+    <textarea id="structure" maxlength="40000" spellcheck="false">["Layout",
+  ["Card",
+    ["Container",
+      ["Button"]
+    ]
+  ]
+]</textarea>
+    <p class="hint">[nazwa, properties?, ...dzieci]. Struktura tworzy nowy layout. Przy przypiętym elemencie wykonywany jest prompt edycji.</p>
     <label for="library">Biblioteka komponentów</label>
     <div class="row"><select id="library" aria-label="Biblioteka"><option value="">Skanowanie…</option></select><button id="scan" type="button" title="Skanuj ponownie">↻</button></div>
     <p class="hint" id="catalogHint">Komponenty lokalne i instancje użyte w pliku.</p>
-    <button class="primary" id="generate" type="submit" disabled>Utwórz layout</button>
+    <button class="primary" id="generate" type="submit" disabled>Utwórz ze struktury</button>
   </form>
   <div id="status" role="status" aria-live="polite">Wczytywanie komponentów…</div>
-  <details id="result" hidden><summary>Struktura wyniku</summary><pre id="tree"></pre></details>
+  <details id="result" hidden><summary>Resolved tree / wynik edycji</summary><pre id="tree"></pre></details>
   <details><summary>Połączenie i biblioteki</summary>
     <label for="token">Token lokalnego serwera</label><input id="token" type="password" autocomplete="off" placeholder="FIGMAJEV_TOKEN z .env">
     <p class="hint">FIGMAJEV_TOKEN i adres biblioteki są zapamiętywane na tym urządzeniu. Serwer: localhost:3847.</p>
@@ -28,7 +37,7 @@
     <p class="hint" id="settingsStatus" role="status"></p>
     <p class="hint">Wymaga FIGMA_ACCESS_TOKEN na serwerze. Figma nie udostępnia wtyczkom pełnej listy komponentów włączonych bibliotek.</p>
   </details>
-  <footer class="hint">Prompt, katalog wybranej biblioteki i kontekst przypiętego elementu są wysyłane do DefAPI. Teksty wpisuj w cudzysłowach. Możesz dodawać dzieci do natywnych slotów Content w Card / Layout.</footer>
+  <footer class="hint">Struktura projektu, katalog biblioteki i kontekst edycji są wysyłane do DefAPI. JEV wybiera komponenty i właściwości; hierarchię nowego layoutu określa Twoje drzewo.</footer>
 </main>
 <script>
 const $ = id => document.getElementById(id);
@@ -56,7 +65,7 @@ function status(text, error = false) { $('status').textContent = text; $('status
 function setBusy(value) {
   if (!value) clearTimeout(libraryAckTimer);
   busy = value;
-  for (const id of ['generate','scan','import','library','prompt','fileKey','token','forget']) $(id).disabled = value;
+  for (const id of ['generate','scan','import','library','prompt','structure','fileKey','token','forget']) $(id).disabled = value;
   $('pin').disabled = value || !hasSelection;
   $('generate').disabled = value || !libraries.length;
 }
@@ -83,11 +92,16 @@ function fail(error) { send('cancel'); setBusy(false); status(error.message || S
 $('pin').onclick = () => send('pin');
 $('scan').onclick = () => { setBusy(true); status('Skanowanie pliku…'); send('scan'); };
 $('form').onsubmit = event => {
-  event.preventDefault(); if (busy || !$('prompt').value.trim()) return;
+  event.preventDefault(); if (busy) return;
+  if (pinned && !$('prompt').value.trim()) { status('Wpisz polecenie edycji przypiętego elementu.', true); return; }
+  if (!pinned) {
+    try { JSON.parse($('structure').value); }
+    catch { status('Struktura projektu: nieprawidłowy JSON.', true); return; }
+  }
   if (!$('token').value.trim()) { status('Wpisz token w sekcji „Połączenie i biblioteki”.', true); return; }
   saveConnection();
   setBusy(true); $('result').hidden = true; status('Przygotowywanie kontekstu…');
-  send('prepare', { prompt: $('prompt').value.trim(), libraryId: $('library').value });
+  send('prepare', { prompt: $('prompt').value.trim(), structure: $('structure').value, libraryId: $('library').value });
 };
 $('import').onclick = async () => {
   saveConnection();
@@ -120,14 +134,14 @@ window.onmessage = async event => {
     const selected = m.selected || $('library').value; libraries = m.libraries;
     $('library').replaceChildren(...libraries.map(l => { const o = document.createElement('option'); o.value = l.id; o.textContent = l.name; return o; }));
     if (libraries.some(l => l.id === selected)) $('library').value = selected;
-    setBusy(false); catalogHint(); status('Gotowe. Opisz swój layout.');
+    setBusy(false); catalogHint(); status('Gotowe. Wklej strukturę projektu.');
   }
   if (m.type === 'selection') {
     hasSelection = Boolean(m.node); pinned = m.pinned;
     $('selected').textContent = m.node ? `${pinned ? 'Przypięto: ' : ''}${m.node.name}` : 'Zaznacz element, aby go przypiąć';
     $('selection').classList.toggle('pinned', pinned); $('pin').textContent = pinned ? 'Odepnij' : 'Przypnij';
-    $('pin').disabled = busy || !hasSelection; $('generate').textContent = pinned ? 'Zmień przypięty element' : 'Utwórz layout';
-    document.querySelector('label[for="prompt"]').textContent = pinned ? 'Co chcesz zmienić?' : 'Co chcesz stworzyć?';
+    $('pin').disabled = busy || !hasSelection; $('generate').textContent = pinned ? 'Zmień przypięty element' : 'Utwórz ze struktury';
+    document.querySelector('label[for="prompt"]').textContent = pinned ? 'Co chcesz zmienić?' : 'Polecenie edycji przypiętego elementu';
   }
   if (m.type === 'progress') status(m.text);
   if (m.type === 'prepared') {

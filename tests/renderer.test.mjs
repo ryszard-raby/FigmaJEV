@@ -1,8 +1,10 @@
-import test from 'node:test';
+import test, { mock } from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { readFile } from 'node:fs/promises';
 import { transform } from 'esbuild';
+import { plan } from '../server/planner.mjs';
+mock.method(console, 'log', () => {});
 
 const { code } = await transform(await readFile(new URL('../plugin/code.ts', import.meta.url), 'utf8'), { loader: 'ts', target: 'es2017' });
 function harness(storage = new Map()) {
@@ -27,7 +29,7 @@ function harness(storage = new Map()) {
     viewport: { center: { x: 500, y: 500 }, scrollAndZoomIntoView() {} }, commitUndo() {},
     importComponentByKeyAsync: async () => { throw new Error('Import failed'); }
   };
-  vm.runInNewContext(code, { figma, __html__: '' });
+  vm.runInNewContext(code, { figma, __html__: '', Error });
   function cardWithContent() {
     const component = frame('COMPONENT'); component.componentPropertyDefinitions = {};
     const definition = frame('SLOT'); definition.name = 'Content'; definition.limitViolations = []; component.appendChild(definition);
@@ -60,7 +62,7 @@ test('renderer merges technical root and host into one frame', async () => {
   const host = h.page.children[0];
   assert.equal(host.name, 'FigmaJev');
   assert.equal(host.layoutSizingHorizontal, 'HUG');
-  assert.equal(host.layoutSizingVertical, 'FIXED');
+  assert.equal(host.layoutSizingVertical, 'HUG');
   assert.equal(host.children.length, 0);
   assert.equal(host.layoutMode, 'HORIZONTAL');
   assert.equal(host.itemSpacing, 0);
@@ -108,12 +110,12 @@ test('concurrent user change invalidates plan without touching canvas', async ()
   assert.equal(card.layoutSizingHorizontal, 'FIXED'); assert.equal(h.messages.at(-1).type, 'error');
 });
 
-test('fill under hugging parent is rejected and creation cleaned up', async () => {
+test('fill under hugging parent reaches Figma without a renderer veto', async () => {
   const h = harness(); await h.send({ type: 'init' });
   await h.send({ type: 'prepare', libraryId: 'local', prompt: 'Layout' });
   await h.send({ type: 'apply', plan: { mode: 'create', tree: { type: 'container', direction: 'VERTICAL', width: 'HUG', height: 'HUG', children: [{ type: 'container', direction: 'VERTICAL', width: 'FILL', height: 'HUG', children: [] }] } } });
-  assert.equal(h.page.children.length, 0);
-  assert.equal(h.messages.at(-1).type, 'error');
+  assert.equal(h.page.children[0].children[0].layoutSizingHorizontal, 'FILL');
+  assert.equal(h.messages.at(-2).type, 'done');
 });
 
 test('legacy spacing edits are rejected without changing spacing', async () => {
@@ -179,6 +181,7 @@ test('KEEP restores standard button height after slot auto-stretch while width c
   const h = harness(); await h.send({ type: 'init' });
   const { instance: card, slot } = h.cardWithContent();
   const buttonMain = h.frame('COMPONENT'); buttonMain.componentPropertyDefinitions = {};
+  buttonMain.height = 40; buttonMain.width = 120;
   const button = h.frame('INSTANCE'); button.height = 40; button.width = 120;
   buttonMain.createInstance = () => button;
   const append = slot.appendChild;
@@ -191,4 +194,155 @@ test('KEEP restores standard button height after slot auto-stretch while width c
   assert.equal(button.layoutSizingVertical, 'FIXED');
   assert.equal(button.layoutSizingHorizontal, 'FILL');
   assert.equal(h.messages.at(-2).type, 'done');
+});
+
+test('compact tree resolves and renders into a new slot replacing only inherited demo children', async () => {
+  const h = harness(); await h.send({ type: 'init' });
+  const { component, instance, slot } = h.cardWithContent();
+  component.createInstance = () => instance;
+  const demo = h.frame(); slot.appendChild(demo);
+  component.componentPropertyDefinitions = { 'Caption#1': { type: 'TEXT' } };
+  instance.setProperties = props => { instance.applied = props; };
+  await h.send({ type: 'library', fileKey: 'testlibrary', components: [{ id: 'card', nodeId: component.id, key: 'card', name: 'Card', description: '' }] });
+  const structure = ['Card', { text: 'Resolved title' }, ['Container'], ['Container']];
+  await h.send({ type: 'prepare', libraryId: 'testlibrary', structure });
+  const input = h.messages.findLast(m => m.type === 'prepared').input;
+  assert.deepEqual(input.structure, structure);
+  const result = await plan(input, async (state, questions) => {
+    if (state.phase === 'component-resolution') return { n0: 'card', n1: 'native_container' };
+    return Object.fromEntries(Object.entries(questions).map(([key, q]) => [key, q.instructions.includes('property:Caption') ? 'literal0' : Object.hasOwn(q.criteria, 'KEEP') ? 'KEEP' : Object.keys(q.criteria)[0]]));
+  });
+  await h.send({ type: 'apply', plan: result });
+  assert.equal(h.messages.at(-2).type, 'done');
+  assert.equal(slot.children.length, 2);
+  assert.equal(demo.removed, true);
+  assert.equal(instance.applied['Caption#1'], 'Resolved title');
+  assert.equal(instance.type, 'INSTANCE');
+});
+
+test('actual Figma sizing errors still propagate and clean up partial creation', async () => {
+  const h = harness(); await h.send({ type: 'init' });
+  const { component, instance } = h.cardWithContent();
+  component.createInstance = () => instance; instance.layoutMode = 'NONE';
+  Object.defineProperty(instance, 'layoutSizingHorizontal', { get: () => 'FIXED', set: () => { throw new Error('Figma API rejected sizing'); } });
+  await h.send({ type: 'library', fileKey: 'testlibrary', components: [{ id: 'card', nodeId: component.id, key: 'card', name: 'Card' }] });
+  await h.send({ type: 'prepare', libraryId: 'testlibrary' });
+  await h.send({ type: 'apply', plan: { mode: 'create', exactTree: true, tree: { type: 'component', componentId: 'card', width: 'HUG', height: 'KEEP' } } });
+  assert.equal(h.messages.at(-1).type, 'error');
+  assert.match(h.messages.at(-1).error, /Figma API rejected sizing/);
+  assert.equal(h.page.children.length, 0);
+});
+
+test('Hug with a Fill child is passed to Figma for creation and pinned edits', async () => {
+  const h = harness(); await h.send({ type: 'init' });
+  const { component, instance, slot } = h.cardWithContent();
+  component.createInstance = () => instance; slot.layoutSizingHorizontal = 'FILL';
+  await h.send({ type: 'library', fileKey: 'testlibrary', components: [{ id: 'card', nodeId: component.id, key: 'card', name: 'Card' }] });
+  await h.send({ type: 'prepare', libraryId: 'testlibrary' });
+  await h.send({ type: 'apply', plan: { mode: 'create', exactTree: true, tree: { type: 'component', componentId: 'card', width: 'HUG', height: 'KEEP' } } });
+  assert.equal(h.messages.at(-2).type, 'done');
+  assert.equal(instance.layoutSizingHorizontal, 'HUG');
+  instance.layoutSizingHorizontal = 'FIXED'; h.page.selection = [instance];
+  await h.send({ type: 'pin' }); await h.send({ type: 'prepare', libraryId: 'testlibrary' });
+  await h.send({ type: 'apply', plan: { mode: 'edit', targetId: instance.id, operations: [{ id: instance.id, field: 'width', value: 'HUG' }] } });
+  assert.equal(h.messages.at(-2).type, 'done');
+  assert.equal(instance.layoutSizingHorizontal, 'HUG');
+});
+
+test('remove affects selected child only and enforces slot minimum', async () => {
+  const h = harness(); await h.send({ type: 'init' });
+  const { instance, slot, component } = h.cardWithContent();
+  const child = h.frame(); const sibling = h.frame(); slot.appendChild(child); slot.appendChild(sibling);
+  h.page.selection = [instance]; await h.send({ type: 'pin' });
+  await h.send({ type: 'prepare', libraryId: 'local' });
+  await h.send({ type: 'apply', plan: { mode: 'remove', targetId: instance.id, nodeId: child.id } });
+  assert.equal(child.removed, true); assert.equal(slot.children[0], sibling);
+  component.children[0].componentPropertyReferences = { slotContentId: 'Content#1' };
+  component.componentPropertyDefinitions = { 'Content#1': { slotSettings: { minChildren: 1 } } };
+  await h.send({ type: 'prepare', libraryId: 'local' });
+  await h.send({ type: 'apply', plan: { mode: 'remove', targetId: instance.id, nodeId: sibling.id } });
+  assert.equal(h.messages.at(-1).type, 'error');
+  assert.equal(sibling.removed, false);
+});
+
+test('quick insertion also supports a pinned native frame without replacing its children', async () => {
+  const h = harness(); await h.send({ type: 'init' });
+  const parent = h.frame(); h.page.appendChild(parent); h.page.selection = [parent];
+  const existing = h.frame(); parent.appendChild(existing);
+  await h.send({ type: 'pin' }); await h.send({ type: 'prepare', libraryId: 'local' });
+  assert.equal(h.messages.findLast(m => m.type === 'prepared').input.context.nodes[0].insertable, true);
+  await h.send({ type: 'apply', plan: { mode: 'insert', targetId: parent.id, parentId: parent.id, exactTree: true, children: [{ type: 'container', direction: 'HORIZONTAL', width: 'KEEP', height: 'KEEP', primaryAlign: 'MAX', children: [] }] } });
+  assert.equal(h.messages.at(-2).type, 'done');
+  assert.equal(parent.children.length, 2);
+  assert.equal(parent.children[0], existing);
+  assert.equal(parent.children[1].primaryAxisAlignItems, 'MAX');
+});
+
+test('INSTANCE_SWAP translates library key to local/imported component node ID, preserving boolean and text', async () => {
+  for (const imported of [false, true]) {
+    const h = harness(); await h.send({ type: 'init' });
+    const { component, instance } = h.cardWithContent();
+    component.createInstance = () => instance;
+    component.componentPropertyDefinitions = { 'Icon#1': { type: 'INSTANCE_SWAP' }, 'Visible#2': { type: 'BOOLEAN' }, 'Label#3': { type: 'TEXT' } };
+    const icon = h.frame('COMPONENT'); icon.componentPropertyDefinitions = {};
+    let imports = 0;
+    h.figma.importComponentByKeyAsync = async key => { assert.equal(key, 'icon-library-key'); imports++; return icon; };
+    let applied;
+    instance.setProperties = props => {
+      assert.equal(props['Icon#1'], icon.id);
+      assert.equal(typeof props['Visible#2'], 'boolean');
+      assert.equal(typeof props['Label#3'], 'string');
+      applied = props;
+    };
+    await h.send({ type: 'library', fileKey: 'testlibrary', components: [
+      { id: 'card', nodeId: component.id, key: 'card', name: 'Card' },
+      { id: 'icon', nodeId: imported ? undefined : icon.id, key: 'icon-library-key', name: 'Icon' }
+    ] });
+    await h.send({ type: 'prepare', libraryId: 'testlibrary' });
+    // Exercise the render-time import path too, when the cached node disappears.
+    if (imported) h.messages.findLast(m => m.type === 'prepared').input.catalog[1].nodeId = 'missing';
+    const properties = { 'Icon#1': 'icon-library-key', 'Visible#2': false, 'Label#3': 'Save' };
+    await h.send({ type: 'apply', plan: { mode: 'create', exactTree: true, tree: { type: 'component', componentId: 'card', width: 'KEEP', height: 'KEEP', properties } } });
+    assert.equal(h.messages.at(-2).type, 'done');
+    assert.equal(applied['Icon#1'], icon.id);
+    assert.equal(properties['Icon#1'], 'icon-library-key');
+    assert.equal(imports, imported ? 2 : 0);
+  }
+});
+
+test('INSTANCE_SWAP outside catalog fails before setProperties and cleans partial layout', async () => {
+  const h = harness(); await h.send({ type: 'init' });
+  const { component, instance } = h.cardWithContent();
+  component.createInstance = () => instance;
+  component.componentPropertyDefinitions = { 'Icon#1': { type: 'INSTANCE_SWAP' } };
+  let called = false; instance.setProperties = () => { called = true; };
+  await h.send({ type: 'library', fileKey: 'testlibrary', components: [{ id: 'card', nodeId: component.id, key: 'card', name: 'Card' }] });
+  await h.send({ type: 'prepare', libraryId: 'testlibrary' });
+  await h.send({ type: 'apply', plan: { mode: 'create', tree: { type: 'component', componentId: 'card', width: 'KEEP', height: 'KEEP', properties: { 'Icon#1': 'unknown-key' } } } });
+  assert.equal(called, false); assert.equal(h.page.children.length, 0);
+  assert.match(h.messages.at(-1).error, /spoza katalogu/);
+});
+
+test('KEEP inherits source Fill/Hug after instantiation, slot insertion and property resets; explicit sizing wins', async () => {
+  for (const width of ['KEEP', 'HUG']) {
+    const h = harness(); await h.send({ type: 'init' });
+    const { instance: parent, slot } = h.cardWithContent();
+    const source = h.frame('COMPONENT'); source.componentPropertyDefinitions = { 'Show#1': { type: 'BOOLEAN' } };
+    source.layoutSizingHorizontal = 'FILL'; source.layoutSizingVertical = 'HUG';
+    const created = h.frame('INSTANCE');
+    source.createInstance = () => created; // new instance is FIXED/FIXED
+    created.setProperties = () => { created.layoutSizingHorizontal = created.layoutSizingVertical = 'FIXED'; };
+    const append = slot.appendChild;
+    slot.appendChild = n => { append(n); n.layoutSizingHorizontal = n.layoutSizingVertical = 'FIXED'; };
+    await h.send({ type: 'library', fileKey: 'ds', components: [{ id: 'custom', key: 'custom', nodeId: source.id, name: 'Any DS component' }] });
+    h.page.selection = [parent]; await h.send({ type: 'pin' });
+    await h.send({ type: 'prepare', libraryId: 'ds' });
+    const input = h.messages.findLast(m => m.type === 'prepared').input;
+    assert.equal(input.catalog[0].defaultSizing.width, 'FILL');
+    assert.equal(input.catalog[0].defaultSizing.height, 'HUG');
+    await h.send({ type: 'apply', plan: { mode: 'insert', targetId: parent.id, parentId: slot.id, children: [{ type: 'component', componentId: 'custom', width, height: 'KEEP', properties: { 'Show#1': true } }] } });
+    assert.equal(h.messages.at(-2).type, 'done');
+    assert.equal(created.layoutSizingHorizontal, width === 'KEEP' ? 'FILL' : 'HUG');
+    assert.equal(created.layoutSizingVertical, 'HUG');
+  }
 });

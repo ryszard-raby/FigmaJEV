@@ -1,6 +1,6 @@
 import test, { mock } from 'node:test';
 import assert from 'node:assert/strict';
-import { plan as trackedPlan, textCandidates } from '../server/planner.mjs';
+import { plan as trackedPlan, textCandidates } from '../server/legacy-planner.mjs';
 import { createJev, validateAnswers } from '../server/jev.mjs';
 mock.method(console, 'debug', () => {});
 
