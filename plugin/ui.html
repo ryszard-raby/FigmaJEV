@@ -13,6 +13,7 @@
     <div id="editFields" hidden>
     <label for="prompt">Co chcesz zmienić?</label>
     <textarea id="prompt" maxlength="4000" placeholder='Wpisz np. „dodaj przycisk”, „usuń przycisk” lub „zrób większy tekst”.'></textarea>
+    <p class="hint">Enter — uruchom edycję. Shift+Enter — nowa linia.</p>
     </div>
     <div id="createFields">
     <label for="structure">Struktura projektu</label>
@@ -93,6 +94,11 @@ async function api(path, body) {
 }
 function fail(error) { send('cancel'); setBusy(false); status(error.message || String(error), true); }
 $('scan').onclick = () => { setBusy(true); status('Skanowanie pliku…'); send('scan'); };
+$('prompt').onkeydown = event => {
+  if (event.key !== 'Enter' || event.shiftKey || event.isComposing) return;
+  event.preventDefault();
+  if (hasSelection && !busy && !$('generate').disabled) $('form').requestSubmit();
+};
 $('form').onsubmit = event => {
   event.preventDefault(); if (busy || selectionCount > 1) return;
   if (hasSelection && !$('prompt').value.trim()) { status('Wpisz polecenie edycji zaznaczonego elementu.', true); return; }

@@ -177,7 +177,7 @@ test('JEV chooses the variant; renderer plan does not reinterpret importance', a
 });
 
 test('quick edit can remove a specific child or increase existing text without recursive planning', async () => {
-  const context = { targetId: 'root', nodes: [{ id: 'root', name: 'Card', type: 'INSTANCE' }, { id: 'label', name: 'Label', type: 'TEXT', fontSize: 16, removable: true }] };
+  const context = { targetId: 'root', nodes: [{ id: 'root', name: 'Card', type: 'FRAME' }, { id: 'label', name: 'Label', type: 'TEXT', fontSize: 16, removable: true }] };
   const removed = await plan({ prompt: 'usuń tekst', context, catalog }, async (_, questions) => 'action' in questions ? { action: 'remove' } : { target: 'label' });
   assert.deepEqual(removed, { mode: 'remove', targetId: 'root', nodeId: 'label' });
   const edited = await plan({ prompt: 'zrób większy tekst', context, catalog }, async (_, questions) => 'action' in questions ? { action: 'properties' } : { q0: '20' });
@@ -189,12 +189,33 @@ test('quick insert uses resolved component and preserves pinned target', async (
   const decide = model(); let calls = 0;
   const result = await plan({ prompt: 'dodaj przycisk', context, catalog }, async (state, questions) => {
     calls++;
-    if ('action' in questions) return { action: 'insert' };
-    if ('target' in questions) return { target: 'slot', component: 'primary' };
+    if ('action' in questions) { assert.equal(state.catalog, undefined); return { action: 'insert' }; }
+    if ('target' in questions) { assert.equal(state.catalog.length, catalog.length); return { target: 'slot', component: 'primary' }; }
     if (state.phase === 'component-resolution') return { n0: 'primary' };
     return decide(state, questions);
   });
   assert.equal(result.mode, 'insert'); assert.equal(result.targetId, 'root');
   assert.equal(result.children.length, 1); assert.equal(result.children[0].componentId, 'primary');
   assert.equal(calls, 4);
+});
+
+test('enlarging an instance asks only for its exposed properties without catalog or sublayers', async () => {
+  const context = { targetId: 'button', nodes: [
+    { id: 'button', name: 'Button', type: 'INSTANCE', layout: { direction: 'HORIZONTAL' }, sizing: { width: { allowed: ['HUG', 'FILL'] } }, properties: { Size: { type: 'VARIANT', value: 'Small', options: ['Small', 'Default'] } } },
+    { id: 'internal', parentId: 'button', name: 'Label', type: 'TEXT', fontSize: 12, sizing: { width: { allowed: ['HUG', 'FILL'] } } },
+  ] };
+  let calls = 0;
+  const result = await plan({ prompt: 'powiększ button', context, catalog }, async (state, questions) => {
+    calls++;
+    assert.equal(state.catalog, undefined);
+    assert.ok(!JSON.stringify(state).includes('"id":"internal"'));
+    if ('action' in questions) return { action: 'properties' };
+    assert.equal(state.context.nodes.length, 1);
+    assert.equal(state.context.nodes[0].properties.Size.value, 'Small');
+    assert.equal(Object.keys(questions).length, 1);
+    assert.deepEqual(questions.q0.criteria, { keep: 'Leave unchanged', v0: 'Small', v1: 'Default' });
+    return { q0: 'v1' };
+  });
+  assert.equal(calls, 2);
+  assert.deepEqual(result.operations, [{ id: 'button', field: 'property:Size', value: 'Default' }]);
 });
