@@ -5,17 +5,17 @@ export async function plan(input, decide) {
   if (!input || typeof input !== 'object') throw new Error('Nieprawidłowe wejście.');
   validateCatalog(input.catalog);
   if (!input.context) return resolveTree(input, decide);
-  return editPinned(input, decide);
+  return editSelected(input, decide);
 }
 
-async function editPinned(input, decide) {
+async function editSelected(input, decide) {
   const { context, prompt } = input;
-  if (typeof prompt !== 'string' || !prompt.trim() || prompt.length > 4000 || !Array.isArray(context.nodes) || !context.nodes.length || context.nodes.length > 80) throw new Error('Wpisz prompt i przypnij element (maks. 80 warstw).');
+  if (typeof prompt !== 'string' || !prompt.trim() || prompt.length > 4000 || !Array.isArray(context.nodes) || !context.nodes.length || context.nodes.length > 80) throw new Error('Wpisz prompt i zaznacz element (maks. 80 warstw).');
   const state = { prompt, context, catalog: input.catalog.map(c => ({ id: c.id, name: c.name, description: c.description })) };
   const { action } = await ask(state, { action: choice('Choose the requested quick edit. Do not build a recursive layout. Only explicit additions/removals are allowed.', { properties: 'Change existing properties', insert: 'Add one component', remove: 'Remove one existing element' }) }, decide);
   if (action === 'insert') {
     const targets = context.nodes.filter(n => n.contentSlot?.capacity > 0 || n.insertable);
-    if (!targets.length) throw new Error('Brak wolnego slotu Content lub edytowalnej ramki w przypiętym elemencie.');
+    if (!targets.length) throw new Error('Brak wolnego slotu Content lub edytowalnej ramki w zaznaczonym elemencie.');
     if (!input.catalog.length) throw new Error('Biblioteka nie zawiera komponentów.');
     const answer = await ask(state, {
       target: choice('Choose Content slot or editable frame for the new component.', Object.fromEntries(targets.map(n => [n.id, `${n.name}, ${n.type}, parent ${n.parentId}`]))),
@@ -28,7 +28,7 @@ async function editPinned(input, decide) {
   }
   if (action === 'remove') {
     const removable = context.nodes.filter(n => n.removable && n.id !== context.targetId);
-    if (!removable.length) throw new Error('Brak warstw, które można usunąć z przypiętego elementu.');
+    if (!removable.length) throw new Error('Brak warstw, które można usunąć z zaznaczonego elementu.');
     const { target } = await ask(state, { target: choice('Choose exactly the element explicitly requested for removal. none cancels.', { none: 'No matching element; preserve all', ...Object.fromEntries(removable.map(n => [n.id, `${n.name}, ${n.type}, parent ${n.parentId}`])) }) }, decide);
     return { mode: 'remove', targetId: context.targetId, nodeId: target === 'none' ? null : target };
   }
@@ -40,6 +40,8 @@ async function editPinned(input, decide) {
   }
   const copy = prompt.match(/["„“]([^"”\n]+)["”]/)?.[1];
   for (const node of context.nodes) {
+    // SVG paths are implementation details, not independent layout controls.
+    if (node.type === 'VECTOR') continue;
     if (node.layout) add(node, 'direction', { VERTICAL: 'Vertical', HORIZONTAL: 'Horizontal' });
     for (const axis of ['width', 'height']) if (node.sizing?.[axis]?.allowed?.length) add(node, axis, Object.fromEntries(node.sizing[axis].allowed.map(v => [v, v])));
     if (node.type === 'TEXT') {

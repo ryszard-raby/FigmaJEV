@@ -1,12 +1,14 @@
 type ContentSlot = { path: number[]; name: string; width: string; height: string; capacity: number; existingChildren?: { name: string; type: string }[]; settings?: SlotSettings; preferredValues?: InstanceSwapPreferredValue[] };
 type CatalogItem = { id: string; key: string; nodeId?: string; name: string; description: string; defaultSizing?: { width: string; height: string }; slots?: ContentSlot[]; properties?: ComponentPropertyDefinitions; textTargets?: { path: number[]; name: string }[] };
 type Library = { id: string; name: string; components: CatalogItem[] };
+// Same input limits as server/compact-tree.mjs; renderer also counts the host.
+const MAX_TREE_NODES = 256;
+const MAX_TREE_LEVELS = 32;
 type Tree = { type: 'container' | 'text' | 'component'; name?: string; direction?: 'HORIZONTAL' | 'VERTICAL'; primaryAlign?: 'MIN' | 'CENTER' | 'MAX' | 'SPACE_BETWEEN'; counterAlign?: 'MIN' | 'CENTER' | 'MAX'; width: 'KEEP' | 'HUG' | 'FILL'; height: 'KEEP' | 'HUG' | 'FILL'; children?: Tree[]; slots?: { path: number[]; children: Tree[]; mode?: 'replace' }[]; text?: string; fontSize?: number; componentId?: string; properties?: Record<string, string | boolean>; textOverrides?: { path: number[]; text: string }[] };
 type Snapshot = { targetId: string; nodes: any[] };
 type Operation = { id: string; field: string; value: any };
 type Plan = ({ mode: 'create'; tree: Tree } | { mode: 'edit'; targetId: string; operations: Operation[] } | { mode: 'insert'; targetId: string; parentId: string; children: Tree[] } | { mode: 'remove'; targetId: string; nodeId: string | null }) & { exactTree?: boolean };
 let libraries: Library[] = [];
-let pinned: string | null = null;
 let pending: { context: Snapshot | null; catalog: CatalogItem[]; pageId: string } | null = null;
 let active = false;
 const SETTINGS_KEY = 'figmajev.connection.v1';
@@ -17,12 +19,11 @@ const send = (type: string, data: object = {}) => figma.ui.postMessage({ type, .
 figma.showUI(__html__, { width: 420, height: 690, themeColors: true });
 
 async function selection() {
-  const node = pinned ? await figma.getNodeByIdAsync(pinned) : figma.currentPage.selection.length === 1 ? figma.currentPage.selection[0] : null;
-  if (pinned && !node) pinned = null;
-  send('selection', { node: node ? { id: node.id, name: node.name, type: node.type } : null, pinned: Boolean(pinned) });
+  const node = figma.currentPage.selection.length === 1 ? figma.currentPage.selection[0] : null;
+  send('selection', { node: node ? { id: node.id, name: node.name, type: node.type } : null, count: figma.currentPage.selection.length });
 }
 figma.on('selectionchange', () => { void selection(); });
-figma.on('currentpagechange', () => { if (!active) { pinned = null; pending = null; } void selection(); });
+figma.on('currentpagechange', () => { if (!active) { pending = null; } void selection(); });
 
 function item(c: ComponentNode): CatalogItem {
   return { id: c.key || c.id, key: c.key, nodeId: c.id, name: c.parent?.type === 'COMPONENT_SET' ? `${c.parent.name} / ${c.name}` : c.name, description: c.description, slots: contentSlots(c) };
@@ -40,7 +41,7 @@ function contentSlots(root: ComponentNode): ContentSlot[] {
       const def = ref ? definitions[ref] : undefined;
       result.push({ path, name: n.name, width: n.layoutMode === 'NONE' ? 'HUG' : n.layoutSizingHorizontal, height: n.layoutMode === 'NONE' ? 'HUG' : n.layoutSizingVertical,
         existingChildren: n.children.map(child => ({ name: child.name, type: child.type })),
-        capacity: Math.max(0, (def?.slotSettings?.maxChildren ?? 32 + n.children.length) - n.children.length), settings: def?.slotSettings, preferredValues: def?.preferredValues });
+        capacity: Math.max(0, (def?.slotSettings?.maxChildren ?? MAX_TREE_NODES + n.children.length) - n.children.length), settings: def?.slotSettings, preferredValues: def?.preferredValues });
       return;
     }
     if ('children' in n) n.children.forEach((child, index) => visit(child, [...path, index]));
@@ -159,7 +160,7 @@ async function loadTextFonts(n: TextNode) {
 }
 
 async function build(tree: Tree, catalog: CatalogItem[], parent: FrameNode | SlotNode, budget: { count: number; warnings: string[]; strict?: boolean }, depth = 0): Promise<SceneNode> {
-  if (++budget.count > 40 || depth > 5) throw new Error('Plan przekracza limit rozmiaru.');
+  if (++budget.count > MAX_TREE_NODES + 1 || depth > MAX_TREE_LEVELS) throw new Error('Plan przekracza limit 256 elementów lub 32 poziomów.');
   if (tree.type === 'component') {
     const entry = catalog.find(c => c.id === tree.componentId);
     if (!entry) throw new Error('Komponent spoza wybranej biblioteki.');
@@ -203,7 +204,7 @@ async function build(tree: Tree, catalog: CatalogItem[], parent: FrameNode | Slo
     for (const content of tree.slots || []) {
       const descriptor = entry.slots?.find(s => JSON.stringify(s.path) === JSON.stringify(content.path));
       if (!descriptor) throw new Error('Plan wskazuje slot spoza katalogu.');
-      if (!Array.isArray(content.children) || content.children.length > (content.mode === 'replace' ? descriptor.settings?.maxChildren ?? 32 : descriptor.capacity)) throw new Error('Przekroczono pojemność slotu Content.');
+      if (!Array.isArray(content.children) || content.children.length > (content.mode === 'replace' ? descriptor.settings?.maxChildren ?? MAX_TREE_NODES : descriptor.capacity)) throw new Error('Przekroczono pojemność slotu Content.');
       const slot = resolveSlot(instance, content.path);
       const previous = content.mode === 'replace' ? [] : slot.limitViolations || [];
       if (content.mode === 'replace') for (const child of [...slot.children]) child.remove();
@@ -278,12 +279,12 @@ async function apply(plan: Plan) {
     const before = pending.context;
     if (!before || before.targetId !== plan.targetId) throw new Error('Nieprawidłowy cel edycji.');
     const root = await figma.getNodeByIdAsync(before.targetId);
-    if (!root || root.type === 'PAGE' || root.type === 'DOCUMENT') throw new Error('Przypięty element został usunięty.');
+    if (!root || root.type === 'PAGE' || root.type === 'DOCUMENT') throw new Error('Wybrany element został usunięty.');
     if (JSON.stringify(await snapshot(root)) !== JSON.stringify(before)) throw new Error('Element zmienił się podczas generowania. Spróbuj ponownie.');
     if (plan.mode === 'remove') {
       if (plan.nodeId !== null) {
         const target = await figma.getNodeByIdAsync(plan.nodeId);
-        if (!before.nodes.some(n => n.id === plan.nodeId && n.removable) || !target || target.id === root.id || !editableParent(target.parent)) throw new Error('Nie można usunąć tej warstwy z przypiętego elementu.');
+        if (!before.nodes.some(n => n.id === plan.nodeId && n.removable) || !target || target.id === root.id || !editableParent(target.parent)) throw new Error('Nie można usunąć tej warstwy z wybranego elementu.');
         if (target.parent?.type === 'SLOT') {
           const descriptor = before.nodes.find(n => n.id === target.parent?.id)?.contentSlot;
           if (target.parent.children.length - 1 < (descriptor?.settings?.minChildren ?? 0)) throw new Error('Usunięcie naruszyłoby minimalną liczbę dzieci slotu.');
@@ -313,7 +314,7 @@ async function apply(plan: Plan) {
     }
     const actions: { apply: () => void; undo: () => void }[] = [];
     for (const op of plan.operations) {
-      if (!before.nodes.some(n => n.id === op.id)) throw new Error('Zmiana poza przypiętym elementem.');
+      if (!before.nodes.some(n => n.id === op.id)) throw new Error('Zmiana poza wybranym elementem.');
       const n = await figma.getNodeByIdAsync(op.id);
       if (!n) throw new Error('Brak warstwy.');
       if (op.field === 'direction' && 'layoutMode' in n && ['HORIZONTAL', 'VERTICAL'].includes(op.value)) {
@@ -372,10 +373,7 @@ figma.ui.onmessage = async (message: any) => {
       await settingsWrites; return;
     }
     if (message.type === 'scan' && !active) { await scan(); return; }
-    if (message.type === 'pin' && !active) {
-      pinned = pinned ? null : figma.currentPage.selection.length === 1 ? figma.currentPage.selection[0].id : null;
-      await selection(); return;
-    }
+
     if (message.type === 'library') {
       if (active) throw new Error('Zakończ generowanie przed dodaniem biblioteki.');
       const lib: Library = { id: message.fileKey, name: `Biblioteka ${message.fileKey}`, components: message.components };
@@ -383,15 +381,18 @@ figma.ui.onmessage = async (message: any) => {
     }
     if (message.type === 'prepare' && !active) {
       active = true;
+      const selected = [...figma.currentPage.selection];
+      if (selected.length > 1) throw new Error('Zaznacz jeden element do edycji albo usuń zaznaczenie, aby utworzyć layout.');
+      const target = selected[0] || null;
+      const pageId = figma.currentPage.id;
       const catalog = libraries.find(l => l.id === message.libraryId)?.components;
       if (!catalog) throw new Error('Wybierz bibliotekę.');
       if (catalog.length > 180) throw new Error('Biblioteka przekracza limit 180 komponentów.');
       send('progress', { text: 'Sprawdzanie slotów Content w bibliotece…' });
       await enrichCatalog(catalog);
-      const target = pinned ? await figma.getNodeByIdAsync(pinned) : null;
-      if (pinned && (!target || target.type === 'PAGE' || target.type === 'DOCUMENT')) throw new Error('Przypięty element jest niedostępny.');
+      if (pageId !== figma.currentPage.id) throw new Error('Strona uległa zmianie. Spróbuj ponownie.');
       const context = target ? await snapshot(target as SceneNode) : null;
-      pending = { context, catalog, pageId: figma.currentPage.id }; active = true;
+      pending = { context, catalog, pageId }; active = true;
       send('prepared', { input: { prompt: message.prompt, structure: message.structure, catalog, context } }); return;
     }
     if (message.type === 'apply' && active) { const warnings = await apply(message.plan); active = false; console.log('RENDER RESULT', { success: true, mode: message.plan.mode, warnings }); send('done', { warnings }); await selection(); return; }

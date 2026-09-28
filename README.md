@@ -42,13 +42,15 @@ Wklej kompletne drzewo w formacie `[componentName, properties?, ...children]`, a
 - `width` / `height` mogą wyrażać intencję keep, hug lub fill. JEV wybiera konkretny tryb, preferując KEEP. Niepoprawna decyzja kończy się błędem, bez cichej korekty przez renderer.
 - Plugin nie blokuje zależności Hug/Fill między rodzicem i dziećmi. Przekazuje wybrany tryb bezpośrednio do Figmy, która może dostosować układ lub zwrócić błąd API.
 - Dla instancji KEEP dziedziczy tryb osi z komponentu źródłowego, odczytany przed `createInstance`. Renderer przywraca go po wstawieniu, properties i zawartości slotów; jawne HUG/FILL od JEV ma pierwszeństwo. Katalog udostępnia te tryby jako `defaultSizing`, a konsola loguje `COMPONENT SIZING`. Źródłowe FIXED pozostaje Fixed — nie zgadujemy Fill/Hug na podstawie nazwy komponentu. Dotyczy to wszystkich komponentów DS, nie natywnych prymitywów ani edycji istniejących instancji.
-- Limity: 32 elementy, 5 poziomów, 24 properties na element, 1000 znaków na wartość tekstową, 40 000 znaków wejściowego JSON-a. Jeden korzeń.
+- Limity: 256 elementów, 32 poziomy, 24 properties na element, 1000 znaków na wartość tekstową, 40 000 znaków wejściowego JSON-a. Jeden korzeń. Są to zabezpieczenia aplikacji przed nadmiernym rozmiarem żądania i pracy renderera, a nie limity Figmy. Jawne ograniczenia slotów z DS nadal obowiązują.
 
 Domyślne drzewo: `["Layout", ["Card", ["Container", ["Button"]]]]`. Komponenty biblioteczne przyjmujące dzieci muszą mieć natywny slot **Content**. Zwykła ramka o tej nazwie wewnątrz instancji nie wystarczy.
 
 ## Resolution
 
-`UI → katalog + compact tree → parser → dwa zbiorcze zapytania JEV → resolved tree → istniejący renderer`
+`UI → katalog + compact tree → parser → dwa etapy decyzji JEV → resolved tree → istniejący renderer`
+
+Małe etapy mieszczą się w jednym żądaniu. Większe klient dzieli na paczki do 24 pytań i 96 kB, ograniczając kontekst do bieżących elementów i przodków. To budżet aplikacji, nie deklarowany limit DefAPI. Odpowiedzi łączą się po ID pytań; struktura nie jest planowana ponownie. Log `JEV BATCH` pokazuje postęp. Przy HTTP 400 klient zapisuje i zwraca szczegóły odpowiedzi serwera, bez automatycznych ponowień.
 
 `server/compact-tree.mjs` waliduje drzewo i przypisuje ścieżki. Identyczne poddrzewa rodzeństwa, wraz z properties i kontekstem rodzica, współdzielą decyzje. Nadal mają oddzielne ścieżki i powstają jako oddzielne elementy. Cache działa tylko w obrębie pojedynczego żądania.
 
@@ -63,13 +65,13 @@ Renderer nadal używa instancji bibliotecznych, slotów, kontroli sizingu i roll
 
 Techniczna ramka FigmaJev pozostaje hostem: domyślnie width Hug i height Hug. Natywny korzeń Container łączy się z hostem; korzeń biblioteczny powstaje jako instancja wewnątrz niego. Natywne kontenery mają zerowy padding/gap, a tekst używa Inter Regular. Biblioteka zachowuje własne style. Obrazy muszą istnieć jako komponenty DS; nie ma generowania ani pobierania zdjęć.
 
-## Przypinanie i szybka edycja
+## Zaznaczenie i szybka edycja
 
-Zaznacz element, kliknij „Przypnij” i wpisz np. `dodaj przycisk`, `usuń przycisk` lub `zrób większy tekst`. W tym trybie textarea struktury nie jest wykonywana. Odpięcie przywraca tworzenie ze struktury.
+Zaznacz jeden element i wpisz np. `dodaj przycisk`, `usuń przycisk` lub `zrób większy tekst`. Panel automatycznie pokazuje polecenie edycji. Brak zaznaczenia przywraca tworzenie layoutu ze struktury JSON. Przy wielu zaznaczonych elementach wybierz jeden. Cel edycji jest ustalany przy rozpoczęciu operacji; późniejsza zmiana zaznaczenia nie przekierowuje zmian.
 
 JEV wybiera jedną operację: dodanie jednego komponentu do Content lub edytowalnej ramki, usunięcie jednej edytowalnej warstwy albo zmianę właściwości istniejących elementów. Podaj treść w cudzysłowie, jeśli chcesz zmienić tekst. Zmiana rozmiaru tekstu obsługuje warstwy o jednolitym fontSize. To ograniczony tryb szybkich edycji, bez rekurencyjnego planowania i historii rozmowy.
 
-Zmiany dotyczą przypiętego poddrzewa. Nie można usunąć samego korzenia ani stałych warstw wewnętrznych instancji. Dodawanie zachowuje istniejącą zawartość. Snapshot chroni przed zastosowaniem odpowiedzi po równoległej zmianie dokumentu. Wynik można cofnąć przez Undo Figmy. Złożone zmiany struktury wykonuj przez edycję JSON-a i utworzenie nowego layoutu.
+Zmiany dotyczą zaznaczonego poddrzewa. Nie można usunąć samego korzenia ani stałych warstw wewnętrznych instancji. Dodawanie zachowuje istniejącą zawartość. Snapshot chroni przed zastosowaniem odpowiedzi po równoległej zmianie dokumentu. Wynik można cofnąć przez Undo Figmy. Złożone zmiany struktury wykonuj przez edycję JSON-a i utworzenie nowego layoutu.
 
 ## Logi i testy
 

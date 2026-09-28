@@ -70,6 +70,18 @@ test('renderer merges technical root and host into one frame', async () => {
   assert.equal(h.page.selection[0], host);
   assert.equal(h.messages.at(-2).type, 'done');
 });
+
+test('renderer accepts a full 256-node tree and nesting beyond the old five-level cap', async () => {
+  const h = harness(); await h.send({ type: 'init' });
+  const leaf = () => ({ type: 'container', direction: 'VERTICAL', width: 'KEEP', height: 'KEEP', children: [] });
+  const tree = leaf(); let parent = tree;
+  for (let i = 1; i < 32; i++) { const child = leaf(); parent.children.push(child); parent = child; }
+  tree.children.push(...Array.from({ length: 224 }, leaf));
+  await h.send({ type: 'prepare', libraryId: 'local' });
+  await h.send({ type: 'apply', plan: { mode: 'create', tree } });
+  assert.equal(h.messages.at(-2).type, 'done');
+  assert.equal(h.page.children[0].children.length, 225);
+});
 test('renderer rejects unknown component and cleans partial layout', async () => {
   const h = harness(); await h.send({ type: 'init' });
   await h.send({ type: 'prepare', libraryId: 'local', prompt: 'Layout' });
@@ -91,19 +103,32 @@ test('planned children are direct children of FigmaJev without Generated content
   assert.equal(root.layoutSizingVertical, 'HUG');
   assert.equal(h.messages.at(-2).type, 'done');
 });
-test('pinned edits keep identity even after changing selection', async () => {
+test('selected edits keep identity even after changing selection', async () => {
   const h = harness(); await h.send({ type: 'init' });
   const card = h.frame(); h.page.appendChild(card); h.page.selection = [card];
-  await h.send({ type: 'pin' }); h.page.selection = [];
+  
   await h.send({ type: 'prepare', libraryId: 'local', prompt: 'Hug width' });
+  h.page.selection = [];
   await h.send({ type: 'apply', plan: { mode: 'edit', targetId: card.id, operations: [{ id: card.id, field: 'width', value: 'HUG' }] } });
   assert.equal(card.layoutSizingHorizontal, 'HUG'); assert.equal(h.page.children[0], card);
   assert.equal(card.itemSpacing, 16);
 });
+test('clearing selection creates a layout and multiple selections cannot start an operation', async () => {
+  const h = harness(); await h.send({ type: 'init' });
+  const card = h.frame(); const other = h.frame();
+  h.page.appendChild(card); h.page.appendChild(other);
+  h.page.selection = [card, other];
+  await h.send({ type: 'prepare', libraryId: 'local' });
+  assert.equal(h.messages.at(-1).type, 'error');
+  assert.equal(h.messages.some(m => m.type === 'prepared'), false);
+  h.page.selection = [];
+  await h.send({ type: 'prepare', libraryId: 'local', structure: '["Container"]' });
+  assert.equal(h.messages.at(-1).input.context, null);
+});
 test('concurrent user change invalidates plan without touching canvas', async () => {
   const h = harness(); await h.send({ type: 'init' });
   const card = h.frame(); h.page.appendChild(card); h.page.selection = [card];
-  await h.send({ type: 'pin' });
+  
   await h.send({ type: 'prepare', libraryId: 'local', prompt: 'Hug width' });
   card.layoutSizingVertical = 'HUG';
   await h.send({ type: 'apply', plan: { mode: 'edit', targetId: card.id, operations: [{ id: card.id, field: 'width', value: 'HUG' }] } });
@@ -121,7 +146,7 @@ test('fill under hugging parent reaches Figma without a renderer veto', async ()
 test('legacy spacing edits are rejected without changing spacing', async () => {
   const h = harness(); await h.send({ type: 'init' });
   const card = h.frame(); h.page.appendChild(card); h.page.selection = [card];
-  await h.send({ type: 'pin' }); await h.send({ type: 'prepare', libraryId: 'local', prompt: 'Gap' });
+   await h.send({ type: 'prepare', libraryId: 'local', prompt: 'Gap' });
   await h.send({ type: 'apply', plan: { mode: 'edit', targetId: card.id, operations: [{ id: card.id, field: 'gap', value: 24 }] } });
   assert.equal(card.itemSpacing, 16); assert.equal(h.messages.at(-1).type, 'error');
 });
@@ -130,7 +155,7 @@ test('insertion appends into native Content without replacing existing children'
   const h = harness(); await h.send({ type: 'init' });
   const { instance, slot } = h.cardWithContent();
   const existing = h.frame(); slot.appendChild(existing); h.page.selection = [instance];
-  await h.send({ type: 'pin' }); await h.send({ type: 'prepare', libraryId: 'local', prompt: 'Add content' });
+   await h.send({ type: 'prepare', libraryId: 'local', prompt: 'Add content' });
   await h.send({ type: 'apply', plan: { mode: 'insert', targetId: instance.id, parentId: slot.id, children: [{ type: 'container', direction: 'VERTICAL', width: 'HUG', height: 'HUG', children: [] }] } });
   assert.equal(slot.children.length, 2); assert.equal(slot.children[0], existing);
   assert.equal(h.page.children[0], instance); assert.equal(h.messages.at(-2).type, 'done');
@@ -140,7 +165,7 @@ test('failed insertion rolls back only new children', async () => {
   const h = harness(); await h.send({ type: 'init' });
   const { instance, slot } = h.cardWithContent();
   const existing = h.frame(); slot.appendChild(existing); h.page.selection = [instance];
-  await h.send({ type: 'pin' }); await h.send({ type: 'prepare', libraryId: 'local', prompt: 'Add content' });
+   await h.send({ type: 'prepare', libraryId: 'local', prompt: 'Add content' });
   await h.send({ type: 'apply', plan: { mode: 'insert', targetId: instance.id, parentId: slot.id, children: [
     { type: 'container', direction: 'VERTICAL', width: 'HUG', height: 'HUG', children: [] },
     { type: 'component', componentId: 'missing', width: 'HUG', height: 'HUG' }
@@ -152,7 +177,7 @@ test('failed insertion rolls back only new children', async () => {
 test('ordinary Content frame in instance is not an insertion target', async () => {
   const h = harness(); await h.send({ type: 'init' });
   const { instance, slot, component } = h.cardWithContent(); slot.type = 'FRAME'; component.children[0].type = 'FRAME';
-  h.page.selection = [instance]; await h.send({ type: 'pin' }); await h.send({ type: 'prepare', libraryId: 'local', prompt: 'Add content' });
+  h.page.selection = [instance];  await h.send({ type: 'prepare', libraryId: 'local', prompt: 'Add content' });
   await h.send({ type: 'apply', plan: { mode: 'insert', targetId: instance.id, parentId: slot.id, children: [{ type: 'container', direction: 'VERTICAL', width: 'HUG', height: 'HUG' }] } });
   assert.equal(slot.children.length, 0); assert.equal(h.messages.at(-1).type, 'error');
 });
@@ -172,7 +197,7 @@ test('slot restrictions reject additions and roll back', async () => {
   const h = harness(); await h.send({ type: 'init' });
   const { instance, slot } = h.cardWithContent();
   Object.defineProperty(slot, 'limitViolations', { get: () => slot.children.length ? ['HAS_NON_PREFERRED'] : [] });
-  h.page.selection = [instance]; await h.send({ type: 'pin' }); await h.send({ type: 'prepare', libraryId: 'local', prompt: 'Add content' });
+  h.page.selection = [instance];  await h.send({ type: 'prepare', libraryId: 'local', prompt: 'Add content' });
   await h.send({ type: 'apply', plan: { mode: 'insert', targetId: instance.id, parentId: slot.id, children: [{ type: 'container', direction: 'VERTICAL', width: 'HUG', height: 'HUG', children: [] }] } });
   assert.equal(slot.children.length, 0); assert.equal(h.messages.at(-1).type, 'error');
 });
@@ -187,7 +212,7 @@ test('KEEP restores standard button height after slot auto-stretch while width c
   const append = slot.appendChild;
   slot.appendChild = child => { append(child); child.height = 180; child.layoutSizingVertical = 'FILL'; };
   await h.send({ type: 'library', fileKey: 'buttons', components: [{ id: 'button', nodeId: buttonMain.id, key: 'button', name: 'Button', description: '' }] });
-  h.page.selection = [card]; await h.send({ type: 'pin' });
+  h.page.selection = [card]; 
   await h.send({ type: 'prepare', libraryId: 'buttons', prompt: 'Add button' });
   await h.send({ type: 'apply', plan: { mode: 'insert', targetId: card.id, parentId: slot.id, children: [{ type: 'component', componentId: 'button', width: 'FILL', height: 'KEEP' }] } });
   assert.equal(button.height, 40);
@@ -233,7 +258,7 @@ test('actual Figma sizing errors still propagate and clean up partial creation',
   assert.equal(h.page.children.length, 0);
 });
 
-test('Hug with a Fill child is passed to Figma for creation and pinned edits', async () => {
+test('Hug with a Fill child is passed to Figma for creation and selected edits', async () => {
   const h = harness(); await h.send({ type: 'init' });
   const { component, instance, slot } = h.cardWithContent();
   component.createInstance = () => instance; slot.layoutSizingHorizontal = 'FILL';
@@ -243,7 +268,7 @@ test('Hug with a Fill child is passed to Figma for creation and pinned edits', a
   assert.equal(h.messages.at(-2).type, 'done');
   assert.equal(instance.layoutSizingHorizontal, 'HUG');
   instance.layoutSizingHorizontal = 'FIXED'; h.page.selection = [instance];
-  await h.send({ type: 'pin' }); await h.send({ type: 'prepare', libraryId: 'testlibrary' });
+   await h.send({ type: 'prepare', libraryId: 'testlibrary' });
   await h.send({ type: 'apply', plan: { mode: 'edit', targetId: instance.id, operations: [{ id: instance.id, field: 'width', value: 'HUG' }] } });
   assert.equal(h.messages.at(-2).type, 'done');
   assert.equal(instance.layoutSizingHorizontal, 'HUG');
@@ -253,7 +278,7 @@ test('remove affects selected child only and enforces slot minimum', async () =>
   const h = harness(); await h.send({ type: 'init' });
   const { instance, slot, component } = h.cardWithContent();
   const child = h.frame(); const sibling = h.frame(); slot.appendChild(child); slot.appendChild(sibling);
-  h.page.selection = [instance]; await h.send({ type: 'pin' });
+  h.page.selection = [instance]; 
   await h.send({ type: 'prepare', libraryId: 'local' });
   await h.send({ type: 'apply', plan: { mode: 'remove', targetId: instance.id, nodeId: child.id } });
   assert.equal(child.removed, true); assert.equal(slot.children[0], sibling);
@@ -265,11 +290,11 @@ test('remove affects selected child only and enforces slot minimum', async () =>
   assert.equal(sibling.removed, false);
 });
 
-test('quick insertion also supports a pinned native frame without replacing its children', async () => {
+test('quick insertion also supports a selected native frame without replacing its children', async () => {
   const h = harness(); await h.send({ type: 'init' });
   const parent = h.frame(); h.page.appendChild(parent); h.page.selection = [parent];
   const existing = h.frame(); parent.appendChild(existing);
-  await h.send({ type: 'pin' }); await h.send({ type: 'prepare', libraryId: 'local' });
+   await h.send({ type: 'prepare', libraryId: 'local' });
   assert.equal(h.messages.findLast(m => m.type === 'prepared').input.context.nodes[0].insertable, true);
   await h.send({ type: 'apply', plan: { mode: 'insert', targetId: parent.id, parentId: parent.id, exactTree: true, children: [{ type: 'container', direction: 'HORIZONTAL', width: 'KEEP', height: 'KEEP', primaryAlign: 'MAX', children: [] }] } });
   assert.equal(h.messages.at(-2).type, 'done');
@@ -335,7 +360,7 @@ test('KEEP inherits source Fill/Hug after instantiation, slot insertion and prop
     const append = slot.appendChild;
     slot.appendChild = n => { append(n); n.layoutSizingHorizontal = n.layoutSizingVertical = 'FIXED'; };
     await h.send({ type: 'library', fileKey: 'ds', components: [{ id: 'custom', key: 'custom', nodeId: source.id, name: 'Any DS component' }] });
-    h.page.selection = [parent]; await h.send({ type: 'pin' });
+    h.page.selection = [parent]; 
     await h.send({ type: 'prepare', libraryId: 'ds' });
     const input = h.messages.findLast(m => m.type === 'prepared').input;
     assert.equal(input.catalog[0].defaultSizing.width, 'FILL');

@@ -1,5 +1,5 @@
 import { choice, validateAnswers } from './jev.mjs';
-import { parseCompactTree, collectRequired } from './compact-tree.mjs';
+import { parseCompactTree, collectRequired, MAX_TREE_NODES } from './compact-tree.mjs';
 
 const sizes = { KEEP: 'Inherit sizing from the source Design System component on this axis; prefer unless explicitly requested otherwise', HUG: 'Hug contents', FILL: 'Fill container; Figma handles layout dependencies' };
 const values = list => Object.fromEntries(list.map((v, i) => [`v${i}`, String(v)]));
@@ -10,7 +10,7 @@ export function componentCandidates(node, catalog) {
   // Name lookup only; variant/intent decisions still belong to JEV.
   const family = catalog.filter(c => normalize(c.name) === requested || c.name.split('/').some(part => normalize(part) === requested));
   const pool = family.length ? family : catalog;
-  return pool.filter(c => !node.childCount || (c.slots || []).some(s => (s.settings?.maxChildren ?? 32) >= node.childCount));
+  return pool.filter(c => !node.childCount || (c.slots || []).some(s => (s.settings?.maxChildren ?? MAX_TREE_NODES) >= node.childCount));
 }
 
 export async function ask(state, questions, decide) {
@@ -46,9 +46,26 @@ export async function resolveTree(input, decide) {
     firstQuestions[n.id] = choice(`Resolve ${n.id}: ${n.name}, intent ${JSON.stringify(n.properties)}. Choose one real component/variant from the candidates. Unspecified properties impose no constraints: choose a standard/default variant and preserve its defaults. Multiple suitable variants do not mean unresolved. Use names, descriptions and parent intent. Do not add/remove/reorder children. Select unresolved only if no candidate can implement the requested component or explicit requirements.`, candidates);
   }
   const selected = await ask({ phase: 'component-resolution', inputTree: root, requiredComponents: required, catalog: catalog.filter(c => offered.has(c.id)).map(c => ({ id: c.id, name: c.name, description: c.description, slots: c.slots.map(s => ({ name: s.name, settings: s.settings })) })) }, firstQuestions, decide);
-  for (const n of required) if (selected[n.id] === 'unresolved') {
-    const pool = componentCandidates(n, catalog);
-    throw new Error(`${n.paths.join(', ')}: JEV nie dopasował komponentu dla ${n.name}. Kandydaci: ${pool.length ? pool.slice(0, 6).map(c => c.name).join('; ') : 'brak komponentu o odpowiedniej pojemności w katalogu'}. Sprawdź nazwę i properties w strukturze projektu.`);
+  const warnings = [];
+  const unmatched = required.filter(n => selected[n.id] === 'unresolved');
+  if (unmatched.length) {
+    const alternatives = {};
+    const offeredAlternatives = new Set();
+    for (const n of unmatched) {
+      const pool = catalog.filter(c => (!n.childCount || c.slots.some(s => (s.settings?.maxChildren ?? MAX_TREE_NODES) >= n.childCount))
+        && (typeof n.properties.text !== 'string' || c.textTargets.length || Object.values(c.properties).some(p => p.type === 'TEXT')));
+      pool.forEach(c => offeredAlternatives.add(c.id));
+      const candidates = Object.fromEntries(pool.map(c => [c.id, `${c.name}: ${c.description}`]));
+      candidates.native_container = 'Native auto-layout frame preserving the requested children';
+      if (!n.childCount) candidates.native_text = 'Native Figma text using the supplied literal text';
+      alternatives[n.id] = choice(`Propose the closest available implementation for ${n.id}: ${n.name}, intent ${JSON.stringify(n.properties)}. Exact matching failed. Choose the most useful available component based on purpose and parent context, relaxing unsupported appearance or variant requirements. Prefer a library component when suitable; otherwise choose a native frame or text. Preserve child order and supplied text. Do not invent component IDs.`, candidates);
+    }
+    const proposed = await ask({ phase: 'component-proposal', inputTree: root, requiredComponents: unmatched, catalog: catalog.filter(c => offeredAlternatives.has(c.id)) }, alternatives, decide);
+    for (const n of unmatched) {
+      selected[n.id] = proposed[n.id];
+      const replacement = catalog.find(c => c.id === proposed[n.id])?.name || (proposed[n.id] === 'native_text' ? 'tekst Figmy' : 'kontener Figmy');
+      warnings.push(`${n.paths.join(', ')}: brak dokładnego dopasowania dla „${n.name}”. JEV zaproponował: ${replacement}.`);
+    }
   }
   const questions = {}; const decoders = new Map();
   function add(n, field, criteria, decode = value => value) {
@@ -72,7 +89,7 @@ export async function resolveTree(input, decide) {
       add(n, 'fontSize', values(fontSizes), value => fontSizes[Number(value.slice(1))]);
     }
     if (c) {
-      if (n.childCount) add(n, 'slot', Object.fromEntries(c.slots.map((s, i) => [`s${i}`, `${s.name}, replacement capacity ${s.settings?.maxChildren ?? 32}, settings ${JSON.stringify(s.settings || {})}`]).filter((_, i) => (c.slots[i].settings?.maxChildren ?? 32) >= n.childCount)), value => c.slots[Number(value.slice(1))]);
+      if (n.childCount) add(n, 'slot', Object.fromEntries(c.slots.map((s, i) => [`s${i}`, `${s.name}, replacement capacity ${s.settings?.maxChildren ?? MAX_TREE_NODES}, settings ${JSON.stringify(s.settings || {})}`]).filter((_, i) => (c.slots[i].settings?.maxChildren ?? MAX_TREE_NODES) >= n.childCount)), value => c.slots[Number(value.slice(1))]);
       // Variants are already resolved by choosing an exact catalog component in pass 1.
       for (const [property, def] of Object.entries(c.properties)) {
         if (def.type === 'BOOLEAN') add(n, `property:${property}`, { KEEP: 'Keep current value', true: 'true', false: 'false' }, v => v === 'KEEP' ? undefined : v === 'true');
@@ -94,7 +111,10 @@ export async function resolveTree(input, decide) {
     const group = nodeGroups.get(node.path); const id = selected[group]; const fields = resolved.get(group);
     const children = node.children.map(assemble);
     const base = { width: fields.width, height: fields.height, sourcePath: node.path };
-    if (id === 'native_container') return { ...base, type: 'container', name: node.name, direction: fields.direction, primaryAlign: fields.primaryAlign, counterAlign: fields.counterAlign, children };
+    if (id === 'native_container') {
+      if (typeof node.properties.text === 'string') children.unshift({ type: 'text', text: node.properties.text, width: 'KEEP', height: 'KEEP' });
+      return { ...base, type: 'container', name: node.name, direction: fields.direction, primaryAlign: fields.primaryAlign, counterAlign: fields.counterAlign, children };
+    }
     if (id === 'native_text') return { ...base, type: 'text', text: fields.text, fontSize: fields.fontSize };
     const properties = Object.fromEntries(Object.entries(fields).filter(([k, v]) => k.startsWith('property:') && v !== undefined).map(([k, v]) => [k.slice(9), v]));
     const textOverrides = Object.entries(fields).filter(([k, v]) => k.startsWith('textTarget:') && v !== undefined).map(([, v]) => v);
@@ -106,5 +126,5 @@ export async function resolveTree(input, decide) {
   }
   const tree = assemble(root);
   console.log('RESOLVED TREE', JSON.stringify(tree));
-  return { mode: 'create', tree, exactTree: true, warnings: [], resolutionCount: required.length };
+  return { mode: 'create', tree, exactTree: true, warnings, resolutionCount: required.length };
 }

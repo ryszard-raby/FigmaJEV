@@ -36,9 +36,18 @@ test('compact parser preserves order, intent and repeated nodes; rejects malform
   const root = parseCompactTree('["Container", ["Input"], ["Input"]]');
   assert.equal(root.children.length, 2);
   assert.equal(root.children[1].path, 'root/1');
-  for (const bad of ['invalid', {}, ['Card', null], ['Card', { nested: {} }], ['Container', ...Array(32).fill(['Button'])]]) {
+  for (const bad of ['invalid', {}, ['Card', null], ['Card', { nested: {} }], ['Container', ...Array(256).fill(['Button'])]]) {
     await assert.rejects(plan({ structure: bad, catalog }, () => { throw new Error('MUST NOT CALL'); }), e => !e.message.includes('MUST NOT CALL'));
   }
+});
+
+test('larger compact trees preserve quantities and enforce the new node/depth boundaries', async () => {
+  const result = await plan({ structure: ['Card', ...Array(255).fill(['Button'])], catalog: catalog.map(c => c.id === 'card' ? { ...c, slots: [{ ...slot, settings: undefined }] } : c) }, model());
+  assert.equal(result.tree.slots[0].children.length, 255);
+  let nested = ['Button'];
+  for (let i = 1; i < 32; i++) nested = ['Container', nested];
+  assert.doesNotThrow(() => parseCompactTree(nested));
+  assert.throws(() => parseCompactTree(['Container', nested]), /32 poziomy/);
 });
 
 test('login tree resolves in two requests with exact hierarchy and distinct semantic properties', async () => {
@@ -72,8 +81,7 @@ test('identical nodes reuse decisions but remain separate output nodes; context/
   assert.equal(contextual.required.filter(n => n.name === 'Button').length, 2);
 });
 
-test('missing components and invalid JEV choices fail explicitly', async () => {
-  await assert.rejects(plan({ structure: ['Unknown'], catalog }, async () => ({ n0: 'unresolved' })), /JEV nie dopasował/);
+test('invalid JEV choices and missing text assignments fail explicitly', async () => {
   await assert.rejects(plan({ structure: ['Button'], catalog }, async () => ({ n0: 'invented' })), /decyzj/);
   await assert.rejects(plan({ structure: ['Button', { text: 'Save' }], catalog: [{ id: 'primary', name: 'Button' }] }, model()), /tekstu/);
 });
@@ -84,7 +92,38 @@ test('bare Button offers only its family variants and explains missing propertie
   assert.deepEqual(Object.keys(calls[0].questions.n0.criteria), ['primary', 'secondary', 'unresolved']);
   assert.deepEqual(calls[0].state.catalog.map(c => c.id), ['primary', 'secondary']);
   assert.match(calls[0].questions.n0.instructions, /Unspecified properties impose no constraints/);
-  await assert.rejects(plan({ structure: ['Button'], catalog }, async () => ({ n0: 'unresolved' })), /Kandydaci: Button \/ Main; Button \/ Quiet/);
+});
+
+test('unmatched component gets a JEV proposal from other families and preserves children', async () => {
+  const decide = model(); let proposals = 0;
+  const result = await plan({ structure: ['Component', ['Button']], catalog }, async (state, questions) => {
+    if (state.phase === 'component-resolution') return { n0: 'unresolved', n1: 'primary' };
+    if (state.phase === 'component-proposal') {
+      proposals++;
+      assert.ok(questions.n0.criteria.card);
+      assert.equal(questions.n0.criteria.primary, undefined);
+      assert.equal(questions.n0.criteria.unresolved, undefined);
+      return { n0: 'card' };
+    }
+    return decide(state, questions);
+  });
+  assert.equal(proposals, 1);
+  assert.equal(result.tree.componentId, 'card');
+  assert.equal(result.tree.slots[0].children[0].componentId, 'primary');
+  assert.match(result.warnings[0], /Component.*Card/);
+});
+
+test('empty library permits native proposals and preserves literal text', async () => {
+  const decide = model();
+  for (const replacement of ['native_container', 'native_text']) {
+    const result = await plan({ structure: ['Unknown', { text: 'Treść' }], catalog: [] }, async (state, questions) => {
+      if (state.phase === 'component-resolution') return { n0: 'unresolved' };
+      if (state.phase === 'component-proposal') return { n0: replacement };
+      return decide(state, questions);
+    });
+    assert.equal(replacement === 'native_text' ? result.tree.text : result.tree.children[0].text, 'Treść');
+    assert.equal(result.warnings.length, 1);
+  }
 });
 
 test('generic family lookup respects names and capacity without choosing variants or unrelated fallback', () => {

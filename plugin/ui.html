@@ -3,15 +3,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-  *{box-sizing:border-box} body{margin:0;background:var(--figma-color-bg,#fff);color:var(--figma-color-text,#18232c);font:12px/1.5 Inter,system-ui,sans-serif}main{padding:24px}header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}h1{font-size:24px;letter-spacing:-1px;margin:0}h1 span{color:#7452ea}.badge{font-size:10px;background:#eee8ff;color:#6545c0;border-radius:6px;padding:4px 8px;font-weight:600}.eyebrow{font-size:10px;letter-spacing:1.3px;text-transform:uppercase;color:var(--figma-color-text-secondary,#68727d)}label{display:block;font-weight:600;margin:15px 0 7px}textarea,input,select{width:100%;border:1px solid var(--figma-color-border,#dfe2e8);border-radius:8px;background:var(--figma-color-bg-secondary,#fafbfc);color:inherit;padding:11px;font:inherit}textarea{resize:vertical;min-height:128px}textarea:focus,input:focus,select:focus{outline:2px solid #a692fa;outline-offset:1px}button{cursor:pointer;border:1px solid var(--figma-color-border,#dfe2e8);border-radius:8px;background:var(--figma-color-bg,#fff);color:inherit;padding:8px 11px;font:inherit;font-weight:600}button:disabled{opacity:.45;cursor:default}.primary{width:100%;background:#7452ea;color:white;border:0;padding:13px;margin-top:20px}.hint{color:var(--figma-color-text-secondary,#68727d);font-size:11px;margin:8px 0}.row{display:flex;align-items:center;gap:8px}.row input,.row select{flex:1;min-width:0}.selection{border:1px solid var(--figma-color-border,#dfe2e8);border-radius:8px;padding:10px;display:flex;gap:8px;align-items:center;margin:14px 0}.selection span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.selection.pinned{border-color:#a692fa;background:var(--figma-color-bg-brand-tertiary,#f5f1ff)}details{margin-top:18px}summary{cursor:pointer;color:var(--figma-color-text-secondary,#68727d)}#status{margin-top:16px;white-space:pre-wrap}#status.error{color:var(--figma-color-text-danger,#c03636)}pre{font:11px/1.6 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:180px;overflow:auto;padding:12px;border-radius:8px;background:var(--figma-color-bg-secondary,#f6f7fa)}footer{border-top:1px solid var(--figma-color-border,#eee);padding-top:14px;margin-top:22px}.spinner{display:inline-block;width:9px;height:9px;background:#7452ea;border-radius:50%;margin-right:7px;animation:pulse 1s infinite}@keyframes pulse{50%{opacity:.2}}
+  *{box-sizing:border-box} body{margin:0;background:var(--figma-color-bg,#fff);color:var(--figma-color-text,#18232c);font:12px/1.5 Inter,system-ui,sans-serif}main{padding:24px}header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}h1{font-size:24px;letter-spacing:-1px;margin:0}h1 span{color:#7452ea}.badge{font-size:10px;background:#eee8ff;color:#6545c0;border-radius:6px;padding:4px 8px;font-weight:600}.eyebrow{font-size:10px;letter-spacing:1.3px;text-transform:uppercase;color:var(--figma-color-text-secondary,#68727d)}label{display:block;font-weight:600;margin:15px 0 7px}textarea,input,select{width:100%;border:1px solid var(--figma-color-border,#dfe2e8);border-radius:8px;background:var(--figma-color-bg-secondary,#fafbfc);color:inherit;padding:11px;font:inherit}textarea{resize:vertical;min-height:128px}textarea:focus,input:focus,select:focus{outline:2px solid #a692fa;outline-offset:1px}button{cursor:pointer;border:1px solid var(--figma-color-border,#dfe2e8);border-radius:8px;background:var(--figma-color-bg,#fff);color:inherit;padding:8px 11px;font:inherit;font-weight:600}button:disabled{opacity:.45;cursor:default}.primary{width:100%;background:#7452ea;color:white;border:0;padding:13px;margin-top:20px}.hint{color:var(--figma-color-text-secondary,#68727d);font-size:11px;margin:8px 0}.row{display:flex;align-items:center;gap:8px}.row input,.row select{flex:1;min-width:0}.selection{border:1px solid var(--figma-color-border,#dfe2e8);border-radius:8px;padding:10px;display:flex;gap:8px;align-items:center;margin:14px 0}.selection span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}details{margin-top:18px}summary{cursor:pointer;color:var(--figma-color-text-secondary,#68727d)}#status{margin-top:16px;white-space:pre-wrap}#status.error{color:var(--figma-color-text-danger,#c03636)}pre{font:11px/1.6 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:180px;overflow:auto;padding:12px;border-radius:8px;background:var(--figma-color-bg-secondary,#f6f7fa)}footer{border-top:1px solid var(--figma-color-border,#eee);padding-top:14px;margin-top:22px}.spinner{display:inline-block;width:9px;height:9px;background:#7452ea;border-radius:50%;margin-right:7px;animation:pulse 1s infinite}@keyframes pulse{50%{opacity:.2}}
 </style>
 <main>
   <header><h1>Figma<span>Jev</span></h1><span class="badge">JEV 1.13</span></header>
   <div class="eyebrow">Z pomysłu do komponentu</div>
-  <div class="selection" id="selection"><span id="selected">Zaznacz element, aby go przypiąć</span><button id="pin" disabled>Przypnij</button></div>
+  <div class="selection" id="selection"><span id="selected">Brak zaznaczenia — tworzenie layoutu ze struktury</span></div>
   <form id="form">
-    <label for="prompt">Polecenie edycji przypiętego elementu</label>
-    <textarea id="prompt" maxlength="4000" placeholder='Przypnij element i wpisz np. „dodaj przycisk”, „usuń przycisk” lub „zrób większy tekst”.'></textarea>
+    <div id="editFields" hidden>
+    <label for="prompt">Co chcesz zmienić?</label>
+    <textarea id="prompt" maxlength="4000" placeholder='Wpisz np. „dodaj przycisk”, „usuń przycisk” lub „zrób większy tekst”.'></textarea>
+    </div>
+    <div id="createFields">
     <label for="structure">Struktura projektu</label>
     <textarea id="structure" maxlength="40000" spellcheck="false">["Layout",
   ["Card",
@@ -20,7 +23,8 @@
     ]
   ]
 ]</textarea>
-    <p class="hint">[nazwa, properties?, ...dzieci]. Struktura tworzy nowy layout. Przy przypiętym elemencie wykonywany jest prompt edycji.</p>
+    <p class="hint">[nazwa, properties?, ...dzieci]. Struktura tworzy nowy layout. Zaznacz jeden element w Figmie, aby edytować go poleceniem.</p>
+    </div>
     <label for="library">Biblioteka komponentów</label>
     <div class="row"><select id="library" aria-label="Biblioteka"><option value="">Skanowanie…</option></select><button id="scan" type="button" title="Skanuj ponownie">↻</button></div>
     <p class="hint" id="catalogHint">Komponenty lokalne i instancje użyte w pliku.</p>
@@ -42,7 +46,7 @@
 <script>
 const $ = id => document.getElementById(id);
 const send = (type, data = {}) => parent.postMessage({ pluginMessage: { type, ...data } }, '*');
-let busy = false, pinned = false, hasSelection = false, libraries = [];
+let busy = false, hasSelection = false, selectionCount = 0, libraries = [];
 let libraryAckTimer;
 let planWarnings = [];
 const settingsDirty = { token: false, libraryUrl: false };
@@ -66,8 +70,7 @@ function setBusy(value) {
   if (!value) clearTimeout(libraryAckTimer);
   busy = value;
   for (const id of ['generate','scan','import','library','prompt','structure','fileKey','token','forget']) $(id).disabled = value;
-  $('pin').disabled = value || !hasSelection;
-  $('generate').disabled = value || !libraries.length;
+  $('generate').disabled = value || !libraries.length || selectionCount > 1;
 }
 async function api(path, body) {
   const token = $('token').value.trim();
@@ -89,12 +92,11 @@ async function api(path, body) {
   } finally { clearTimeout(timeout); }
 }
 function fail(error) { send('cancel'); setBusy(false); status(error.message || String(error), true); }
-$('pin').onclick = () => send('pin');
 $('scan').onclick = () => { setBusy(true); status('Skanowanie pliku…'); send('scan'); };
 $('form').onsubmit = event => {
-  event.preventDefault(); if (busy) return;
-  if (pinned && !$('prompt').value.trim()) { status('Wpisz polecenie edycji przypiętego elementu.', true); return; }
-  if (!pinned) {
+  event.preventDefault(); if (busy || selectionCount > 1) return;
+  if (hasSelection && !$('prompt').value.trim()) { status('Wpisz polecenie edycji zaznaczonego elementu.', true); return; }
+  if (!hasSelection) {
     try { JSON.parse($('structure').value); }
     catch { status('Struktura projektu: nieprawidłowy JSON.', true); return; }
   }
@@ -137,11 +139,12 @@ window.onmessage = async event => {
     setBusy(false); catalogHint(); status('Gotowe. Wklej strukturę projektu.');
   }
   if (m.type === 'selection') {
-    hasSelection = Boolean(m.node); pinned = m.pinned;
-    $('selected').textContent = m.node ? `${pinned ? 'Przypięto: ' : ''}${m.node.name}` : 'Zaznacz element, aby go przypiąć';
-    $('selection').classList.toggle('pinned', pinned); $('pin').textContent = pinned ? 'Odepnij' : 'Przypnij';
-    $('pin').disabled = busy || !hasSelection; $('generate').textContent = pinned ? 'Zmień przypięty element' : 'Utwórz ze struktury';
-    document.querySelector('label[for="prompt"]').textContent = pinned ? 'Co chcesz zmienić?' : 'Polecenie edycji przypiętego elementu';
+    hasSelection = Boolean(m.node); selectionCount = m.count ?? (hasSelection ? 1 : 0);
+    $('selected').textContent = selectionCount > 1 ? 'Zaznacz jeden element do edycji' : m.node ? m.node.name : 'Brak zaznaczenia — tworzenie layoutu ze struktury';
+    $('generate').textContent = hasSelection ? 'Zmień zaznaczony element' : 'Utwórz ze struktury';
+    $('generate').disabled = busy || !libraries.length || selectionCount > 1;
+    $('editFields').hidden = !hasSelection;
+    $('createFields').hidden = selectionCount !== 0;
   }
   if (m.type === 'progress') status(m.text);
   if (m.type === 'prepared') {

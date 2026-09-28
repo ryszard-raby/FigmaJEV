@@ -1,4 +1,6 @@
 export const DEFAULT_STRUCTURE = ['Layout', ['Card', ['Container', ['Button']]]];
+export const MAX_TREE_NODES = 256;
+export const MAX_TREE_LEVELS = 32;
 
 export function parseCompactTree(source) {
   let value = source;
@@ -8,7 +10,8 @@ export function parseCompactTree(source) {
   }
   let count = 0;
   function parse(node, path, depth) {
-    if (++count > 32 || depth > 4) throw new Error('Struktura projektu: limit 32 elementów i 5 poziomów.');
+    if (++count > MAX_TREE_NODES) throw new Error(`Struktura projektu: przekroczono ${MAX_TREE_NODES} elementów (${path}).`);
+    if (depth >= MAX_TREE_LEVELS) throw new Error(`Struktura projektu: przekroczono ${MAX_TREE_LEVELS} poziomy (${path}).`);
     if (!Array.isArray(node) || typeof node[0] !== 'string' || !node[0].trim() || node[0].length > 200) throw new Error(`${path}: oczekiwano [componentName, properties?, ...children].`);
     let offset = 1; let properties = {};
     if (node[1] !== null && typeof node[1] === 'object' && !Array.isArray(node[1])) {
