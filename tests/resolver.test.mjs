@@ -3,6 +3,54 @@ import assert from 'node:assert/strict';
 import { plan } from '../server/planner.mjs';
 import { parseCompactTree, collectRequired } from '../server/compact-tree.mjs';
 import { componentCandidates } from '../server/resolver.mjs';
+
+test('icon edit exposes swap candidates by name and description without internal vectors', async () => {
+  const context = { targetId: 'button', nodes: [
+    { id: 'button', name: 'Button', type: 'INSTANCE', properties: { 'Icon#1': { type: 'INSTANCE_SWAP', value: '1:10' }, 'Show Icon#2': { type: 'BOOLEAN', value: false } } },
+    { id: 'path', parentId: 'button', type: 'VECTOR', name: 'Stroke' },
+  ] };
+  const ds = [{ id: 'bell', key: 'bell-key', name: 'Icons / Alarm', description: 'Bell notification icon' }];
+  const result = await plan({ prompt: 'zmień ikonę na dzwonek', context, catalog: ds }, async (state, questions) => {
+    assert.ok(!JSON.stringify(state).includes('Stroke'));
+    if ('action' in questions) return { action: 'properties' };
+    assert.equal(state.catalog, undefined);
+    assert.equal(questions.q0.criteria['bell-key'], 'Icons / Alarm: Bell notification icon');
+    return { q0: 'bell-key', q1: 'true' };
+  });
+  assert.deepEqual(result.operations, [{ id: 'button', field: 'property:Icon#1', value: 'bell-key' }, { id: 'button', field: 'property:Show Icon#2', value: true }]);
+  const noop = await plan({ prompt: 'zmień ikonę na dzwonek', context, catalog: [] }, async (_, questions) => 'action' in questions ? { action: 'properties' } : Object.fromEntries(Object.keys(questions).map(k => [k, 'keep'])));
+  assert.equal(noop.operations.length, 0); assert.ok(noop.warnings.length);
+});
+
+test('vectors never enter JEV edit context or choices; deletion sends only identifying data', async () => {
+  for (const action of ['remove', 'properties', 'insert']) {
+    const context = { targetId: 'root', nodes: [
+      { id: 'root', name: 'Card', type: 'FRAME', insertable: true, width: 500, sizing: { width: { allowed: ['HUG', 'FILL'] } } },
+      { id: 'button', parentId: 'root', name: 'Vector (Stroke)', type: 'INSTANCE', removable: true, properties: { Size: { type: 'VARIANT', value: 'Small', options: ['Small', 'Default'] } } },
+      { id: 'svg-path', parentId: 'button', name: 'Hidden SVG detail', type: 'VECTOR', removable: true, width: 12 },
+    ] };
+    const original = JSON.stringify(context);
+    await plan({ prompt: 'zmień element', context, catalog }, async (state, questions) => {
+      assert.ok(!JSON.stringify({ state, questions }).includes('svg-path'));
+      if ('action' in questions) return { action };
+      if (action === 'remove') {
+        assert.deepEqual(state.context.nodes.map(n => n.id), ['root', 'button']);
+        assert.equal(state.context.nodes[0].sizing, undefined);
+        assert.equal(state.context.nodes[1].properties, undefined);
+        assert.ok('button' in questions.target.criteria);
+        return { target: 'button' };
+      }
+      if ('target' in questions) return { target: 'root', component: 'primary' };
+      if (state.phase === 'component-resolution') return { n0: 'primary' };
+      return Object.fromEntries(Object.entries(questions).map(([key, q]) => [key, 'keep' in q.criteria ? 'keep' : 'KEEP' in q.criteria ? 'KEEP' : Object.keys(q.criteria)[0]]));
+    });
+    assert.equal(JSON.stringify(context), original);
+  }
+});
+
+test('selecting a vector asks to select its component before calling JEV', async () => {
+  await assert.rejects(plan({ prompt: 'usuń', catalog, context: { targetId: 'v', nodes: [{ id: 'v', type: 'VECTOR' }] } }, () => assert.fail('No model call expected')), /warstwy wektorowej/);
+});
 mock.method(console, 'log', () => {});
 
 const slot = { name: 'Content', path: [0], capacity: 0, settings: { maxChildren: 12 } };

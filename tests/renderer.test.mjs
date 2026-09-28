@@ -290,6 +290,78 @@ test('remove affects selected child only and enforces slot minimum', async () =>
   assert.equal(sibling.removed, false);
 });
 
+test('generic delete resolves and removes the selected root, preserving siblings', async () => {
+  const h = harness(); await h.send({ type: 'init' });
+  const selected = h.frame(); const sibling = h.frame();
+  h.page.appendChild(selected); h.page.appendChild(sibling); h.page.selection = [selected];
+  await h.send({ type: 'prepare', libraryId: 'local', prompt: 'usuń element' });
+  const input = h.messages.findLast(m => m.type === 'prepared').input;
+  assert.equal(input.context.nodes[0].removable, true);
+  const result = await plan(input, async (_, questions) => {
+    if ('action' in questions) return { action: 'remove' };
+    assert.match(questions.target.criteria[selected.id], /SELECTED/);
+    return { target: selected.id };
+  });
+  await h.send({ type: 'apply', plan: result });
+  assert.equal(h.messages.at(-2).type, 'done');
+  assert.equal(selected.removed, true); assert.equal(sibling.removed, false);
+  assert.equal(h.page.selection.length, 0);
+});
+
+test('selected slot child deletion checks its external parent minimum', async () => {
+  const h = harness(); await h.send({ type: 'init' });
+  const { component, slot } = h.cardWithContent();
+  component.children[0].componentPropertyReferences = { slotContentId: 'Content#1' };
+  component.componentPropertyDefinitions = { 'Content#1': { slotSettings: { minChildren: 1 } } };
+  const child = h.frame(); slot.appendChild(child); h.page.selection = [child];
+  await h.send({ type: 'prepare', libraryId: 'local' });
+  await h.send({ type: 'apply', plan: { mode: 'remove', targetId: child.id, nodeId: child.id } });
+  assert.equal(h.messages.at(-1).type, 'error'); assert.equal(child.removed, false);
+  const other = h.frame(); slot.appendChild(other);
+  await h.send({ type: 'prepare', libraryId: 'local' });
+  await h.send({ type: 'apply', plan: { mode: 'remove', targetId: child.id, nodeId: child.id } });
+  assert.equal(h.messages.at(-2).type, 'done'); assert.equal(child.removed, true);
+});
+
+test('selected fixed internal instance layer cannot be deleted as a root', async () => {
+  const h = harness(); await h.send({ type: 'init' });
+  const { instance } = h.cardWithContent(); const internal = h.frame(); instance.appendChild(internal);
+  h.page.selection = [internal]; await h.send({ type: 'prepare', libraryId: 'local' });
+  assert.equal(h.messages.findLast(m => m.type === 'prepared').input.context.nodes[0].removable, false);
+  await h.send({ type: 'apply', plan: { mode: 'remove', targetId: internal.id, nodeId: internal.id } });
+  assert.equal(h.messages.at(-1).type, 'error'); assert.equal(internal.removed, false);
+});
+
+test('directly selected Content exposes live capacity and accepts a button without expanding edit scope', async () => {
+  const h = harness(); await h.send({ type: 'init' });
+  const { component, instance, slot } = h.cardWithContent();
+  component.children[0].componentPropertyReferences = { slotContentId: 'Content#1' };
+  component.componentPropertyDefinitions = { 'Content#1': { slotSettings: { maxChildren: 2 } } };
+  const existing = h.frame(); slot.appendChild(existing);
+  const buttonMain = h.frame('COMPONENT'); buttonMain.componentPropertyDefinitions = {};
+  const button = h.frame('INSTANCE'); buttonMain.createInstance = () => button;
+  button.componentProperties = {}; button.getMainComponentAsync = async () => buttonMain;
+  await h.send({ type: 'library', fileKey: 'buttons', components: [{ id: 'button', key: 'button', nodeId: buttonMain.id, name: 'Button' }] });
+  h.page.selection = [slot]; await h.send({ type: 'prepare', libraryId: 'buttons', prompt: 'dodaj button' });
+  const input = h.messages.findLast(m => m.type === 'prepared').input;
+  assert.equal(input.context.targetId, slot.id);
+  assert.equal(input.context.nodes[0].contentSlot.capacity, 1);
+  assert.ok(!input.context.nodes.some(n => n.id === instance.id));
+  const result = await plan(input, async (state, questions) => {
+    if ('action' in questions) return { action: 'insert' };
+    if ('target' in questions) { assert.ok(slot.id in questions.target.criteria); return { target: slot.id, component: 'button' }; }
+    if (state.phase === 'component-resolution') return { n0: 'button' };
+    return Object.fromEntries(Object.entries(questions).map(([key, q]) => [key, 'KEEP' in q.criteria ? 'KEEP' : Object.keys(q.criteria)[0]]));
+  });
+  await h.send({ type: 'apply', plan: result });
+  assert.equal(h.messages.at(-2).type, 'done');
+  assert.equal(slot.children[0], existing); assert.equal(slot.children[1], button);
+  // A subsequent snapshot sees the actual full slot, not the main's empty one.
+  h.page.selection = [slot]; await h.send({ type: 'prepare', libraryId: 'buttons' });
+  const full = h.messages.findLast(m => m.type === 'prepared').input;
+  assert.equal(full.context.nodes[0].contentSlot.capacity, 0);
+});
+
 test('quick insertion also supports a selected native frame without replacing its children', async () => {
   const h = harness(); await h.send({ type: 'init' });
   const parent = h.frame(); h.page.appendChild(parent); h.page.selection = [parent];
@@ -346,6 +418,29 @@ test('INSTANCE_SWAP outside catalog fails before setProperties and cleans partia
   await h.send({ type: 'apply', plan: { mode: 'create', tree: { type: 'component', componentId: 'card', width: 'KEEP', height: 'KEEP', properties: { 'Icon#1': 'unknown-key' } } } });
   assert.equal(called, false); assert.equal(h.page.children.length, 0);
   assert.match(h.messages.at(-1).error, /spoza katalogu/);
+});
+
+test('editing INSTANCE_SWAP resolves key to node ID and rolls back the old ID on later failure', async () => {
+  for (const fail of [false, true]) {
+    const h = harness(); await h.send({ type: 'init' });
+    const { instance, component } = h.cardWithContent();
+    component.componentPropertyDefinitions = { 'Icon#1': { type: 'INSTANCE_SWAP' }, 'Show#2': { type: 'BOOLEAN' } };
+    instance.componentProperties = { 'Icon#1': { type: 'INSTANCE_SWAP', value: 'old-node-id' }, 'Show#2': { type: 'BOOLEAN', value: false } };
+    const bell = h.frame('COMPONENT'); bell.componentPropertyDefinitions = {};
+    instance.setProperties = props => {
+      if (fail && props['Show#2'] === true) throw new Error('Figma write failed');
+      for (const [key, value] of Object.entries(props)) instance.componentProperties[key].value = value;
+    };
+    await h.send({ type: 'library', fileKey: 'icons', components: [{ id: 'bell', key: 'bell-key', nodeId: bell.id, name: 'Icons / Alarm' }] });
+    h.page.selection = [instance]; await h.send({ type: 'pin' });
+    await h.send({ type: 'prepare', libraryId: 'icons' });
+    await h.send({ type: 'apply', plan: { mode: 'edit', targetId: instance.id, operations: [
+      { id: instance.id, field: 'property:Icon#1', value: 'bell-key' }, { id: instance.id, field: 'property:Show#2', value: true }
+    ] } });
+    assert.equal(instance.componentProperties['Icon#1'].value, fail ? 'old-node-id' : bell.id);
+    assert.equal(instance.componentProperties['Show#2'].value, !fail);
+    assert.equal(fail ? h.messages.at(-1).type : h.messages.at(-2).type, fail ? 'error' : 'done');
+  }
 });
 
 test('KEEP inherits source Fill/Hug after instantiation, slot insertion and property resets; explicit sizing wins', async () => {

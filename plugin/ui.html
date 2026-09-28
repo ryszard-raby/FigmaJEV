@@ -7,7 +7,6 @@
 </style>
 <main>
   <header><h1>Figma<span>Jev</span></h1><span class="badge">JEV 1.13</span></header>
-  <div class="eyebrow">Z pomysłu do komponentu</div>
   <div class="selection" id="selection"><span id="selected">Brak zaznaczenia — tworzenie layoutu ze struktury</span></div>
   <form id="form">
     <div id="editFields" hidden>
@@ -50,6 +49,7 @@ const send = (type, data = {}) => parent.postMessage({ pluginMessage: { type, ..
 let busy = false, hasSelection = false, selectionCount = 0, libraries = [];
 let libraryAckTimer;
 let planWarnings = [];
+let planHasChanges = true;
 const settingsDirty = { token: false, libraryUrl: false };
 for (const [id, key] of [['token', 'token'], ['fileKey', 'libraryUrl']]) {
   $(id).oninput = () => {
@@ -155,15 +155,22 @@ window.onmessage = async event => {
   if (m.type === 'progress') status(m.text);
   if (m.type === 'prepared') {
     planWarnings = [];
+    planHasChanges = true;
     status('JEV podejmuje decyzje…');
     try {
       const plan = await api('/plan', m.input);
       planWarnings = plan.warnings || [];
+      planHasChanges = !(plan.mode === 'edit' && Array.isArray(plan.operations) && plan.operations.length === 0);
       $('tree').textContent = JSON.stringify(plan, null, 2);
       $('result').hidden = false; status('Stosowanie zmian w Figmie…'); send('apply', { plan });
     } catch (error) { fail(error); }
   }
-  if (m.type === 'done') { setBusy(false); status(['Gotowe. Zmianę możesz cofnąć w Figmie.', ...planWarnings, ...(m.warnings || [])].join('\n')); }
+  if (m.type === 'done') {
+    setBusy(false);
+    const messages = [...planWarnings, ...(m.warnings || [])];
+    if (planHasChanges) messages.unshift('Gotowe. Zmianę możesz cofnąć w Figmie.');
+    status(messages.length ? messages.join('\n') : 'Nie wprowadzono zmian.');
+  }
   if (m.type === 'error') fail(new Error(m.error));
 };
 send('init');

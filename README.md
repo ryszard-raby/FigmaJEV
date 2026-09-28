@@ -71,7 +71,7 @@ Zaznacz jeden element i wpisz np. `dodaj przycisk`, `usuń przycisk` lub `zrób 
 
 JEV wybiera jedną operację: dodanie jednego komponentu do Content lub edytowalnej ramki, usunięcie jednej edytowalnej warstwy albo zmianę właściwości istniejących elementów. Podaj treść w cudzysłowie, jeśli chcesz zmienić tekst. Zmiana rozmiaru tekstu obsługuje warstwy o jednolitym fontSize. To ograniczony tryb szybkich edycji, bez rekurencyjnego planowania i historii rozmowy.
 
-Zmiany dotyczą zaznaczonego poddrzewa. Nie można usunąć samego korzenia ani stałych warstw wewnętrznych instancji. Dodawanie zachowuje istniejącą zawartość. Snapshot chroni przed zastosowaniem odpowiedzi po równoległej zmianie dokumentu. Wynik można cofnąć przez Undo Figmy. Złożone zmiany struktury wykonuj przez edycję JSON-a i utworzenie nowego layoutu.
+Zmiany dotyczą zaznaczonego poddrzewa. „Usuń element” wskazuje samo zaznaczenie; polecenie dotyczące konkretnego dziecka może wskazać potomka. Nie można usunąć stałych warstw wewnętrznych instancji, a usunięcie dziecka slotu respektuje minimum dzieci z DS. Dodawanie zachowuje istniejącą zawartość. Snapshot chroni przed zastosowaniem odpowiedzi po równoległej zmianie dokumentu. Wynik można cofnąć przez Undo Figmy. Złożone zmiany struktury wykonuj przez edycję JSON-a i utworzenie nowego layoutu.
 
 ## Logi i testy
 

@@ -9,8 +9,13 @@ export async function plan(input, decide) {
 }
 
 async function editSelected(input, decide) {
-  const { context, prompt } = input;
-  if (typeof prompt !== 'string' || !prompt.trim() || prompt.length > 4000 || !Array.isArray(context.nodes) || !context.nodes.length || context.nodes.length > 80) throw new Error('Wpisz prompt i zaznacz element (maks. 80 warstw).');
+  const { context: snapshot, prompt } = input;
+  if (typeof prompt !== 'string' || !prompt.trim() || prompt.length > 4000 || !Array.isArray(snapshot.nodes) || !snapshot.nodes.length || snapshot.nodes.length > 80) throw new Error('Wpisz prompt i zaznacz element (maks. 80 warstw).');
+  // Keep the plugin's full snapshot intact for stale-state validation. Only the
+  // model-facing context is filtered; match actual types, never layer names.
+  if (snapshot.nodes.find(n => n.id === snapshot.targetId)?.type === 'VECTOR') throw new Error('Zaznacz komponent lub kontener zamiast wewnętrznej warstwy wektorowej.');
+  const context = { targetId: snapshot.targetId, nodes: snapshot.nodes.filter(n => n.type !== 'VECTOR') };
+  if (!context.nodes.length) throw new Error('Brak elementów UI do edycji po odfiltrowaniu wektorów.');
   const target = context.nodes.find(n => n.id === context.targetId) || context.nodes[0];
   const state = { prompt, context };
   const { action } = await ask({ prompt, target: { id: target.id, name: target.name, type: target.type } }, { action: choice('Choose the requested quick edit. Resizing or changing an existing component means properties, not insertion. Do not build a recursive layout. Only explicit additions/removals are allowed.', { properties: 'Change existing properties', insert: 'Add one component', remove: 'Remove one existing element' }) }, decide);
@@ -28,9 +33,10 @@ async function editSelected(input, decide) {
     return { mode: 'insert', exactTree: true, targetId: context.targetId, parentId: answer.target, children: [result.tree] };
   }
   if (action === 'remove') {
-    const removable = context.nodes.filter(n => n.removable && n.id !== context.targetId);
-    if (!removable.length) throw new Error('Brak warstw, które można usunąć z zaznaczonego elementu.');
-    const { target } = await ask(state, { target: choice('Choose exactly the element explicitly requested for removal. none cancels.', { none: 'No matching element; preserve all', ...Object.fromEntries(removable.map(n => [n.id, `${n.name}, ${n.type}, parent ${n.parentId}`])) }) }, decide);
+    const removable = context.nodes.filter(n => n.removable);
+    if (!removable.length) throw new Error('Zaznaczona warstwa i jej dzieci nie mogą zostać usunięte. Wybierz całą instancję lub element w edytowalnym kontenerze.');
+    const removalContext = { targetId: context.targetId, nodes: context.nodes.map(({ id, name, type, parentId, text, removable }) => ({ id, name, type, parentId, ...(text !== undefined ? { text } : {}), removable })) };
+    const { target } = await ask({ prompt, context: removalContext }, { target: choice('Choose exactly the element explicitly requested for removal. A generic request such as "usuń element" or "delete this" means the selected root (context.targetId), not an arbitrary child. Choose a descendant only when the prompt explicitly identifies it. none cancels if the requested target is not removable.', { none: 'No matching element; preserve all', ...Object.fromEntries(removable.map(n => [n.id, `${n.id === context.targetId ? '[SELECTED] ' : ''}${n.name}, ${n.type}, parent ${n.parentId}`])) }) }, decide);
     return { mode: 'remove', targetId: context.targetId, nodeId: target === 'none' ? null : target };
   }
   const questions = {}; const bindings = [];
@@ -66,10 +72,16 @@ async function editSelected(input, decide) {
       if (def.type === 'VARIANT' && def.options?.length) add(node, `property:${name}`, Object.fromEntries(def.options.map((v, i) => [`v${i}`, v])), v => def.options[Number(v.slice(1))]);
       if (def.type === 'BOOLEAN') add(node, `property:${name}`, { true: 'true', false: 'false' }, v => v === 'true');
       if (def.type === 'TEXT' && copy !== undefined) add(node, `property:${name}`, { literal: copy }, () => copy);
+      if (def.type === 'INSTANCE_SWAP') {
+        // Only expose compact catalog labels for properties that can swap an
+        // instance. Model maps semantic intent (e.g. dzwonek -> Alarm) to a key.
+        add(node, `property:${name}`, Object.fromEntries(input.catalog.filter(c => c.key).map(c => [c.key, `${c.name}${c.description ? `: ${c.description}` : ''}`])));
+      }
     }
   }
   if (bindings.length > 240) throw new Error('Za dużo właściwości: wybierz mniejszy element.');
   const editContext = { targetId: context.targetId, nodes: editableNodes.map(node => node.type === 'INSTANCE' ? { id: node.id, name: node.name, type: node.type, properties: node.properties } : node) };
-  const answers = await ask({ prompt, context: editContext, sizingRule: 'For instances use exposed component properties only. Interpret requests such as enlarge the button through the available Size variant values (for example Small to Default). Do not resize internal layers. Keep unrelated properties unchanged.' }, questions, decide);
-  return { mode: 'edit', targetId: context.targetId, operations: bindings.filter(b => answers[b.key] !== 'keep').map(b => ({ id: b.id, field: b.field, value: b.decode(answers[b.key]) })) };
+  const answers = await ask({ prompt, context: editContext, sizingRule: 'For instances use exposed component properties only. Interpret requests such as enlarge the button through the available Size variant values (for example Small to Default). For icon replacement use INSTANCE_SWAP candidates, matching names and descriptions semantically across languages. Enable its exposed visibility boolean if needed to display the requested icon. Keep unrelated properties unchanged; if no matching component exists select keep. Do not resize internal layers.' }, questions, decide);
+  const operations = bindings.filter(b => answers[b.key] !== 'keep').map(b => ({ id: b.id, field: b.field, value: b.decode(answers[b.key]) }));
+  return { mode: 'edit', targetId: context.targetId, operations, ...(!operations.length ? { warnings: ['JEV nie wybrał żadnej zmiany. Sprawdź dostępne właściwości elementu i komponenty wybranej biblioteki.'] } : {}) };
 }

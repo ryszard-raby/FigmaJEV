@@ -97,6 +97,23 @@ async function scan() {
 async function snapshot(root: SceneNode): Promise<Snapshot> {
   const nodes: any[] = [];
   const slots = new Map<string, ContentSlot>();
+  function registerSlots(instance: InstanceNode, main: ComponentNode) {
+    for (const descriptor of contentSlots(main)) {
+      const slot = resolveSlot(instance, descriptor.path);
+      slots.set(slot.id, { ...descriptor, width: slot.layoutMode === 'NONE' ? 'HUG' : slot.layoutSizingHorizontal, height: slot.layoutMode === 'NONE' ? 'HUG' : slot.layoutSizingVertical,
+        existingChildren: slot.children.map(child => ({ name: child.name, type: child.type })),
+        capacity: Math.max(0, (descriptor.settings?.maxChildren ?? slot.children.length + 4) - slot.children.length) });
+    }
+  }
+  // Selection may start at Content (or an internal frame), bypassing the
+  // instance visitor. Read slot definitions from its nearest owning instance
+  // without adding that instance or its other descendants to the edit scope.
+  let owner: BaseNode | null = root.parent;
+  while (owner && owner.type !== 'INSTANCE') owner = owner.parent;
+  if (owner?.type === 'INSTANCE') {
+    const main = await owner.getMainComponentAsync();
+    if (main) registerSlots(owner, main);
+  }
   async function visit(n: SceneNode, parentId?: string) {
     if (nodes.length >= 80) throw new Error('Wybierz mniejszy element: limit kontekstu to 80 warstw.');
     const data: any = { id: n.id, name: n.name, type: n.type, parentId, visible: n.visible, width: n.width, height: n.height };
@@ -104,19 +121,14 @@ async function snapshot(root: SceneNode): Promise<Snapshot> {
     if ('layoutMode' in n && n.layoutMode !== 'NONE') data.layout = { direction: n.layoutMode };
     if ('layoutSizingHorizontal' in n) data.sizing = Object.fromEntries((['width', 'height'] as const).map(axis => [axis, { value: n[axis === 'width' ? 'layoutSizingHorizontal' : 'layoutSizingVertical'], allowed: sizingOptions(n, axis) }]));
     if (n.type === 'TEXT') { data.text = n.characters; data.fontSize = n.fontSize === figma.mixed ? null : n.fontSize; }
-    data.removable = n.id !== root.id && editableParent(n.parent);
+    data.removable = editableParent(n.parent);
     data.insertable = n.type === 'FRAME' && editableParent(n);
     if (n.type === 'INSTANCE') {
       const main = await n.getMainComponentAsync();
       const definitions = main?.parent?.type === 'COMPONENT_SET' ? main.parent.componentPropertyDefinitions : main?.componentPropertyDefinitions;
       data.properties = Object.fromEntries(Object.entries(n.componentProperties).map(([key, value]) => [key, { ...value, options: definitions?.[key]?.variantOptions }]));
       data.componentKey = main?.key;
-      if (main) for (const descriptor of contentSlots(main)) {
-        const slot = resolveSlot(n, descriptor.path);
-        slots.set(slot.id, { ...descriptor, width: slot.layoutMode === 'NONE' ? 'HUG' : slot.layoutSizingHorizontal, height: slot.layoutMode === 'NONE' ? 'HUG' : slot.layoutSizingVertical,
-          existingChildren: slot.children.map(child => ({ name: child.name, type: child.type })),
-          capacity: Math.max(0, (descriptor.settings?.maxChildren ?? slot.children.length + 4) - slot.children.length) });
-      }
+      if (main) registerSlots(n, main);
     }
     nodes.push(data);
     if ('children' in n) for (const child of n.children) await visit(child, n.id);
@@ -142,6 +154,7 @@ function setSizing(n: SceneNode, tree: Tree) {
 
 function editableParent(parent: BaseNode | null): boolean {
   if (!parent) return false;
+  if (parent.type === 'PAGE' || parent.type === 'SECTION') return true;
   if (parent.type === 'SLOT') return true;
   if (parent.type !== 'FRAME' && parent.type !== 'GROUP') return false;
   let ancestor: BaseNode | null = parent;
@@ -284,12 +297,26 @@ async function apply(plan: Plan) {
     if (plan.mode === 'remove') {
       if (plan.nodeId !== null) {
         const target = await figma.getNodeByIdAsync(plan.nodeId);
-        if (!before.nodes.some(n => n.id === plan.nodeId && n.removable) || !target || target.id === root.id || !editableParent(target.parent)) throw new Error('Nie można usunąć tej warstwy z wybranego elementu.');
+        if (!before.nodes.some(n => n.id === plan.nodeId && n.removable) || !target || !editableParent(target.parent)) throw new Error('Nie można usunąć tej warstwy z wybranego elementu.');
         if (target.parent?.type === 'SLOT') {
-          const descriptor = before.nodes.find(n => n.id === target.parent?.id)?.contentSlot;
+          let descriptor = before.nodes.find(n => n.id === target.parent?.id)?.contentSlot;
+          // A selected slot child has its parent outside the snapshot. Resolve
+          // the containing instance's slot definition before deleting it.
+          if (!descriptor) {
+            const slot = target.parent;
+            let owner: BaseNode | null = slot.parent;
+            while (owner && owner.type !== 'INSTANCE') owner = owner.parent;
+            if (owner?.type !== 'INSTANCE') throw new Error('Nie można odczytać ograniczeń nadrzędnego slotu.');
+            const main = await owner.getMainComponentAsync();
+            if (!main) throw new Error('Nie można odczytać komponentu nadrzędnego slotu.');
+            const instance = owner;
+            descriptor = contentSlots(main).find(s => resolveSlot(instance, s.path).id === slot.id);
+            if (!descriptor) throw new Error('Nie można odczytać ograniczeń nadrzędnego slotu.');
+          }
           if (target.parent.children.length - 1 < (descriptor?.settings?.minChildren ?? 0)) throw new Error('Usunięcie naruszyłoby minimalną liczbę dzieci slotu.');
         }
         target.remove();
+        figma.currentPage.selection = figma.currentPage.selection.filter(n => !n.removed);
       }
       figma.commitUndo(); pending = null; return warnings;
     }
@@ -340,8 +367,16 @@ async function apply(plan: Plan) {
         const name = op.field.slice(9); const old = n.componentProperties[name]?.value;
         const def = before.nodes.find(x => x.id === n.id).properties?.[name];
         if (old === undefined || !def || (def.type === 'BOOLEAN' ? typeof op.value !== 'boolean' : typeof op.value !== 'string') || (def.type === 'VARIANT' && !def.options?.includes(op.value))) throw new Error('Nieprawidłowa właściwość instancji.');
+        let value = op.value;
+        if (def.type === 'INSTANCE_SWAP') {
+          const entry = pending.catalog.find(c => c.key === value);
+          if (!entry) throw new Error(`${n.name}: ${name} wskazuje komponent spoza wybranej biblioteki.`);
+          const local = entry.nodeId ? await figma.getNodeByIdAsync(entry.nodeId) : null;
+          const component = local?.type === 'COMPONENT' ? local : await figma.importComponentByKeyAsync(entry.key);
+          value = component.id;
+        }
         for (const text of n.findAllWithCriteria({ types: ['TEXT'] })) for (const font of text.getRangeAllFontNames(0, text.characters.length)) await figma.loadFontAsync(font);
-        actions.push({ apply: () => n.setProperties({ [name]: op.value }), undo: () => n.setProperties({ [name]: old }) });
+        actions.push({ apply: () => n.setProperties({ [name]: value }), undo: () => n.setProperties({ [name]: old }) });
       } else throw new Error('Nieobsługiwana operacja edycji.');
     }
     const done: typeof actions = [];
