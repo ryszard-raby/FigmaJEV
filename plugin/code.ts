@@ -1,6 +1,7 @@
 type ContentSlot = { path: number[]; name: string; width: string; height: string; capacity: number; existingChildren?: { name: string; type: string }[]; settings?: SlotSettings; preferredValues?: InstanceSwapPreferredValue[] };
 type CatalogItem = { id: string; key: string; nodeId?: string; name: string; description: string; defaultSizing?: { width: string; height: string }; slots?: ContentSlot[]; properties?: ComponentPropertyDefinitions; textTargets?: { path: number[]; name: string }[] };
 type Library = { id: string; name: string; components: CatalogItem[] };
+const sortComponents = (components: CatalogItem[]) => [...components].sort((a, b) => a.name.localeCompare(b.name, 'pl', { sensitivity: 'base', numeric: true }));
 // Same input limits as server/compact-tree.mjs; renderer also counts the host.
 const MAX_TREE_NODES = 256;
 const MAX_TREE_LEVELS = 32;
@@ -90,7 +91,7 @@ async function scan() {
     }
   }
   libraries = libraries.filter(l => l.id !== 'local' && l.id !== 'used');
-  libraries.unshift({ id: 'local', name: `Ten plik (${local.size})`, components: [...local.values()] }, { id: 'used', name: `Użyte komponenty z bibliotek (${remote.size})`, components: [...remote.values()] });
+  libraries.unshift({ id: 'local', name: `Ten plik (${local.size})`, components: sortComponents([...local.values()]) }, { id: 'used', name: `Użyte komponenty z bibliotek (${remote.size})`, components: sortComponents([...remote.values()]) });
   send('libraries', { libraries });
 }
 
@@ -411,7 +412,7 @@ figma.ui.onmessage = async (message: any) => {
 
     if (message.type === 'library') {
       if (active) throw new Error('Zakończ generowanie przed dodaniem biblioteki.');
-      const lib: Library = { id: message.fileKey, name: `Biblioteka ${message.fileKey}`, components: message.components };
+      const lib: Library = { id: message.fileKey, name: `Biblioteka ${message.fileKey}`, components: sortComponents(message.components) };
       libraries = libraries.filter(l => l.id !== lib.id); libraries.push(lib); send('libraries', { libraries, selected: lib.id }); return;
     }
     if (message.type === 'prepare' && !active) {

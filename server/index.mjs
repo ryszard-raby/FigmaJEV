@@ -1,7 +1,6 @@
 import http from 'node:http';
 import { timingSafeEqual } from 'node:crypto';
-import { createJev } from './jev.mjs';
-import { plan } from './planner.mjs';
+import { loggedPlan } from './logged-plan.mjs';
 
 const token = process.env.FIGMAJEV_TOKEN;
 if (!token || token.length < 20 || token === 'replace-with-a-long-random-token') throw new Error('Ustaw własny FIGMAJEV_TOKEN (min. 20 znaków) w .env.');
@@ -39,11 +38,10 @@ const server = http.createServer(async (req, res) => {
       const data = await response.json();
       if (!Array.isArray(data.meta?.components)) throw new Error('Nieprawidłowa odpowiedź biblioteki.');
       if (data.meta.components.length > 180) throw new Error('Biblioteka ma ponad 180 wariantów. Użyj mniejszej biblioteki lub instancji w pliku.');
-      send(200, { components: data.meta.components.map(c => ({ id: c.key, key: c.key, name: [c.containing_frame?.name, c.name].filter(Boolean).join(' / '), description: c.description || '' })) });
+      send(200, { components: data.meta.components.map(c => ({ id: c.key, key: c.key, name: [c.containing_frame?.name, c.name].filter(Boolean).join(' / '), description: c.description || '' })).sort((a, b) => a.name.localeCompare(b.name, 'pl', { sensitivity: 'base', numeric: true })) });
     } else {
       const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(180000)]);
-      const decide = createJev(process.env.DEFAPI_API_KEY, fetch, signal);
-      send(200, await plan(input, decide));
+      send(200, await loggedPlan(input, { apiKey: process.env.DEFAPI_API_KEY, signal }));
     }
   } catch (error) { send(400, { error: error instanceof Error ? error.message : 'Błąd serwera.' }); }
   finally { busy = false; }

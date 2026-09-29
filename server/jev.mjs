@@ -3,9 +3,9 @@ import { dirname, resolve } from 'node:path';
 
 const logPath = resolve('logs/defapi.log');
 
-async function logDefApi(direction, payload) {
+export async function logDefApi(direction, payload, metadata = {}) {
   await mkdir(dirname(logPath), { recursive: true });
-  await appendFile(logPath, `${JSON.stringify({ timestamp: new Date().toISOString(), direction, payload })}\n`);
+  await appendFile(logPath, `${JSON.stringify({ timestamp: new Date().toISOString(), direction, ...metadata, payload })}\n`);
 }
 
 export function choice(instructions, criteria) {
@@ -24,11 +24,13 @@ export function validateAnswers(questions, answers) {
   return result;
 }
 
-export function createJev(apiKey, fetcher = fetch, signal) {
+export function createJev(apiKey, fetcher = fetch, signal, trace = {}, logger = logDefApi) {
   async function requestBatch(state, questions) {
     if (!apiKey) throw new Error('Ustaw DEFAPI_API_KEY w pliku .env serwera.');
+    trace.requestCount = (trace.requestCount || 0) + 1;
+    const metadata = { promptId: trace.promptId, requestNumber: trace.requestCount };
     const request = { model: 'typesafe/jev-1.13', state, questions };
-    await logDefApi('request', request);
+    await logger('request', request, metadata);
     console.log(`[DefAPI] request zapisany w ${logPath}`);
     const response = await fetcher('https://api.defapi.org/api/v1/decisions', {
       method: 'POST', signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(30000)]) : AbortSignal.timeout(30000),
@@ -38,11 +40,11 @@ export function createJev(apiKey, fetcher = fetch, signal) {
     if (!response.ok) {
       const body = await response.text();
       const detail = body.split(apiKey).join('[REDACTED]').slice(0, 2000);
-      await logDefApi('error', { status: response.status, detail });
+      await logger('error', { status: response.status, detail }, metadata);
       throw new Error(`DefAPI: HTTP ${response.status}. ${detail || 'Serwer nie podał szczegółów.'}`);
     }
     const data = await response.json();
-    await logDefApi('response', data);
+    await logger('response', data, metadata);
     console.log(`[DefAPI] response zapisany w ${logPath}`);
     return validateAnswers(questions, data.answers);
   }
