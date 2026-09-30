@@ -19,7 +19,7 @@ test('DefAPI endpoint, auth, model and typed response contract', async () => {
     assert.equal(req.headers.Authorization, 'Bearer test-key');
     assert.equal(JSON.parse(req.body).model, 'typesafe/jev-1.13');
     return { ok: true, json: async () => ({ answers: { a: { type: 'choice', choice: 'yes' } } }) };
-  });
+  }, undefined, {}, async () => {});
   assert.deepEqual(await decide({}, { a: { criteria: { yes: 'Yes' } } }), { a: 'yes' });
 });
 test('rejects missing or out-of-schema model answers', () => {

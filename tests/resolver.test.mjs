@@ -270,14 +270,37 @@ test('insertion tells JEV to group matching siblings instead of nesting inside t
     if (questions.action) return { action: 'insert' };
     if (questions.component) return { component: 'product' };
     assert.equal(state.selected, 'Layout');
-    assert.equal(questions.target.criteria.products, 'Layout / Container / Content; direct children: ["Product"]');
-    assert.equal(questions.target.criteria.inner, 'Layout / Container / Product / Content; direct children: ["Text"]');
-    assert.match(questions.target.instructions, /first prefer a slot already containing components of the same kind/);
-    assert.match(questions.target.instructions, /add beside them as a sibling, not inside/);
+    assert.equal(questions.target.criteria.products, 'INSIDE Container; Layout / Container / Content; direct children: ["Product"]');
+    assert.equal(questions.target.criteria.inner, 'INSIDE Product; Layout / Container / Product / Content; direct children: ["Text"]');
+    assert.match(questions.target.instructions, /prefer a group of the same kind/);
+    assert.match(questions.target.instructions, /add as a sibling, not inside/);
     return { target: 'products' };
   });
   assert.equal(calls, 3);
   assert.equal(result.parentId, 'products');
+});
+
+test('insertion distinguishes inside Card from beside Card and sends component placement description', async () => {
+  const context = { targetId: 'host', nodes: [
+    { id: 'host', name: 'FigmaJev', type: 'FRAME' },
+    { id: 'layout', name: 'Layout', type: 'INSTANCE', parentId: 'host' },
+    { id: 'outside', name: 'Content', type: 'SLOT', parentId: 'layout', contentSlot: { capacity: 4, existingChildren: [{ name: 'Card', type: 'INSTANCE' }] } },
+    { id: 'card', name: 'Card', type: 'INSTANCE', parentId: 'outside' },
+    { id: 'inside', name: 'Content', type: 'SLOT', parentId: 'card', contentSlot: { capacity: 4, existingChildren: [] } }
+  ] };
+  let calls = 0;
+  const result = await plan({ prompt: 'dodaj Container', context, catalog: [{ id: 'container', name: 'Container / Vertical', description: 'Kontener powinien być umieszczony wewnątrz Card' }] }, async (state, questions) => {
+    calls++;
+    if (questions.action) return { action: 'insert' };
+    if (questions.component) return { component: 'container' };
+    assert.equal(state.componentDescription, 'Kontener powinien być umieszczony wewnątrz Card');
+    assert.match(questions.target.criteria.outside, /^INSIDE Layout;/);
+    assert.match(questions.target.criteria.inside, /^INSIDE Card;/);
+    assert.match(questions.target.instructions, /BESIDE Card, not inside it/);
+    return { target: 'inside' };
+  });
+  assert.equal(calls, 3);
+  assert.equal(result.parentId, 'inside');
 });
 
 test('insertion uses only slots and never sends snapshot, properties, geometry or sibling internals', async () => {
@@ -293,7 +316,7 @@ test('insertion uses only slots and never sends snapshot, properties, geometry o
     if ('action' in questions) return { action: 'insert' };
     if ('component' in questions) { assert.deepEqual(state, { prompt: 'Dodaj button' }); return { component: 'primary' }; }
     assert.deepEqual(Object.keys(questions.target.criteria), ['slot']);
-    assert.equal(questions.target.criteria.slot, 'Card / Content');
+    assert.equal(questions.target.criteria.slot, 'INSIDE Card; Card / Content; direct children: []');
     return { target: 'slot' };
   });
   assert.equal(calls.length, 3);

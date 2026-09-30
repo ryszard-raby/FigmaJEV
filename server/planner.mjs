@@ -66,13 +66,21 @@ async function editSelected(input, decide) {
     const destinations = Object.fromEntries(slots.map(n => {
       const children = n.contentSlot.existingChildren || context.nodes.filter(child => child.parentId === n.id);
       const names = [...new Set(children.filter(child => child.type !== 'VECTOR').map(child => child.name))];
+      let owner = context.nodes.find(node => node.id === n.parentId);
+      const seen = new Set();
+      while (owner && owner.type !== 'INSTANCE' && owner.id !== context.targetId && !seen.has(owner.id)) {
+        seen.add(owner.id);
+        owner = context.nodes.find(node => node.id === owner.parentId);
+      }
+      if (!owner && n.id === context.targetId) owner = context.parent;
+      const ownerName = n === context.parent ? n.ownerName : owner?.name;
       const location = n === context.parent
         ? `[PARENT OF SELECTED — adds a sibling] ${[n.ownerName, n.name].filter(Boolean).join(' / ')}`
         : `${n.id === context.targetId ? '[SELECTED] ' : ''}${pathLabel(n, context.nodes, context.targetId)}`;
-      return [n.id, `${location}${names.length ? `; direct children: ${JSON.stringify(names)}` : ''}`];
+      return [n.id, `${ownerName ? `INSIDE ${ownerName}; ` : ''}${location}; direct children: ${JSON.stringify(names)}`];
     }));
-    const { target: parentId } = await ask({ prompt, component: selected.name, selected: target.name }, {
-      target: choice('Choose destination slot. Honor an explicitly requested destination or selected slot. "Add another" of the selected kind means its parent slot: add a sibling. Otherwise first prefer a slot already containing components of the same kind: add beside them as a sibling, not inside an existing component of that kind. Direct children lists identify existing siblings; names in a path identify ancestors, not siblings. If no such group exists, prefer placing new components inside a Card: choose its Content or an appropriate slot within it. If no Card slot is available, prefer Content of the selected element, then the nearest suitable slot. Only choose from the offered slots; do not create a Card or change the hierarchy. The component being added is not itself the destination.', destinations)
+    const { target: parentId } = await ask({ prompt, component: selected.name, ...(selected.description ? { componentDescription: selected.description } : {}), selected: target.name }, {
+      target: choice('Choose where the new component will be inserted. INSIDE names the slot owner. A slot listing Card among its children inserts BESIDE Card, not inside it. Priority: explicit destination or selected slot; "add another" of the selected kind goes to its parent slot; otherwise follow componentDescription placement and prefer INSIDE Card (or a container within Card) over Layout. Within that destination, prefer a group of the same kind and add as a sibling, not inside one of those elements. If no suitable Card exists, use the nearest suitable slot. Selection is the search scope, not automatically the destination. Choose only an offered slot; do not create wrappers.', destinations)
     }, decide);
     // No recursive resolution or size/property survey after the two choices.
     return { mode: 'insert', exactTree: true, targetId: context.targetId, parentId, children: [{ type: 'component', componentId: selected.id, width: 'KEEP', height: 'KEEP' }] };

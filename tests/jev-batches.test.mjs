@@ -13,7 +13,7 @@ test('client sends all requested decisions once without splitting', async () => 
     assert.equal(body.state.catalog.length, 146);
     assert.equal(body.state.inputTree, undefined);
     return { ok: true, json: async () => ({ answers: Object.fromEntries(Object.keys(body.questions).map(key => [key, { type: 'choice', choice: 'KEEP' }])) }) };
-  });
+  }, undefined, {}, async () => {});
   const result = await jev(state, questions);
   assert.equal(calls, 1); assert.equal(Object.keys(result).length, 146);
   assert.equal(result.q145, 'KEEP');
@@ -21,7 +21,7 @@ test('client sends all requested decisions once without splitting', async () => 
 
 test('provider error details are reported without retrying or exposing API key', async () => {
   let calls = 0;
-  const jev = createJev('fake-secret', async () => { calls++; return { ok: false, status: 400, text: async () => 'Too many questions: fake-secret' }; });
+  const jev = createJev('fake-secret', async () => { calls++; return { ok: false, status: 400, text: async () => 'Too many questions: fake-secret' }; }, undefined, {}, async () => {});
   await assert.rejects(jev({}, { q: choice('Choose', { yes: 'Yes' }) }), e => e.message.includes('Too many questions') && !e.message.includes('fake-secret'));
   assert.equal(calls, 1);
 });

@@ -76,7 +76,7 @@ Zmiany dotyczą zaznaczonego poddrzewa. „Usuń element” wskazuje samo zaznac
 
 ## Logi i testy
 
-Terminal backendu pokazuje `INPUT TREE`, `REQUIRED COMPONENTS`, `JEV REQUEST`, `JEV RESPONSE`, `RESOLVED TREE`. Konsola wtyczki pokazuje `RENDER RESULT` z powodzeniem lub błędem. Panel „Resolved tree / wynik edycji” pokazuje odpowiedź backendu. Pełne żądania i odpowiedzi klienta trafiają też jako JSONL do `logs/defapi.log`.
+Terminal backendu pokazuje `INPUT TREE`, `REQUIRED COMPONENTS`, `JEV REQUEST`, `JEV RESPONSE`, `RESOLVED TREE`. Konsola wtyczki pokazuje `RENDER RESULT` z powodzeniem lub błędem. Panel „Resolved tree / wynik edycji” pokazuje odpowiedź backendu. Pełne żądania i odpowiedzi trafiają do nadpisywanych, formatowanych plików `logs/request-1.json`, `logs/response-1.json`, `logs/request-2.json`, `logs/response-2.json` itd. Numer to requestNumber w obrębie promptu; nie powstają pliki dla kolejnych UUID ani dat. `logs/prompt.json` zawiera ostatni prompt, `logs/summary.json` status i liczbę wywołań. Początek nowego promptu oznacza stare pary jako `not_called`, wysłanie żądania ustawia odpowiedź na `pending`, a błąd zapisuje się w tym samym `response-N.json`. Pliki pozostają na miejscu, więc można trzymać je otwarte w IDE. Równoległe starsze prompty nie nadpisują logów najnowszego. Historyczny `defapi.log` nie jest już uzupełniany.
 
 `npm test`, `npm run typecheck`, `npm run build`.
 
