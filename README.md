@@ -1,6 +1,6 @@
-﻿# FigmaJev
+# FigmaJev
 
-Lokalna wtyczka Figma Design: podajesz kompletne drzewo UI, JEV 1.13 wybiera komponenty i właściwości aktualnej biblioteki, a renderer tworzy instancje.
+Lokalna wtyczka Figma Design: podajesz kompletne drzewo UI, JEV 1.13 wybiera komponenty i warianty aktualnej biblioteki, a renderer tworzy instancje.
 
 ## Uruchomienie
 
@@ -38,29 +38,23 @@ Wklej kompletne drzewo w formacie `[componentName, properties?, ...children]`, a
 - Pierwsza pozycja to nazwa zbliżona do komponentu DS, np. Layout, Card, Input, Button, Text, Container.
 - Opcjonalny obiekt properties występuje bezpośrednio po nazwie. Wartości: string, number lub boolean. Są intencją dla JEV, a nie mapowaniem wariantów w rendererze.
 - Pozostałe pozycje to dzieci w kolejności renderowania. Dwa identyczne wpisy tworzą dwie instancje.
-- `text` zawiera dokładną treść. JEV wskazuje właściwość tekstową lub warstwę komponentu, która ją otrzyma. Inne ciągi properties też mogą być kandydatami dla właściwości TEXT, np. placeholder. Model nie generuje copy.
-- `width` / `height` mogą wyrażać intencję keep, hug lub fill. JEV wybiera konkretny tryb, preferując KEEP. Niepoprawna decyzja kończy się błędem, bez cichej korekty przez renderer.
+- `text` zawiera dokładną treść. Resolver kopiuje ją do jednoznacznej właściwości Label/Text, jedynej właściwości TEXT lub jednoznacznej warstwy tekstowej z katalogu. Przy niejednoznaczności podaj właściwą nazwę property, np. `Title` lub `Placeholder`. Jawne właściwości TEXT/BOOLEAN/INSTANCE_SWAP są kopiowane po nazwie (bez sufiksu `#…`); INSTANCE_SWAP wymaga klucza komponentu biblioteki. Intencje, np. importance/purpose/device, służą tylko do wyboru wariantu przez JEV.
+- `width` / `height`: keep, hug lub fill są wykonywane wprost ze struktury. Brak wartości oznacza KEEP. Nie ma pytań JEV o sizing.
 - Plugin nie blokuje zależności Hug/Fill między rodzicem i dziećmi. Przekazuje wybrany tryb bezpośrednio do Figmy, która może dostosować układ lub zwrócić błąd API.
-- Dla instancji KEEP dziedziczy tryb osi z komponentu źródłowego, odczytany przed `createInstance`. Renderer przywraca go po wstawieniu, properties i zawartości slotów; jawne HUG/FILL od JEV ma pierwszeństwo. Katalog udostępnia te tryby jako `defaultSizing`, a konsola loguje `COMPONENT SIZING`. Źródłowe FIXED pozostaje Fixed — nie zgadujemy Fill/Hug na podstawie nazwy komponentu. Dotyczy to wszystkich komponentów DS, nie natywnych prymitywów ani edycji istniejących instancji.
+- Dla instancji KEEP dziedziczy tryb osi z komponentu źródłowego, odczytany przed `createInstance`. Renderer przywraca go po wstawieniu, properties i zawartości slotów; jawne HUG/FILL ze struktury ma pierwszeństwo. Katalog udostępnia te tryby jako `defaultSizing`, a konsola loguje `COMPONENT SIZING`. Źródłowe FIXED pozostaje Fixed — nie zgadujemy Fill/Hug na podstawie nazwy komponentu. Dotyczy to wszystkich komponentów DS, nie natywnych prymitywów ani edycji istniejących instancji.
 - Limity: 256 elementów, 32 poziomy, 24 properties na element, 1000 znaków na wartość tekstową, 40 000 znaków wejściowego JSON-a. Jeden korzeń. Są to zabezpieczenia aplikacji przed nadmiernym rozmiarem żądania i pracy renderera, a nie limity Figmy. Jawne ograniczenia slotów z DS nadal obowiązują.
 
-Domyślne drzewo: `["Layout", ["Card", ["Container", ["Button"]]]]`. Komponenty biblioteczne przyjmujące dzieci muszą mieć natywny slot **Content**. Zwykła ramka o tej nazwie wewnątrz instancji nie wystarczy.
+Domyślne drzewo: `["Layout", {"device":"mobile"}, ["Card", ["Container", ["Button"]]]]`. Komponenty biblioteczne przyjmujące dzieci muszą mieć natywny slot **Content**. Zwykła ramka o tej nazwie wewnątrz instancji nie wystarczy.
 
 ## Resolution
 
-`UI → katalog + compact tree → parser → dwa etapy decyzji JEV → resolved tree → istniejący renderer`
+`UI → katalog + compact tree → parser → jeden wybór komponentów JEV → resolved tree → istniejący renderer`
 
-Małe etapy mieszczą się w jednym żądaniu. Większe klient dzieli na paczki do 24 pytań i 96 kB, ograniczając kontekst do bieżących elementów i przodków. To budżet aplikacji, nie deklarowany limit DefAPI. Odpowiedzi łączą się po ID pytań; struktura nie jest planowana ponownie. Log `JEV BATCH` pokazuje postęp. Przy HTTP 400 klient zapisuje i zwraca szczegóły odpowiedzi serwera, bez automatycznych ponowień.
+JEV otrzymuje listę wymaganych elementów z intencją oraz nazwy i opisy kandydatów z Design Systemu. Zwraca wyłącznie mapę ID elementu → ID komponentu/wariantu. Bez osobnego etapu properties, wyboru natywnych prymitywów, szukania zamienników i dzielenia pytań na paczki. Brak pasującego komponentu kończy się czytelnym błędem.
 
-`server/compact-tree.mjs` waliduje drzewo i przypisuje ścieżki. Identyczne poddrzewa rodzeństwa, wraz z properties i kontekstem rodzica, współdzielą decyzje. Nadal mają oddzielne ścieżki i powstają jako oddzielne elementy. Cache działa tylko w obrębie pojedynczego żądania.
+`server/compact-tree.mjs` waliduje drzewo. Identyczne poddrzewa rodzeństwa współdzielą decyzję, ale nadal tworzą oddzielne instancje. `server/resolver.mjs` wybiera komponenty przez istniejący klient JEV. `server/structure-render-plan.mjs` odtwarza hierarchię i kopiuje jawne wartości do kontraktu istniejącego renderera. Dzieci trafiają do jednoznacznego slotu Content (lub jedynego slotu); `slot` pozwala wskazać nazwę innego slotu. Wariant i nieokreślone właściwości pochodzą z wybranego komponentu DS.
 
-`server/resolver.mjs` używa istniejącego klienta `server/jev.mjs`:
-
-1. JEV wybiera rzeczywisty komponent/wariant dla każdej unikalnej pozycji. Dostaje nazwy, opisy i informacje o slotach. Dla Container oraz Text może jawnie wybrać natywny prymityw.
-2. JEV wybiera sizing, właściwości BOOLEAN/TEXT/INSTANCE_SWAP, docelowe warstwy tekstowe i slot. Dla natywnego kontenera wybiera kierunek i wyrównanie; dla tekstu treść i rozmiar fontu. Definicje właściwości dotyczą tylko wybranych komponentów. Wariant został już wybrany jako konkretny wpis katalogu.
-
-Backend składa resolved tree z tej samej hierarchii. Nie pyta o liczbę dzieci, następny element ani spełnione wymagania. Stary planner zachowano w `server/legacy-planner.mjs` wyłącznie jako referencję dla dawnych testów; aktywny endpoint go nie importuje. Brak integracji z GPT.
-
+Szybka edycja zaznaczenia zachowuje osobny flow. Stary planner jest wyłącznie referencją dla dawnych testów. Brak integracji z GPT.
 Renderer nadal używa instancji bibliotecznych, slotów, kontroli sizingu i rollback. W nowych instancjach podane dzieci **zastępują domyślną zawartość Content**; pozostałe sloty Content są opróżniane. Przykładowe dzieci biblioteki nie dublują drzewa. Ograniczenia slotów nadal obowiązują. Pozostałe wewnętrzne warstwy komponentu pozostają częścią biblioteki.
 
 Techniczna ramka FigmaJev pozostaje hostem: domyślnie width Hug i height Hug. Natywny korzeń Container łączy się z hostem; korzeń biblioteczny powstaje jako instancja wewnątrz niego. Natywne kontenery mają zerowy padding/gap, a tekst używa Inter Regular. Biblioteka zachowuje własne style. Obrazy muszą istnieć jako komponenty DS; nie ma generowania ani pobierania zdjęć.

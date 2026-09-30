@@ -1,4 +1,4 @@
-export const DEFAULT_STRUCTURE = ['Layout', ['Card', ['Container', ['Button']]]];
+export const DEFAULT_STRUCTURE = ['Layout', { device: 'mobile' }, ['Card', ['Container', ['Button']]]];
 export const MAX_TREE_NODES = 256;
 export const MAX_TREE_LEVELS = 32;
 

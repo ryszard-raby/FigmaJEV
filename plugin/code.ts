@@ -27,7 +27,11 @@ figma.on('selectionchange', () => { void selection(); });
 figma.on('currentpagechange', () => { if (!active) { pending = null; } void selection(); });
 
 function item(c: ComponentNode): CatalogItem {
-  return { id: c.key || c.id, key: c.key, nodeId: c.id, name: c.parent?.type === 'COMPONENT_SET' ? `${c.parent.name} / ${c.name}` : c.name, description: c.description, slots: contentSlots(c) };
+  return { id: c.key || c.id, key: c.key, nodeId: c.id, name: c.parent?.type === 'COMPONENT_SET' ? `${c.parent.name} / ${c.name}` : c.name, description: componentDescription(c), slots: contentSlots(c) };
+}
+
+function componentDescription(component: ComponentNode): string {
+  return component.description?.trim() || (component.parent?.type === 'COMPONENT_SET' ? component.parent.description?.trim() : '') || '';
 }
 
 function contentSlots(root: ComponentNode): ContentSlot[] {
@@ -67,6 +71,7 @@ async function enrichCatalog(catalog: CatalogItem[]) {
       const local = entry.nodeId ? await figma.getNodeByIdAsync(entry.nodeId) : null;
       const component = local?.type === 'COMPONENT' ? local : await figma.importComponentByKeyAsync(entry.key);
       entry.nodeId = component.id; entry.slots = contentSlots(component);
+      entry.description = componentDescription(component) || entry.description || '';
       entry.defaultSizing = { width: component.layoutSizingHorizontal, height: component.layoutSizingVertical };
       entry.properties = component.parent?.type === 'COMPONENT_SET' ? component.parent.componentPropertyDefinitions : component.componentPropertyDefinitions;
       entry.textTargets = [];
@@ -126,7 +131,7 @@ async function snapshot(root: SceneNode): Promise<Snapshot> {
     if (n.type === 'INSTANCE') {
       const main = await n.getMainComponentAsync();
       const definitions = main?.parent?.type === 'COMPONENT_SET' ? main.parent.componentPropertyDefinitions : main?.componentPropertyDefinitions;
-      data.description = main?.description || (main?.parent?.type === 'COMPONENT_SET' ? main.parent.description : '') || '';
+      data.description = main ? componentDescription(main) : '';
       data.properties = Object.fromEntries(Object.entries(n.componentProperties).map(([key, value]) => [key, { ...value, description: definitions?.[key]?.description || undefined, options: definitions?.[key]?.variantOptions }]));
       data.componentKey = main?.key;
       if (main) registerSlots(n, main);

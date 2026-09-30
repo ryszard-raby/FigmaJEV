@@ -50,7 +50,7 @@ async function editSelected(input, decide) {
   const target = context.nodes.find(n => n.id === context.targetId) || context.nodes[0];
   if (target.type === 'VECTOR') throw new Error('Zaznacz komponent lub kontener zamiast wewnętrznej warstwy wektorowej.');
   const { action } = await ask({ prompt }, {
-    action: choice('Choose intent. Changing an icon or variant is properties. Only explicit additions/removals use insert/remove.', { properties: 'Edit component properties', insert: 'Add a component', remove: 'Remove an element' })
+    action: choice('Choose intent. Showing/hiding an existing icon or label, changing an icon or variant is properties. Only explicit additions/removals of whole components use insert/remove.', { properties: 'Edit component properties', insert: 'Add a component', remove: 'Remove an element' })
   }, decide);
 
   if (action === 'insert') {
@@ -72,7 +72,7 @@ async function editSelected(input, decide) {
       return [n.id, `${location}${names.length ? `; direct children: ${JSON.stringify(names)}` : ''}`];
     }));
     const { target: parentId } = await ask({ prompt, component: selected.name, selected: target.name }, {
-      target: choice('Choose destination slot. Honor an explicitly requested destination or selected slot. "Add another" of the selected kind means its parent slot: add a sibling. Otherwise first prefer a slot already containing components of the same kind: add beside them as a sibling, not inside an existing component of that kind. Direct children lists identify existing siblings; names in a path identify ancestors, not siblings. If no such group exists, prefer Content of the selected element, then the nearest suitable slot. The component being added is not itself the destination.', destinations)
+      target: choice('Choose destination slot. Honor an explicitly requested destination or selected slot. "Add another" of the selected kind means its parent slot: add a sibling. Otherwise first prefer a slot already containing components of the same kind: add beside them as a sibling, not inside an existing component of that kind. Direct children lists identify existing siblings; names in a path identify ancestors, not siblings. If no such group exists, prefer placing new components inside a Card: choose its Content or an appropriate slot within it. If no Card slot is available, prefer Content of the selected element, then the nearest suitable slot. Only choose from the offered slots; do not create a Card or change the hierarchy. The component being added is not itself the destination.', destinations)
     }, decide);
     // No recursive resolution or size/property survey after the two choices.
     return { mode: 'insert', exactTree: true, targetId: context.targetId, parentId, children: [{ type: 'component', componentId: selected.id, width: 'KEEP', height: 'KEEP' }] };
@@ -122,9 +122,9 @@ async function editSelected(input, decide) {
     if (def.type === 'BOOLEAN') add(name, { true: 'true', false: 'false' }, v => v === 'true');
     if (def.type === 'TEXT' && copy !== undefined) add(name, { literal: copy }, () => copy);
     // The library is sent only if JEV actually requests a replacement.
-    if (def.type === 'INSTANCE_SWAP' && catalog.some(c => c.key)) add(name, { change: 'Choose replacement component in next step' });
+    if (def.type === 'INSTANCE_SWAP' && catalog.some(c => c.key)) add(name, { change: 'Replace the component only when a different icon/component is requested. Showing or hiding the existing one means keep.' });
   }
-  const answers = await ask({ prompt, component: { name: component.name, description: component.description || '', properties }, instructions: 'Change only requested exposed properties. Size requests use Size variant. For icon replacement choose change and enable its visibility boolean when needed. No internal layer edits.' }, questions, decide);
+  const answers = await ask({ prompt, component: { name: component.name, description: component.description || '', properties }, instructions: 'Change only requested exposed properties. Show/hide (pokaż/ukryj) changes visibility BOOLEAN only; keep INSTANCE_SWAP unchanged. Replace INSTANCE_SWAP only when a different icon/component is requested, enabling its visibility when needed. Size requests use Size variant. No internal layer edits.' }, questions, decide);
   const operations = []; const swaps = {};
   for (const b of bindings) {
     if (answers[b.key] === 'keep') continue;
@@ -135,10 +135,15 @@ async function editSelected(input, decide) {
       if (value !== component.properties[b.name].value) operations.push({ id: component.id, field: `property:${b.name}`, value });
     }
   }
+  const warnings = [];
   if (Object.keys(swaps).length) {
     const replacements = await ask({ prompt, component: component.name }, swaps, decide);
-    if (Object.values(replacements).some(v => v === 'none')) return { mode: 'edit', targetId: context.targetId, operations: [], warnings: [noChange] };
-    for (const [key, value] of Object.entries(replacements)) operations.push({ id: component.id, field: `property:${bindings.find(b => b.key === key).name}`, value });
+    for (const [key, value] of Object.entries(replacements)) {
+      const name = bindings.find(b => b.key === key).name;
+      if (value === 'none') warnings.push(`${name}: JEV nie znalazł zamiennika. Zachowano dotychczasowy komponent.`);
+      else operations.push({ id: component.id, field: `property:${name}`, value });
+    }
   }
-  return { mode: 'edit', targetId: context.targetId, operations, ...(!operations.length ? { warnings: [noChange] } : {}) };
+  if (!operations.length) warnings.unshift(noChange);
+  return { mode: 'edit', targetId: context.targetId, operations, ...(warnings.length ? { warnings } : {}) };
 }

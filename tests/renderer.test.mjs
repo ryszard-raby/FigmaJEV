@@ -241,21 +241,47 @@ test('compact tree resolves and renders into a new slot replacing only inherited
   const demo = h.frame(); slot.appendChild(demo);
   component.componentPropertyDefinitions = { 'Caption#1': { type: 'TEXT' } };
   instance.setProperties = props => { instance.applied = props; };
-  await h.send({ type: 'library', fileKey: 'testlibrary', components: [{ id: 'card', nodeId: component.id, key: 'card', name: 'Card', description: '' }] });
+  const containerMain = h.frame('COMPONENT'); containerMain.componentPropertyDefinitions = {};
+  containerMain.createInstance = () => h.frame('INSTANCE');
+  await h.send({ type: 'library', fileKey: 'testlibrary', components: [{ id: 'card', nodeId: component.id, key: 'card', name: 'Card', description: '' }, { id: 'container', nodeId: containerMain.id, key: 'container', name: 'Container' }] });
   const structure = ['Card', { text: 'Resolved title' }, ['Container'], ['Container']];
   await h.send({ type: 'prepare', libraryId: 'testlibrary', structure });
   const input = h.messages.findLast(m => m.type === 'prepared').input;
   assert.deepEqual(input.structure, structure);
-  const result = await plan(input, async (state, questions) => {
-    if (state.phase === 'component-resolution') return { n0: 'card', n1: 'native_container' };
-    return Object.fromEntries(Object.entries(questions).map(([key, q]) => [key, q.instructions.includes('property:Caption') ? 'literal0' : Object.hasOwn(q.criteria, 'KEEP') ? 'KEEP' : Object.keys(q.criteria)[0]]));
+  let calls = 0;
+  const result = await plan(input, async (state) => {
+    calls++;
+    assert.equal(state.phase, 'component-resolution');
+    return { n0: 'card', n1: 'container' };
   });
+  assert.equal(calls, 1);
   await h.send({ type: 'apply', plan: result });
   assert.equal(h.messages.at(-2).type, 'done');
   assert.equal(slot.children.length, 2);
   assert.equal(demo.removed, true);
   assert.equal(instance.applied['Caption#1'], 'Resolved title');
   assert.equal(instance.type, 'INSTANCE');
+});
+
+test('library descriptions reach JEV from variants, their set, or REST metadata', async () => {
+  for (const [variantDescription, setDescription, restDescription, expected] of [
+    ['Variant description', 'Set description', 'REST description', 'Variant description'],
+    ['  ', 'Set description', '', 'Set description'],
+    ['', '', 'REST description', 'REST description']
+  ]) {
+    const h = harness(); await h.send({ type: 'init' });
+    const main = h.frame('COMPONENT'); main.description = variantDescription;
+    const set = h.frame('COMPONENT_SET'); set.description = setDescription; set.componentPropertyDefinitions = {};
+    set.appendChild(main);
+    await h.send({ type: 'library', fileKey: 'test', components: [{ id: 'button', key: 'button', nodeId: main.id, name: 'Button', description: restDescription }] });
+    await h.send({ type: 'prepare', libraryId: 'test', structure: ['Button'] });
+    const input = h.messages.findLast(m => m.type === 'prepared').input;
+    assert.equal(input.catalog[0].description, expected);
+    await plan(input, async (_, questions) => {
+      assert.equal(questions.n0.criteria.button, `Button: ${expected}`);
+      return { n0: 'button' };
+    });
+  }
 });
 
 test('actual Figma sizing errors still propagate and clean up partial creation', async () => {
