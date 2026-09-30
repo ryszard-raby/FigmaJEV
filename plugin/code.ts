@@ -5,7 +5,7 @@ const sortComponents = (components: CatalogItem[]) => [...components].sort((a, b
 // Same input limits as server/compact-tree.mjs; renderer also counts the host.
 const MAX_TREE_NODES = 256;
 const MAX_TREE_LEVELS = 32;
-type Tree = { type: 'container' | 'text' | 'component'; name?: string; direction?: 'HORIZONTAL' | 'VERTICAL'; primaryAlign?: 'MIN' | 'CENTER' | 'MAX' | 'SPACE_BETWEEN'; counterAlign?: 'MIN' | 'CENTER' | 'MAX'; width: 'KEEP' | 'HUG' | 'FILL'; height: 'KEEP' | 'HUG' | 'FILL'; children?: Tree[]; slots?: { path: number[]; children: Tree[]; mode?: 'replace' }[]; text?: string; fontSize?: number; componentId?: string; properties?: Record<string, string | boolean>; textOverrides?: { path: number[]; text: string }[] };
+type Tree = { type: 'container' | 'text' | 'component'; name?: string; direction?: 'HORIZONTAL' | 'VERTICAL'; primaryAlign?: 'MIN' | 'CENTER' | 'MAX' | 'SPACE_BETWEEN'; counterAlign?: 'MIN' | 'CENTER' | 'MAX'; width: 'KEEP' | 'HUG' | 'FILL' | number; height: 'KEEP' | 'HUG' | 'FILL' | number; children?: Tree[]; slots?: { path: number[]; children: Tree[]; mode?: 'replace' }[]; text?: string; fontSize?: number; componentId?: string; properties?: Record<string, string | boolean>; textOverrides?: { path: number[]; text: string }[] };
 type Snapshot = { targetId: string; nodes: any[]; parent?: { id: string; name: string; type: string; ownerName?: string; contentSlot?: ContentSlot } };
 type Operation = { id: string; field: string; value: any };
 type Plan = ({ mode: 'create'; tree: Tree } | { mode: 'edit'; targetId: string; operations: Operation[] } | { mode: 'insert'; targetId: string; parentId: string; children: Tree[] } | { mode: 'remove'; targetId: string; nodeId: string | null }) & { exactTree?: boolean };
@@ -151,13 +151,23 @@ function sizingOptions(n: SceneNode, axis: 'width' | 'height'): string[] {
 }
 
 function setSizing(n: SceneNode, tree: Tree) {
+  const numeric = typeof tree.width === 'number' || typeof tree.height === 'number';
+  for (const value of [tree.width, tree.height]) {
+    if (typeof value === 'number' ? !Number.isFinite(value) || value <= 0 : !['KEEP', 'HUG', 'FILL'].includes(value)) throw new Error('Nieprawidłowy rozmiar: użyj keep, hug, fill lub dodatniej liczby pikseli.');
+  }
+  if (tree.width === 'KEEP' && tree.height === 'KEEP') return;
+  if (!('layoutSizingHorizontal' in n)) throw new Error(`${n.name}: warstwa nie udostępnia rozmiarowania.`);
+  const previous = { width: n.layoutSizingHorizontal, height: n.layoutSizingVertical };
+  if (numeric) {
+    if (typeof tree.width === 'number') n.layoutSizingHorizontal = 'FIXED';
+    if (typeof tree.height === 'number') n.layoutSizingVertical = 'FIXED';
+    n.resize(typeof tree.width === 'number' ? tree.width : n.width, typeof tree.height === 'number' ? tree.height : n.height);
+  }
   for (const axis of ['width', 'height'] as const) {
     const value = tree[axis];
-    if (value === 'KEEP') continue;
-    if (!['HUG', 'FILL'].includes(value)) throw new Error('Nieprawidłowy tryb rozmiaru.');
-    if (!('layoutSizingHorizontal' in n)) throw new Error(`${n.name}: warstwa nie udostępnia rozmiarowania.`);
+    if (value === 'KEEP' && !numeric) continue;
     // Let Figma apply its own layout rules (or return its actual API error).
-    n[axis === 'width' ? 'layoutSizingHorizontal' : 'layoutSizingVertical'] = value;
+    n[axis === 'width' ? 'layoutSizingHorizontal' : 'layoutSizingVertical'] = typeof value === 'number' ? 'FIXED' : value === 'KEEP' ? previous[axis] : value;
   }
 }
 

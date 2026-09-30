@@ -52,12 +52,58 @@ test('repeated nodes reuse component selection without dropping instances', asyn
   assert.notEqual(result.tree.slots[0].children[0], result.tree.slots[0].children[1]);
 });
 
+test('each Text question identifies its own role without requiring copy or a matching property name', async () => {
+  const calls = [];
+  await plan({ structure: ['Card', ['Text', { type: 'heading', text: 'Title' }], ['Text', { type: 'body', text: 'Body' }]], catalog }, model(calls));
+  const [heading, body] = calls[0].state.requiredComponents.filter(n => n.name === 'Text');
+  assert.match(calls[0].questions[heading.id].instructions, /INTENT: \{"type":"heading"\}/);
+  assert.match(calls[0].questions[body.id].instructions, /INTENT: \{"type":"body"\}/);
+  assert.match(calls[0].questions[heading.id].instructions, /intentionally omitted/);
+  assert.equal(calls.length, 1);
+});
+
 test('default tree only asks four component questions', async () => {
   const calls = [];
   await plan({ structure: ['Layout', { device: 'mobile' }, ['Card', ['Container', ['Button']]]], catalog }, model(calls));
   assert.equal(calls.length, 1);
   assert.equal(Object.keys(calls[0].questions).length, 4);
   assert.ok(!Object.values(calls[0].questions).some(q => /native_container|native_text/.test(JSON.stringify(q))));
+});
+
+test('same component intent across different branches shares a decision while copy and sizing stay local', async () => {
+  const calls = [];
+  const result = await plan({ structure: ['Layout',
+    ['Card', ['Text', { type: 'body', text: 'First', width: 'fill' }]],
+    ['Card', ['Text', { type: 'body', text: 'Second', width: 'hug' }], ['Text', { type: 'heading', text: 'Title' }]]
+  ], catalog }, model(calls));
+  const texts = calls[0].state.requiredComponents.filter(n => n.name === 'Text');
+  assert.equal(texts.length, 2);
+  assert.deepEqual(texts.map(n => n.properties), [{ type: 'body' }, { type: 'heading' }]);
+  assert.equal(calls[0].state.requiredComponents.filter(n => n.name === 'Card').length, 1);
+  const cards = result.tree.slots[0].children;
+  assert.equal(cards[0].slots[0].children[0].properties['Label#1'], 'First');
+  assert.equal(cards[0].slots[0].children[0].width, 'FILL');
+  assert.equal(cards[1].slots[0].children[0].properties['Label#1'], 'Second');
+  assert.equal(cards[1].slots[0].children[0].width, 'HUG');
+});
+
+test('grouping preserves candidate capacity differences and unknown semantic values', async () => {
+  const ds = [...catalog.filter(c => c.id !== 'card'),
+    { id: 'small', name: 'Card / Small', slots: [{ ...slot, settings: { maxChildren: 1 } }] },
+    { id: 'large', name: 'Card / Large', slots: [{ ...slot, settings: { maxChildren: 5 } }] }
+  ];
+  let captured;
+  await plan({ structure: ['Layout', ['Card', ['Button']], ['Card', ['Button'], ['Button']],
+    ['Container', { purpose: 'rating-bar', value: 1 }], ['Container', { purpose: 'rating-bar', value: 93 }]
+  ], catalog: ds }, async (state, questions) => {
+    captured = { state, questions };
+    return Object.fromEntries(state.requiredComponents.map(n => [n.id, n.name === 'Card' ? 'large' : n.name === 'Button' ? 'primary' : n.name.toLowerCase()]));
+  });
+  const cards = captured.state.requiredComponents.filter(n => n.name === 'Card');
+  assert.equal(cards.length, 2);
+  assert.ok(captured.questions[cards[0].id].criteria.small);
+  assert.equal(captured.questions[cards[1].id].criteria.small, undefined);
+  assert.equal(captured.state.requiredComponents.filter(n => n.name === 'Container').length, 2);
 });
 
 test('explicit sizing is copied without questions and unspecified axes inherit defaults', async () => {
@@ -67,6 +113,16 @@ test('explicit sizing is copied without questions and unspecified axes inherit d
   assert.equal(result.tree.slots[0].children[0].height, 'HUG');
 });
 
+test('numeric photo sizes stay local and share a component decision', async () => {
+  const calls = [];
+  const ds = [...catalog, { id: 'photo', name: 'Photo' }];
+  const result = await plan({ structure: ['Card', ['Photo', { width: 50, height: 50 }], ['Photo', { width: 80, height: 80 }]], catalog: ds }, model(calls));
+  assert.equal(calls.length, 1);
+  assert.equal(Object.keys(calls[0].questions).length, 2);
+  assert.deepEqual(result.tree.slots[0].children.map(n => [n.width, n.height]), [[50, 50], [80, 80]]);
+  for (const width of [0, -1, '50px']) await assert.rejects(plan({ structure: ['Photo', { width }], catalog: ds }, model()), /width:/);
+});
+
 test('unresolved and invalid component choices fail without a second request or native fallback', async () => {
   for (const answer of ['unresolved', 'invented']) {
     let calls = 0;
@@ -74,6 +130,23 @@ test('unresolved and invalid component choices fail without a second request or 
     assert.equal(calls, 1);
   }
   await assert.rejects(plan({ structure: ['Text'], catalog: [] }, () => assert.fail('No call')), /brak komponentu/);
+});
+
+test('known families only offer real variants even for unsupported intent hints', async () => {
+  let calls = 0;
+  const result = await plan({ structure: ['Container', { purpose: 'rating-bar', value: 0 }], catalog }, async (_, questions) => {
+    calls++;
+    assert.deepEqual(Object.keys(questions.n0.criteria), ['container']);
+    assert.match(questions.n0.instructions, /unsupported intent hints do not invalidate the family/);
+    return { n0: 'container' };
+  });
+  assert.equal(calls, 1);
+  assert.equal(result.tree.componentId, 'container');
+  assert.deepEqual(result.tree.properties, {});
+  await assert.rejects(plan({ structure: ['UnknownWidget'], catalog }, async (_, questions) => {
+    assert.ok(questions.n0.criteria.unresolved);
+    return { n0: 'unresolved' };
+  }), /unresolved/);
 });
 
 test('text maps to a unique layer; ambiguous text requires an explicit DS property', async () => {

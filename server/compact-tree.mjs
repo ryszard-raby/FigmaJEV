@@ -32,17 +32,19 @@ export function canonical(value) {
   return JSON.stringify(value);
 }
 
-export function collectRequired(root) {
+export function collectRequired(root, candidatesFor) {
   const groups = new Map(); const nodeGroups = new Map();
-  function visit(node, ancestors) {
-    // Include subtree and actual parent paths: reuse identical siblings only.
-    // Different parents may resolve to different components or slots.
-    const shape = n => ({ name: n.name, properties: n.properties, children: n.children.map(shape) });
-    const key = canonical({ shape: shape(node), ancestors });
-    if (!groups.has(key)) groups.set(key, { id: `n${groups.size}`, name: node.name, properties: node.properties, childCount: node.children.length, ancestors, paths: [] });
+  function visit(node) {
+    // Literal copy and sizing are executed locally, not component-selection intent.
+    // Different candidate sets keep slot/capacity constraints separate.
+    const properties = Object.fromEntries(Object.entries(node.properties).filter(([key]) => !['text', 'width', 'height', 'slot'].includes(key)));
+    const candidateIds = candidatesFor(node).map(c => c.id);
+    const key = canonical({ name: node.name, properties, candidateIds });
+    if (!groups.has(key)) groups.set(key, { id: `n${groups.size}`, name: node.name, properties, childCount: node.children.length, candidateIds, paths: [] });
     const group = groups.get(key); group.paths.push(node.path); nodeGroups.set(node.path, group.id);
-    for (const child of node.children) visit(child, [...ancestors, { path: node.path, name: node.name, properties: node.properties }]);
+    group.childCount = Math.max(group.childCount, node.children.length);
+    for (const child of node.children) visit(child);
   }
-  visit(root, []);
+  visit(root);
   return { required: [...groups.values()], nodeGroups };
 }

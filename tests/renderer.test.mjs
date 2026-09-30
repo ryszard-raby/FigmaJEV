@@ -278,9 +278,32 @@ test('library descriptions reach JEV from variants, their set, or REST metadata'
     const input = h.messages.findLast(m => m.type === 'prepared').input;
     assert.equal(input.catalog[0].description, expected);
     await plan(input, async (_, questions) => {
-      assert.equal(questions.n0.criteria.button, `Button: ${expected}`);
+      assert.equal(questions.n0.criteria.button, `COMPONENT NAME: "Button"\nDESCRIPTION: ${JSON.stringify(expected)}`);
       return { n0: 'button' };
     });
+  }
+});
+
+test('numeric component sizes use Fixed and preserve the other axis sizing mode', async () => {
+  for (const [width, height, expectedWidth, expectedHeight, horizontal, vertical] of [
+    [50, 50, 50, 50, 'FIXED', 'FIXED'],
+    [80, 'KEEP', 80, 200, 'FIXED', 'HUG'],
+    ['FILL', 32, 300, 32, 'FILL', 'FIXED']
+  ]) {
+    const h = harness(); await h.send({ type: 'init' });
+    const { component, instance } = h.cardWithContent();
+    component.layoutSizingHorizontal = 'FILL'; component.layoutSizingVertical = 'HUG';
+    component.createInstance = () => instance;
+    // Simulate resizing normalizing both axes, as happens during Figma mutations.
+    instance.resize = (w, v) => { instance.width = w; instance.height = v; instance.layoutSizingHorizontal = instance.layoutSizingVertical = 'FIXED'; };
+    await h.send({ type: 'library', fileKey: 'photo', components: [{ id: 'photo', key: 'photo', nodeId: component.id, name: 'Photo' }] });
+    await h.send({ type: 'prepare', libraryId: 'photo', structure: ['Photo', { width, height }] });
+    const input = h.messages.findLast(m => m.type === 'prepared').input;
+    const result = await plan(input, async () => ({ n0: 'photo' }));
+    await h.send({ type: 'apply', plan: result });
+    assert.equal(h.messages.at(-2).type, 'done');
+    assert.equal(instance.width, expectedWidth); assert.equal(instance.height, expectedHeight);
+    assert.equal(instance.layoutSizingHorizontal, horizontal); assert.equal(instance.layoutSizingVertical, vertical);
   }
 });
 

@@ -5,8 +5,13 @@ const normalize = name => name.split('#')[0].trim().toLowerCase();
 export function renderNode(node, component, children) {
   const fail = message => { throw new Error(`${node.path}: ${message}`); };
   const sizing = axis => {
+    const explicit = node.properties[axis];
+    if (typeof explicit === 'number') {
+      if (!Number.isFinite(explicit) || explicit <= 0) fail(`${axis}: wymiar w pikselach musi być dodatnią liczbą.`);
+      return explicit;
+    }
     const value = String(node.properties[axis] ?? 'KEEP').toUpperCase();
-    if (!['KEEP', 'HUG', 'FILL'].includes(value)) fail(`${axis}: użyj keep, hug lub fill.`);
+    if (!['KEEP', 'HUG', 'FILL'].includes(value)) fail(`${axis}: użyj keep, hug, fill lub dodatniej liczby pikseli.`);
     return value;
   };
   const definitions = Object.entries(component.properties || {});

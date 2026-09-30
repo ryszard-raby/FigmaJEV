@@ -3,11 +3,12 @@ import { choice, validateAnswers } from './jev.mjs';
 import { parseCompactTree, collectRequired, MAX_TREE_NODES } from './compact-tree.mjs';
 
 
+const normalize = name => name.trim().toLowerCase().replace(/\s+/g, ' ');
+const matchesName = (name, component) => normalize(component.name) === normalize(name) || component.name.split('/').some(part => normalize(part) === normalize(name));
+
 export function componentCandidates(node, catalog) {
-  const normalize = name => name.trim().toLowerCase().replace(/\s+/g, ' ');
-  const requested = normalize(node.name);
   // Name lookup only; variant/intent decisions still belong to JEV.
-  const family = catalog.filter(c => normalize(c.name) === requested || c.name.split('/').some(part => normalize(part) === requested));
+  const family = catalog.filter(c => matchesName(node.name, c));
   const pool = family.length ? family : catalog;
   return pool.filter(c => !node.childCount || (c.slots || []).some(s => (s.settings?.maxChildren ?? MAX_TREE_NODES) >= node.childCount));
 }
@@ -29,16 +30,18 @@ export function validateCatalog(catalog) {
 export async function resolveTree(input, decide) {
   validateCatalog(input.catalog);
   const root = parseCompactTree(input.structure);
-  const { required, nodeGroups } = collectRequired(root);
+  const { required, nodeGroups } = collectRequired(root, node => componentCandidates({ ...node, childCount: node.children.length }, input.catalog));
   console.log('INPUT TREE', JSON.stringify(input.structure));
   console.log('REQUIRED COMPONENTS', JSON.stringify(required));
+  console.log('COMPONENT RESOLUTION', JSON.stringify({ elements: nodeGroups.size, decisions: required.length, reused: nodeGroups.size - required.length }));
   const questions = {};
   for (const node of required) {
-    const candidates = componentCandidates(node, input.catalog);
+    const candidates = node.candidateIds.map(id => input.catalog.find(c => c.id === id));
     if (!candidates.length) throw new Error(`${node.paths[0]}: brak komponentu dla ${node.name}.`);
+    const knownFamily = candidates.every(c => matchesName(node.name, c));
     questions[node.id] = choice(
-      'Choose the closest Design System component/variant for this element and its intent. Preserve library defaults for unspecified properties. Only choose a component; do not plan children or properties. Prefer a useful available variant even when it cannot implement every hint. Use unresolved only if no component is suitable.',
-      { ...Object.fromEntries(candidates.map(c => [c.id, `${c.name}${c.description ? `: ${c.description}` : ''}`])), unresolved: 'No suitable Design System component' }
+      `Select component for ${node.id}. COMPONENT NAME: ${JSON.stringify(node.name)}. INTENT: ${JSON.stringify(node.properties)}. Choose the closest available variant using its name and description. Intent describes the role, not required literal property names (e.g. heading can be implemented by a text size/weight variant). Text content and sizing are applied later by the renderer and intentionally omitted here. Missing copy or unspecified properties are not reasons to reject a component. Preserve defaults where intent is unspecified. ${knownFamily ? 'The requested component family exists. Choose one of its variants; unsupported intent hints do not invalidate the family. This decision selects a component, not whether the entire intended behavior is implemented.' : 'Return unresolved only when no offered component can serve this role.'}`,
+      { ...Object.fromEntries(candidates.map(c => [c.id, `COMPONENT NAME: ${JSON.stringify(c.name)}${c.description ? `\nDESCRIPTION: ${JSON.stringify(c.description)}` : ''}`])), ...(!knownFamily ? { unresolved: 'None of the offered components can serve the requested role; not merely an imperfect variant match' } : {}) }
     );
   }
   // Definitions stay local. JEV only needs the intent and named candidates.
@@ -46,7 +49,7 @@ export async function resolveTree(input, decide) {
   function assemble(node) {
     const id = selected[nodeGroups.get(node.path)];
     const component = input.catalog.find(c => c.id === id);
-    if (!component) throw new Error(`${node.path}: brak komponentu dla ${node.name}.`);
+    if (!component) throw new Error(`${node.path}: JEV nie wybrał wariantu dla ${node.name} spośród dostępnych komponentów biblioteki (unresolved).`);
     return renderNode(node, component, node.children.map(assemble));
   }
   const tree = assemble(root);
