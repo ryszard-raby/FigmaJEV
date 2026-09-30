@@ -135,6 +135,19 @@ test('concurrent user change invalidates plan without touching canvas', async ()
   assert.equal(card.layoutSizingHorizontal, 'FIXED'); assert.equal(h.messages.at(-1).type, 'error');
 });
 
+test('snapshot accepts more than 80 layers and still detects changes in late descendants', async () => {
+  const h = harness(); await h.send({ type: 'init' });
+  const root = h.frame(); h.page.appendChild(root); h.page.selection = [root];
+  for (let i = 0; i < 200; i++) root.appendChild(h.frame());
+  await h.send({ type: 'prepare', libraryId: 'local', prompt: 'usuń element' });
+  const prepared = h.messages.findLast(m => m.type === 'prepared');
+  assert.equal(prepared.input.context.nodes.length, 201);
+  root.children[199].width += 10;
+  await h.send({ type: 'apply', plan: { mode: 'remove', targetId: root.id, nodeId: root.id } });
+  assert.equal(h.messages.at(-1).type, 'error');
+  assert.equal(root.removed, false);
+});
+
 test('fill under hugging parent reaches Figma without a renderer veto', async () => {
   const h = harness(); await h.send({ type: 'init' });
   await h.send({ type: 'prepare', libraryId: 'local', prompt: 'Layout' });
@@ -297,10 +310,11 @@ test('generic delete resolves and removes the selected root, preserving siblings
   await h.send({ type: 'prepare', libraryId: 'local', prompt: 'usuń element' });
   const input = h.messages.findLast(m => m.type === 'prepared').input;
   assert.equal(input.context.nodes[0].removable, true);
-  const result = await plan(input, async (_, questions) => {
+  const result = await plan(input, async (state, questions) => {
     if ('action' in questions) return { action: 'remove' };
-    assert.match(questions.target.criteria[selected.id], /SELECTED/);
-    return { target: selected.id };
+    assert.equal(state.selected, 'r0');
+    assert.equal(questions.target.criteria.r0, selected.name);
+    return { target: 'r0' };
   });
   await h.send({ type: 'apply', plan: result });
   assert.equal(h.messages.at(-2).type, 'done');
@@ -349,7 +363,8 @@ test('directly selected Content exposes live capacity and accepts a button witho
   assert.ok(!input.context.nodes.some(n => n.id === instance.id));
   const result = await plan(input, async (state, questions) => {
     if ('action' in questions) return { action: 'insert' };
-    if ('target' in questions) { assert.ok(slot.id in questions.target.criteria); return { target: slot.id, component: 'button' }; }
+    if ('component' in questions) return { component: 'button' };
+    if ('target' in questions) { assert.ok(slot.id in questions.target.criteria); return { target: slot.id }; }
     if (state.phase === 'component-resolution') return { n0: 'button' };
     return Object.fromEntries(Object.entries(questions).map(([key, q]) => [key, 'KEEP' in q.criteria ? 'KEEP' : Object.keys(q.criteria)[0]]));
   });
@@ -360,6 +375,43 @@ test('directly selected Content exposes live capacity and accepts a button witho
   h.page.selection = [slot]; await h.send({ type: 'prepare', libraryId: 'buttons' });
   const full = h.messages.findLast(m => m.type === 'prepared').input;
   assert.equal(full.context.nodes[0].contentSlot.capacity, 0);
+});
+
+test('selected product exposes its parent slot and inserts another product beside it', async () => {
+  const h = harness(); await h.send({ type: 'init' });
+  const list = h.cardWithContent(); list.instance.name = 'Product list';
+  const product = h.cardWithContent(); product.instance.name = 'Product';
+  list.slot.appendChild(product.instance);
+  const added = h.frame('INSTANCE'); added.name = 'Product'; added.componentProperties = {};
+  added.getMainComponentAsync = async () => product.component;
+  product.component.createInstance = () => added;
+  await h.send({ type: 'library', fileKey: 'products', components: [{ id: 'product', key: 'product', nodeId: product.component.id, name: 'Product' }] });
+  h.page.selection = [product.instance];
+  await h.send({ type: 'prepare', libraryId: 'products', prompt: 'dodaj kolejny produkt' });
+  const input = h.messages.findLast(m => m.type === 'prepared').input;
+  assert.equal(input.context.parent.id, list.slot.id);
+  assert.equal(input.context.parent.ownerName, 'Product list');
+  assert.equal(input.context.parent.contentSlot.existingChildren[0].name, 'Product');
+  assert.ok(!input.context.nodes.some(n => n.id === list.slot.id || n.id === list.instance.id));
+  let calls = 0;
+  const result = await plan(input, async (state, questions) => {
+    calls++;
+    if (questions.action) return { action: 'insert' };
+    if (questions.component) return { component: 'product' };
+    assert.equal(state.selected, 'Product');
+    assert.match(questions.target.criteria[list.slot.id], /PARENT OF SELECTED/);
+    assert.match(questions.target.criteria[list.slot.id], /direct children: \["Product"\]/);
+    assert.ok(product.slot.id in questions.target.criteria);
+    return { target: list.slot.id };
+  });
+  assert.equal(calls, 3);
+  await h.send({ type: 'apply', plan: result });
+  assert.equal(h.messages.at(-2).type, 'done');
+  assert.equal(list.slot.children.length, 2);
+  assert.equal(list.slot.children[0], product.instance);
+  assert.equal(list.slot.children[1], added);
+  assert.equal(product.slot.children.length, 0);
+  assert.equal(h.page.selection[0], product.instance);
 });
 
 test('quick insertion also supports a selected native frame without replacing its children', async () => {

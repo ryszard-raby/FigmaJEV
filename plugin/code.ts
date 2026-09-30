@@ -6,7 +6,7 @@ const sortComponents = (components: CatalogItem[]) => [...components].sort((a, b
 const MAX_TREE_NODES = 256;
 const MAX_TREE_LEVELS = 32;
 type Tree = { type: 'container' | 'text' | 'component'; name?: string; direction?: 'HORIZONTAL' | 'VERTICAL'; primaryAlign?: 'MIN' | 'CENTER' | 'MAX' | 'SPACE_BETWEEN'; counterAlign?: 'MIN' | 'CENTER' | 'MAX'; width: 'KEEP' | 'HUG' | 'FILL'; height: 'KEEP' | 'HUG' | 'FILL'; children?: Tree[]; slots?: { path: number[]; children: Tree[]; mode?: 'replace' }[]; text?: string; fontSize?: number; componentId?: string; properties?: Record<string, string | boolean>; textOverrides?: { path: number[]; text: string }[] };
-type Snapshot = { targetId: string; nodes: any[] };
+type Snapshot = { targetId: string; nodes: any[]; parent?: { id: string; name: string; type: string; ownerName?: string; contentSlot?: ContentSlot } };
 type Operation = { id: string; field: string; value: any };
 type Plan = ({ mode: 'create'; tree: Tree } | { mode: 'edit'; targetId: string; operations: Operation[] } | { mode: 'insert'; targetId: string; parentId: string; children: Tree[] } | { mode: 'remove'; targetId: string; nodeId: string | null }) & { exactTree?: boolean };
 let libraries: Library[] = [];
@@ -116,7 +116,6 @@ async function snapshot(root: SceneNode): Promise<Snapshot> {
     if (main) registerSlots(owner, main);
   }
   async function visit(n: SceneNode, parentId?: string) {
-    if (nodes.length >= 80) throw new Error('Wybierz mniejszy element: limit kontekstu to 80 warstw.');
     const data: any = { id: n.id, name: n.name, type: n.type, parentId, visible: n.visible, width: n.width, height: n.height };
     if (n.type === 'SLOT' && slots.has(n.id)) data.contentSlot = slots.get(n.id);
     if ('layoutMode' in n && n.layoutMode !== 'NONE') data.layout = { direction: n.layoutMode };
@@ -127,7 +126,8 @@ async function snapshot(root: SceneNode): Promise<Snapshot> {
     if (n.type === 'INSTANCE') {
       const main = await n.getMainComponentAsync();
       const definitions = main?.parent?.type === 'COMPONENT_SET' ? main.parent.componentPropertyDefinitions : main?.componentPropertyDefinitions;
-      data.properties = Object.fromEntries(Object.entries(n.componentProperties).map(([key, value]) => [key, { ...value, options: definitions?.[key]?.variantOptions }]));
+      data.description = main?.description || (main?.parent?.type === 'COMPONENT_SET' ? main.parent.description : '') || '';
+      data.properties = Object.fromEntries(Object.entries(n.componentProperties).map(([key, value]) => [key, { ...value, description: definitions?.[key]?.description || undefined, options: definitions?.[key]?.variantOptions }]));
       data.componentKey = main?.key;
       if (main) registerSlots(n, main);
     }
@@ -135,7 +135,10 @@ async function snapshot(root: SceneNode): Promise<Snapshot> {
     if ('children' in n) for (const child of n.children) await visit(child, n.id);
   }
   await visit(root);
-  return { targetId: root.id, nodes };
+  const parent = root.parent;
+  return { targetId: root.id, nodes, ...(parent && parent.type !== 'PAGE' && parent.type !== 'DOCUMENT' ? {
+    parent: { id: parent.id, name: parent.name, type: parent.type, ...(parent.type === 'SLOT' ? { ownerName: owner?.name, contentSlot: slots.get(parent.id) } : {}) }
+  } : {}) };
 }
 
 function sizingOptions(n: SceneNode, axis: 'width' | 'height'): string[] {
@@ -322,7 +325,8 @@ async function apply(plan: Plan) {
       figma.commitUndo(); pending = null; return warnings;
     }
     if (plan.mode === 'insert') {
-      const descriptor = before.nodes.find(n => n.id === plan.parentId)?.contentSlot;
+      const descriptor = before.nodes.find(n => n.id === plan.parentId)?.contentSlot
+        || (before.parent?.id === plan.parentId ? before.parent.contentSlot : undefined);
       const slot = await figma.getNodeByIdAsync(plan.parentId);
       const frameTarget = before.nodes.find(n => n.id === plan.parentId)?.insertable;
       if (!slot || !((descriptor && slot.type === 'SLOT') || (frameTarget && slot.type === 'FRAME' && editableParent(slot)))) throw new Error('Wybierz natywny slot Content lub edytowalną ramkę.');

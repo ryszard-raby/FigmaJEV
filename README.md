@@ -69,7 +69,14 @@ Techniczna ramka FigmaJev pozostaje hostem: domyślnie width Hug i height Hug. N
 
 Zaznacz jeden element i wpisz np. `dodaj przycisk`, `usuń przycisk` lub `zrób większy tekst`. Panel automatycznie pokazuje polecenie edycji. Brak zaznaczenia przywraca tworzenie layoutu ze struktury JSON. Przy wielu zaznaczonych elementach wybierz jeden. Cel edycji jest ustalany przy rozpoczęciu operacji; późniejsza zmiana zaznaczenia nie przekierowuje zmian.
 
-JEV wybiera jedną operację: dodanie jednego komponentu do Content lub edytowalnej ramki, usunięcie jednej edytowalnej warstwy albo zmianę właściwości istniejących elementów. Podaj treść w cudzysłowie, jeśli chcesz zmienić tekst. Zmiana rozmiaru tekstu obsługuje warstwy o jednolitym fontSize. To ograniczony tryb szybkich edycji, bez rekurencyjnego planowania i historii rozmowy.
+Szybkie polecenia używają małych, niezależnych decyzji:
+
+- Dodawanie: 3 zapytania — wybór operacji, lista nazw/opisów komponentów i wariantów, lista wolnych slotów Content w zaznaczeniu. Instancja zachowuje domyślne properties i rozmiarowanie DS. Nie uruchamiamy resolvera drzewa ani nie pytamy o width/height. Dodawanie z promptu jest ograniczone do slotów; nie proponujemy zwykłych ramek.
+- Usuwanie: 2 zapytania — operacja i lista usuwalnych celów z krótką ścieżką nazw. Brak snapshotu, wymiarów, properties i katalogu w pytaniu o cel.
+- Edycja: operacja i properties jednego komponentu. JEV dostaje wyłącznie jego nazwę, opis, typy i aktualne wartości properties; dostępne odpowiedzi są zapisane w pytaniach. Dla kilku komponentów w zaznaczonym kontenerze dochodzi osobny wybór celu. Wewnętrzne instancje ikon nie są celami edycji.
+- Zmiana ikony: lista komponentów biblioteki pojawia się dopiero w dodatkowym pytaniu, gdy JEV wskaże zmianę właściwości INSTANCE_SWAP. Przy zwykłej zmianie wariantu katalog nie jest wysyłany.
+
+Zmiana tekstu wymaga udostępnionej właściwości TEXT; podaj treść w cudzysłowie. Zmiana wielkości korzysta z właściwości wariantu, np. Size. Szybka edycja nie zmienia surowych warstw tekstowych, fontSize, kierunku auto layoutu ani width/height. Pełny snapshot pozostaje po stronie aplikacji do kontroli równoległych zmian, ale nie trafia do JEV. Generowanie ze struktury JSON zachowuje osobny resolver.
 
 Zmiany dotyczą zaznaczonego poddrzewa. „Usuń element” wskazuje samo zaznaczenie; polecenie dotyczące konkretnego dziecka może wskazać potomka. Nie można usunąć stałych warstw wewnętrznych instancji, a usunięcie dziecka slotu respektuje minimum dzieci z DS. Dodawanie zachowuje istniejącą zawartość. Snapshot chroni przed zastosowaniem odpowiedzi po równoległej zmianie dokumentu. Wynik można cofnąć przez Undo Figmy. Złożone zmiany struktury wykonuj przez edycję JSON-a i utworzenie nowego layoutu.
 
@@ -81,4 +88,4 @@ Terminal backendu pokazuje `INPUT TREE`, `REQUIRED COMPONENTS`, `JEV REQUEST`, `
 
 Testy obejmują parser, hierarchię i ilości, reuse decyzji, mapowanie intencji przez JEV, edycje oraz compact tree → resolver → renderer z atrapą Figmy i JEV. Nie wykonują płatnych zapytań. Jakość mapowania rzeczywistej biblioteki i działanie slotów wymagają próby we wtyczce z prawdziwym JEV.
 
-Backend nasłuchuje na `127.0.0.1:3847` i wymaga tokenu parowania. Klucze DefAPI i REST Figmy pozostają w `.env`. Token lokalnego serwera i URL biblioteki zapamiętuje `figma.clientStorage`; usuwa je „Zapomnij zapisane dane”. Do DefAPI trafiają struktura, katalog i kontekst edycji. Logi zawierają te dane, bez nagłówków autoryzacji. Limit katalogu: 180 wariantów; snapshotu: 80 warstw; planowania: 180 sekund; wywołania JEV: 30 sekund. Brak automatycznych ponowień płatnych żądań.
+Backend nasłuchuje na `127.0.0.1:3847` i wymaga tokenu parowania. Klucze DefAPI i REST Figmy pozostają w `.env`. Token lokalnego serwera i URL biblioteki zapamiętuje `figma.clientStorage`; usuwa je „Zapomnij zapisane dane”. Do DefAPI trafiają struktura, katalog i kontekst edycji. Logi zawierają te dane, bez nagłówków autoryzacji. Snapshot nie ma limitu liczby warstw. Pozostają limity: katalog 180 wariantów, żądanie HTTP 500 kB, planowanie 180 sekund, wywołanie JEV 30 sekund. Brak automatycznych ponowień płatnych żądań.

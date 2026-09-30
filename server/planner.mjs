@@ -1,6 +1,42 @@
 import { resolveTree, ask, validateCatalog } from './resolver.mjs';
 import { choice } from './jev.mjs';
 
+const noChange = 'JEV nie wybrał żadnej zmiany. Sprawdź dostępne właściwości elementu i komponenty wybranej biblioteki.';
+const label = c => `${c.name}${c.description ? `: ${c.description}` : ''}`;
+const choices = list => Object.fromEntries(list.map(c => [c.id, label(c)]));
+
+function instanceLabel(node) {
+  const labels = Object.entries(node.properties || {})
+    .filter(([name, property]) => name.split('#')[0].trim().toLowerCase() === 'label' && property.type === 'TEXT' && typeof property.value === 'string' && property.value.trim())
+    .map(([, property]) => property.value);
+  return `${label(node)}${labels.length ? `; Label: ${[...new Set(labels)].map(value => JSON.stringify(value)).join(', ')}` : ''}`;
+}
+
+// Instances inside other instances are implementation details, except when
+// reached through an editable slot. The selected instance itself is always UI.
+function isUI(node, nodes, targetId) {
+  if (node.id === targetId) return true;
+  let parent = nodes.find(n => n.id === node.parentId);
+  const seen = new Set();
+  while (parent && !seen.has(parent.id)) {
+    if (parent.type === 'SLOT') return true;
+    if (parent.type === 'INSTANCE') return false;
+    seen.add(parent.id); parent = nodes.find(n => n.id === parent.parentId);
+  }
+  return true;
+}
+
+function pathLabel(node, nodes, targetId) {
+  const names = [node.name]; const seen = new Set([node.id]);
+  let parent = nodes.find(n => n.id === node.parentId);
+  while (parent && !seen.has(parent.id)) {
+    seen.add(parent.id);
+    if (parent.type === 'INSTANCE' || parent.id === targetId) names.unshift(parent.name);
+    parent = nodes.find(n => n.id === parent.parentId);
+  }
+  return names.join(' / ');
+}
+
 export async function plan(input, decide) {
   if (!input || typeof input !== 'object') throw new Error('Nieprawidłowe wejście.');
   validateCatalog(input.catalog);
@@ -9,79 +45,100 @@ export async function plan(input, decide) {
 }
 
 async function editSelected(input, decide) {
-  const { context: snapshot, prompt } = input;
-  if (typeof prompt !== 'string' || !prompt.trim() || prompt.length > 4000 || !Array.isArray(snapshot.nodes) || !snapshot.nodes.length || snapshot.nodes.length > 80) throw new Error('Wpisz prompt i zaznacz element (maks. 80 warstw).');
-  // Keep the plugin's full snapshot intact for stale-state validation. Only the
-  // model-facing context is filtered; match actual types, never layer names.
-  if (snapshot.nodes.find(n => n.id === snapshot.targetId)?.type === 'VECTOR') throw new Error('Zaznacz komponent lub kontener zamiast wewnętrznej warstwy wektorowej.');
-  const context = { targetId: snapshot.targetId, nodes: snapshot.nodes.filter(n => n.type !== 'VECTOR') };
-  if (!context.nodes.length) throw new Error('Brak elementów UI do edycji po odfiltrowaniu wektorów.');
+  const { context, prompt, catalog } = input;
+  if (typeof prompt !== 'string' || !prompt.trim() || prompt.length > 4000 || !Array.isArray(context.nodes) || !context.nodes.length) throw new Error('Wpisz prompt i zaznacz element.');
   const target = context.nodes.find(n => n.id === context.targetId) || context.nodes[0];
-  const state = { prompt, context };
-  const { action } = await ask({ prompt, target: { id: target.id, name: target.name, type: target.type } }, { action: choice('Choose the requested quick edit. Resizing or changing an existing component means properties, not insertion. Do not build a recursive layout. Only explicit additions/removals are allowed.', { properties: 'Change existing properties', insert: 'Add one component', remove: 'Remove one existing element' }) }, decide);
+  if (target.type === 'VECTOR') throw new Error('Zaznacz komponent lub kontener zamiast wewnętrznej warstwy wektorowej.');
+  const { action } = await ask({ prompt }, {
+    action: choice('Choose intent. Changing an icon or variant is properties. Only explicit additions/removals use insert/remove.', { properties: 'Edit component properties', insert: 'Add a component', remove: 'Remove an element' })
+  }, decide);
+
   if (action === 'insert') {
-    const targets = context.nodes.filter(n => n.contentSlot?.capacity > 0 || n.insertable);
-    if (!targets.length) throw new Error('Brak wolnego slotu Content lub edytowalnej ramki w zaznaczonym elemencie.');
-    if (!input.catalog.length) throw new Error('Biblioteka nie zawiera komponentów.');
-    const answer = await ask({ ...state, catalog: input.catalog.map(c => ({ id: c.id, name: c.name, description: c.description })) }, {
-      target: choice('Choose Content slot or editable frame for the new component.', Object.fromEntries(targets.map(n => [n.id, `${n.name}, ${n.type}, parent ${n.parentId}`]))),
-      component: choice('Choose the exact component/variant to add, following the prompt.', Object.fromEntries(input.catalog.map(c => [c.id, `${c.name}: ${c.description || ''}`])))
+    const slots = context.nodes.filter(n => n.contentSlot?.capacity > 0);
+    if (context.parent?.contentSlot?.capacity > 0) slots.push(context.parent);
+    if (!slots.length) throw new Error('Brak wolnego slotu Content w zaznaczonym elemencie i jego dzieciach.');
+    if (!catalog.length) throw new Error('Biblioteka nie zawiera komponentów.');
+    const { component } = await ask({ prompt }, {
+      component: choice('Choose the component/variant to add. Unspecified properties retain library defaults. none if unavailable.', { none: 'No suitable component', ...choices(catalog) })
     }, decide);
-    const selected = input.catalog.find(c => c.id === answer.component);
-    const copy = prompt.match(/["„“]([^"”\n]+)["”]/)?.[1];
-    const result = await resolveTree({ catalog: [selected], structure: [selected.name, { intent: prompt, ...(copy ? { text: copy } : {}) }] }, decide);
-    return { mode: 'insert', exactTree: true, targetId: context.targetId, parentId: answer.target, children: [result.tree] };
+    if (component === 'none') return { mode: 'edit', targetId: context.targetId, operations: [], warnings: [noChange] };
+    const selected = catalog.find(c => c.id === component);
+    const destinations = Object.fromEntries(slots.map(n => {
+      const children = n.contentSlot.existingChildren || context.nodes.filter(child => child.parentId === n.id);
+      const names = [...new Set(children.filter(child => child.type !== 'VECTOR').map(child => child.name))];
+      const location = n === context.parent
+        ? `[PARENT OF SELECTED — adds a sibling] ${[n.ownerName, n.name].filter(Boolean).join(' / ')}`
+        : `${n.id === context.targetId ? '[SELECTED] ' : ''}${pathLabel(n, context.nodes, context.targetId)}`;
+      return [n.id, `${location}${names.length ? `; direct children: ${JSON.stringify(names)}` : ''}`];
+    }));
+    const { target: parentId } = await ask({ prompt, component: selected.name, selected: target.name }, {
+      target: choice('Choose destination slot. Honor an explicitly requested destination or selected slot. "Add another" of the selected kind means its parent slot: add a sibling. Otherwise first prefer a slot already containing components of the same kind: add beside them as a sibling, not inside an existing component of that kind. Direct children lists identify existing siblings; names in a path identify ancestors, not siblings. If no such group exists, prefer Content of the selected element, then the nearest suitable slot. The component being added is not itself the destination.', destinations)
+    }, decide);
+    // No recursive resolution or size/property survey after the two choices.
+    return { mode: 'insert', exactTree: true, targetId: context.targetId, parentId, children: [{ type: 'component', componentId: selected.id, width: 'KEEP', height: 'KEEP' }] };
   }
+
   if (action === 'remove') {
-    const removable = context.nodes.filter(n => n.removable);
+    const removable = context.nodes.filter(n => n.removable && n.type !== 'VECTOR' && isUI(n, context.nodes, context.targetId));
     if (!removable.length) throw new Error('Zaznaczona warstwa i jej dzieci nie mogą zostać usunięte. Wybierz całą instancję lub element w edytowalnym kontenerze.');
-    const removalContext = { targetId: context.targetId, nodes: context.nodes.map(({ id, name, type, parentId, text, removable }) => ({ id, name, type, parentId, ...(text !== undefined ? { text } : {}), removable })) };
-    const { target } = await ask({ prompt, context: removalContext }, { target: choice('Choose exactly the element explicitly requested for removal. A generic request such as "usuń element" or "delete this" means the selected root (context.targetId), not an arbitrary child. Choose a descendant only when the prompt explicitly identifies it. none cancels if the requested target is not removable.', { none: 'No matching element; preserve all', ...Object.fromEntries(removable.map(n => [n.id, `${n.id === context.targetId ? '[SELECTED] ' : ''}${n.name}, ${n.type}, parent ${n.parentId}`])) }) }, decide);
-    return { mode: 'remove', targetId: context.targetId, nodeId: target === 'none' ? null : target };
+    // Short model-facing references stay local to this choice; the renderer still receives Figma IDs.
+    const candidates = Object.fromEntries(removable.map((n, i) => [`r${i}`, n]));
+    const nameCounts = new Map();
+    for (const n of removable) nameCounts.set(n.name, (nameCounts.get(n.name) || 0) + 1);
+    const selected = Object.keys(candidates).find(key => candidates[key].id === context.targetId) || null;
+    const { target: reference } = await ask({ prompt, selected }, {
+      target: choice('Choose the element to remove by its own name/meaning or Label (UI text), matching across languages. An explicitly named target takes priority over selection. Selection defines the search scope, not the default removal target for a named request. Only generic requests such as "usuń element" or "delete this" mean selected. Paths only distinguish namesakes; an ancestor is not a match for its descendant. Choose none if no target matches.', {
+        none: 'No matching element',
+        ...Object.fromEntries(Object.entries(candidates).map(([key, n]) => [key, `${instanceLabel(n)}${nameCounts.get(n.name) > 1 ? ` (path: ${pathLabel(n, context.nodes, context.targetId)})` : ''}`]))
+      })
+    }, decide);
+    const node = reference === 'none' ? null : candidates[reference];
+    console.log('REMOVAL TARGET', JSON.stringify({ reference, nodeId: node?.id ?? null, name: node?.name ?? null }));
+    return { mode: 'remove', targetId: context.targetId, nodeId: node?.id ?? null };
   }
+
+  const components = target.type === 'INSTANCE' ? [target] : context.nodes.filter(n => n.type === 'INSTANCE' && isUI(n, context.nodes, context.targetId));
+  if (!components.length) return { mode: 'edit', targetId: context.targetId, operations: [], warnings: ['Zaznacz komponent z udostępnionymi właściwościami lub jego kontener.'] };
+  let component = components[0];
+  if (components.length > 1) {
+    const { target: id } = await ask({ prompt }, {
+      target: choice('Choose the component whose exposed properties should change. Label is its UI text.', Object.fromEntries(components.map(n => [n.id, instanceLabel(n)])))
+    }, decide);
+    component = components.find(c => c.id === id);
+  }
+
   const questions = {}; const bindings = [];
-  function add(node, field, criteria, decode = value => value) {
+  function add(name, criteria, decode = v => v) {
     const key = `q${bindings.length}`;
-    questions[key] = choice(`For ${node.name} (${node.id}), resolve ${field} from prompt. Keep unless explicitly requested.`, { keep: 'Leave unchanged', ...criteria });
-    bindings.push({ key, id: node.id, field, decode });
+    questions[key] = choice(name, { keep: 'Unchanged', ...criteria });
+    bindings.push({ key, name, decode });
   }
   const copy = prompt.match(/["„“]([^"”\n]+)["”]/)?.[1];
-  const editableNodes = target.type === 'INSTANCE' ? [target] : context.nodes.filter(node => {
-    let parent = context.nodes.find(n => n.id === node.parentId);
-    const visited = new Set();
-    while (parent && !visited.has(parent.id)) {
-      if (parent.type === 'INSTANCE') return false;
-      visited.add(parent.id);
-      parent = context.nodes.find(n => n.id === parent.parentId);
-    }
-    return true;
-  });
-  for (const node of editableNodes) {
-    // SVG paths are implementation details, not independent layout controls.
-    if (node.type === 'VECTOR') continue;
-    if (node.type !== 'INSTANCE') {
-      if (node.layout) add(node, 'direction', { VERTICAL: 'Vertical', HORIZONTAL: 'Horizontal' });
-      for (const axis of ['width', 'height']) if (node.sizing?.[axis]?.allowed?.length) add(node, axis, Object.fromEntries(node.sizing[axis].allowed.map(v => [v, v])));
-    }
-    if (node.type === 'TEXT') {
-      if (copy !== undefined) add(node, 'text', { literal: copy }, () => copy);
-      const sizes = [...new Set([12, 14, 16, 20, 24, 32, 40, 48, ...(typeof node.fontSize === 'number' ? [Math.min(300, node.fontSize + 4), Math.max(1, node.fontSize - 4)] : [])])];
-      add(node, 'fontSize', Object.fromEntries(sizes.map(v => [String(v), `${v}px`])), Number);
-    }
-    for (const [name, def] of Object.entries(node.properties || {})) {
-      if (def.type === 'VARIANT' && def.options?.length) add(node, `property:${name}`, Object.fromEntries(def.options.map((v, i) => [`v${i}`, v])), v => def.options[Number(v.slice(1))]);
-      if (def.type === 'BOOLEAN') add(node, `property:${name}`, { true: 'true', false: 'false' }, v => v === 'true');
-      if (def.type === 'TEXT' && copy !== undefined) add(node, `property:${name}`, { literal: copy }, () => copy);
-      if (def.type === 'INSTANCE_SWAP') {
-        // Only expose compact catalog labels for properties that can swap an
-        // instance. Model maps semantic intent (e.g. dzwonek -> Alarm) to a key.
-        add(node, `property:${name}`, Object.fromEntries(input.catalog.filter(c => c.key).map(c => [c.key, `${c.name}${c.description ? `: ${c.description}` : ''}`])));
-      }
+  const properties = {};
+  for (const [name, def] of Object.entries(component.properties || {})) {
+    if (!['VARIANT', 'BOOLEAN', 'TEXT', 'INSTANCE_SWAP'].includes(def.type)) continue;
+    properties[name] = { type: def.type, ...(def.type !== 'INSTANCE_SWAP' ? { value: def.value } : {}), ...(def.description ? { description: def.description } : {}) };
+    if (def.type === 'VARIANT' && def.options?.length) add(name, Object.fromEntries(def.options.map((v, i) => [`v${i}`, v])), v => def.options[Number(v.slice(1))]);
+    if (def.type === 'BOOLEAN') add(name, { true: 'true', false: 'false' }, v => v === 'true');
+    if (def.type === 'TEXT' && copy !== undefined) add(name, { literal: copy }, () => copy);
+    // The library is sent only if JEV actually requests a replacement.
+    if (def.type === 'INSTANCE_SWAP' && catalog.some(c => c.key)) add(name, { change: 'Choose replacement component in next step' });
+  }
+  const answers = await ask({ prompt, component: { name: component.name, description: component.description || '', properties }, instructions: 'Change only requested exposed properties. Size requests use Size variant. For icon replacement choose change and enable its visibility boolean when needed. No internal layer edits.' }, questions, decide);
+  const operations = []; const swaps = {};
+  for (const b of bindings) {
+    if (answers[b.key] === 'keep') continue;
+    if (answers[b.key] === 'change' && component.properties[b.name].type === 'INSTANCE_SWAP') {
+      swaps[b.key] = choice(`Replacement for ${b.name}. Match names/descriptions across languages; none if unavailable.`, { none: 'No suitable replacement', ...Object.fromEntries(catalog.filter(c => c.key).map(c => [c.key, label(c)])) });
+    } else {
+      const value = b.decode(answers[b.key]);
+      if (value !== component.properties[b.name].value) operations.push({ id: component.id, field: `property:${b.name}`, value });
     }
   }
-  if (bindings.length > 240) throw new Error('Za dużo właściwości: wybierz mniejszy element.');
-  const editContext = { targetId: context.targetId, nodes: editableNodes.map(node => node.type === 'INSTANCE' ? { id: node.id, name: node.name, type: node.type, properties: node.properties } : node) };
-  const answers = await ask({ prompt, context: editContext, sizingRule: 'For instances use exposed component properties only. Interpret requests such as enlarge the button through the available Size variant values (for example Small to Default). For icon replacement use INSTANCE_SWAP candidates, matching names and descriptions semantically across languages. Enable its exposed visibility boolean if needed to display the requested icon. Keep unrelated properties unchanged; if no matching component exists select keep. Do not resize internal layers.' }, questions, decide);
-  const operations = bindings.filter(b => answers[b.key] !== 'keep').map(b => ({ id: b.id, field: b.field, value: b.decode(answers[b.key]) }));
-  return { mode: 'edit', targetId: context.targetId, operations, ...(!operations.length ? { warnings: ['JEV nie wybrał żadnej zmiany. Sprawdź dostępne właściwości elementu i komponenty wybranej biblioteki.'] } : {}) };
+  if (Object.keys(swaps).length) {
+    const replacements = await ask({ prompt, component: component.name }, swaps, decide);
+    if (Object.values(replacements).some(v => v === 'none')) return { mode: 'edit', targetId: context.targetId, operations: [], warnings: [noChange] };
+    for (const [key, value] of Object.entries(replacements)) operations.push({ id: component.id, field: `property:${bindings.find(b => b.key === key).name}`, value });
+  }
+  return { mode: 'edit', targetId: context.targetId, operations, ...(!operations.length ? { warnings: [noChange] } : {}) };
 }
