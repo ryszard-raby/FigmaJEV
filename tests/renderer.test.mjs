@@ -339,7 +339,7 @@ test('generic delete resolves and removes the selected root, preserving siblings
   const result = await plan(input, async (state, questions) => {
     if ('action' in questions) return { action: 'remove' };
     assert.equal(state.selected, 'r0');
-    assert.equal(questions.target.criteria.r0, selected.name);
+    assert.equal(questions.target.criteria.r0, `COMPONENT NAME: ${JSON.stringify(selected.name)}`);
     return { target: 'r0' };
   });
   await h.send({ type: 'apply', plan: result });

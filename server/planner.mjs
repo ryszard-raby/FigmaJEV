@@ -9,7 +9,11 @@ function instanceLabel(node) {
   const labels = Object.entries(node.properties || {})
     .filter(([name, property]) => name.split('#')[0].trim().toLowerCase() === 'label' && property.type === 'TEXT' && typeof property.value === 'string' && property.value.trim())
     .map(([, property]) => property.value);
-  return `${label(node)}${labels.length ? `; Label: ${[...new Set(labels)].map(value => JSON.stringify(value)).join(', ')}` : ''}`;
+  return [
+    `COMPONENT NAME: ${JSON.stringify(node.name)}`,
+    ...(labels.length ? [`Label: ${[...new Set(labels)].map(value => JSON.stringify(value)).join(', ')}`] : []),
+    ...(node.description ? [`DESCRIPTION (context only): ${JSON.stringify(node.description)}`] : [])
+  ].join('\n');
 }
 
 // Instances inside other instances are implementation details, except when
@@ -95,9 +99,9 @@ async function editSelected(input, decide) {
     for (const n of removable) nameCounts.set(n.name, (nameCounts.get(n.name) || 0) + 1);
     const selected = Object.keys(candidates).find(key => candidates[key].id === context.targetId) || null;
     const { target: reference } = await ask({ prompt, selected }, {
-      target: choice('Choose the element to remove by its own name/meaning or Label (UI text), matching across languages. An explicitly named target takes priority over selection. Selection defines the search scope, not the default removal target for a named request. Only generic requests such as "usuń element" or "delete this" mean selected. Paths only distinguish namesakes; an ancestor is not a match for its descendant. Choose none if no target matches.', {
+      target: choice('Choose the element to remove primarily by COMPONENT NAME or Label (UI text), matching across languages. DESCRIPTION is supporting context, not the element name: mentioning another component there does not make this element that component. An explicitly named target takes priority over selection. Selection defines the search scope, not the default removal target for a named request. Only generic requests such as "usuń element" or "delete this" mean selected. PATH only distinguishes namesakes; an ancestor is not a match for its descendant. Choose none if no target matches.', {
         none: 'No matching element',
-        ...Object.fromEntries(Object.entries(candidates).map(([key, n]) => [key, `${instanceLabel(n)}${nameCounts.get(n.name) > 1 ? ` (path: ${pathLabel(n, context.nodes, context.targetId)})` : ''}`]))
+        ...Object.fromEntries(Object.entries(candidates).map(([key, n]) => [key, `${instanceLabel(n)}${nameCounts.get(n.name) > 1 ? `\nPATH: ${JSON.stringify(pathLabel(n, context.nodes, context.targetId))}` : ''}`]))
       })
     }, decide);
     const node = reference === 'none' ? null : candidates[reference];
@@ -110,7 +114,7 @@ async function editSelected(input, decide) {
   let component = components[0];
   if (components.length > 1) {
     const { target: id } = await ask({ prompt }, {
-      target: choice('Choose the component whose exposed properties should change. Label is its UI text.', Object.fromEntries(components.map(n => [n.id, instanceLabel(n)])))
+      target: choice('Choose the component whose exposed properties should change primarily by COMPONENT NAME or Label (UI text). DESCRIPTION is supporting context, not the element name.', Object.fromEntries(components.map(n => [n.id, instanceLabel(n)])))
     }, decide);
     component = components.find(c => c.id === id);
   }

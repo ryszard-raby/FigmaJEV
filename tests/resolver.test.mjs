@@ -86,7 +86,7 @@ test('vectors never enter JEV edit context or choices; deletion sends only ident
       if (action === 'remove') {
         assert.deepEqual(Object.keys(state), ['prompt', 'selected']);
         assert.equal(state.selected, null);
-        assert.equal(questions.target.criteria.r0, 'Vector (Stroke)');
+        assert.equal(questions.target.criteria.r0, 'COMPONENT NAME: "Vector (Stroke)"');
         return { target: 'r0' };
       }
       if ('component' in questions) return { component: 'primary' };
@@ -132,7 +132,7 @@ test('named removal uses concise own names and maps the chosen descendant withou
     calls++;
     if ('action' in questions) return { action: 'remove' };
     assert.deepEqual(state, { prompt: 'usuń produkt', selected: 'r0' });
-    assert.deepEqual(questions.target.criteria, { none: 'No matching element', r0: 'Layout', r1: 'Card', r2: 'Product: Product details' });
+    assert.deepEqual(questions.target.criteria, { none: 'No matching element', r0: 'COMPONENT NAME: "Layout"', r1: 'COMPONENT NAME: "Card"', r2: 'COMPONENT NAME: "Product"\nDESCRIPTION (context only): "Product details"' });
     assert.ok(!JSON.stringify({ state, questions }).includes('51:4856'));
     assert.match(questions.target.instructions, /explicitly named target takes priority/);
     return { target: 'r2' };
@@ -153,9 +153,9 @@ test('removal distinguishes namesakes by path and retains the no-match choice', 
   ] };
   const result = await plan({ prompt: 'usuń zdjęcie', context, catalog: [] }, async (_, questions) => {
     if ('action' in questions) return { action: 'remove' };
-    assert.equal(questions.target.criteria.r0, 'Layout');
-    assert.equal(questions.target.criteria.r1, 'Card (path: Layout / Left / Card)');
-    assert.equal(questions.target.criteria.r2, 'Card (path: Layout / Right / Card)');
+    assert.equal(questions.target.criteria.r0, 'COMPONENT NAME: "Layout"');
+    assert.equal(questions.target.criteria.r1, 'COMPONENT NAME: "Card"\nPATH: "Layout / Left / Card"');
+    assert.equal(questions.target.criteria.r2, 'COMPONENT NAME: "Card"\nPATH: "Layout / Right / Card"');
     return { target: 'none' };
   });
   assert.equal(result.nodeId, null);
