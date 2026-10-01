@@ -42,6 +42,30 @@ test('icon edit exposes swap candidates by name and description without internal
   assert.equal(noop.operations.length, 0); assert.ok(noop.warnings.length);
 });
 
+test('text edits accept single and double quotes but never extract unquoted text after na', async () => {
+  const context = { targetId: 'button', nodes: [{ id: 'button', name: 'Button', type: 'INSTANCE', properties: {
+    'Label#71:0': { type: 'TEXT', value: 'Kup teraz' }, Size: { type: 'VARIANT', value: 'Small', options: ['Small', 'Default'] }
+  } }] };
+  for (const [open, close] of [["'", "'"], ['"', '"'], ['„', '”'], ['“', '”']]) {
+    let calls = 0;
+    const result = await plan({ prompt: `zmień tekst ${open}Idź do sklepu${close}`, context, catalog: [] }, async (_, questions) => {
+      calls++;
+      if (questions.action) return { action: 'properties' };
+      assert.equal(questions.q0.instructions, 'Label#71:0');
+      assert.equal(questions.q0.criteria.literal, 'Idź do sklepu');
+      return { q0: 'literal', q1: 'keep' };
+    });
+    assert.equal(calls, 2);
+    assert.deepEqual(result.operations, [{ id: 'button', field: 'property:Label#71:0', value: 'Idź do sklepu' }]);
+  }
+  const result = await plan({ prompt: 'zmień tekst na Idź do sklepu', context, catalog: [] }, async (_, questions) => {
+    if (questions.action) return { action: 'properties' };
+    assert.ok(!Object.values(questions).some(q => q.instructions === 'Label#71:0'));
+    return { q0: 'keep' };
+  });
+  assert.deepEqual(result.operations, []);
+});
+
 test('show icon edits visibility without a replacement request', async () => {
   const context = { targetId: 'button', nodes: [{ id: 'button', name: 'Button', type: 'INSTANCE', properties: {
     'Icon#1': { type: 'INSTANCE_SWAP', value: '1:10' }, 'Show Icon#2': { type: 'BOOLEAN', value: false }

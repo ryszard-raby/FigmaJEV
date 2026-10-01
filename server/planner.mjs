@@ -125,7 +125,8 @@ async function editSelected(input, decide) {
     questions[key] = choice(name, { keep: 'Unchanged', ...criteria });
     bindings.push({ key, name, decode });
   }
-  const copy = prompt.match(/["„“]([^"”\n]+)["”]/)?.[1];
+  const quoted = prompt.match(/"([^"\n]+)"|„([^”\n]+)”|“([^”\n]+)”|'([^'\n]+)'/);
+  const copy = quoted?.slice(1).find(value => value !== undefined);
   const properties = {};
   for (const [name, def] of Object.entries(component.properties || {})) {
     if (!['VARIANT', 'BOOLEAN', 'TEXT', 'INSTANCE_SWAP'].includes(def.type)) continue;
