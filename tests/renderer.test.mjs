@@ -9,6 +9,9 @@ mock.method(console, 'log', () => {});
 const { code } = await transform(await readFile(new URL('../plugin/code.ts', import.meta.url), 'utf8'), { loader: 'ts', target: 'es2017' });
 function harness(storage = new Map()) {
   let sequence = 0;
+  let clock = 0; let timerId = 0;
+  const timers = new Map();
+  const commits = [];
   const nodes = new Map(); const messages = []; const events = {};
   function frame(type = 'FRAME') {
     const n = { id: `id${sequence++}`, type, name: 'Card', visible: true, width: 300, height: 200, x: 0, y: 0,
@@ -26,10 +29,24 @@ function harness(storage = new Map()) {
     showUI() {}, on: (event, fn) => { events[event] = fn; }, loadAllPagesAsync: async () => {},
     getNodeByIdAsync: async id => nodes.get(id) || null,
     createFrame() { const n = frame(); page.appendChild(n); return n; },
-    viewport: { center: { x: 500, y: 500 }, scrollAndZoomIntoView() {} }, commitUndo() {},
+    createRectangle() { const n = frame('RECTANGLE'); page.appendChild(n); return n; },
+    viewport: { center: { x: 500, y: 500 }, scrollAndZoomIntoView() {} }, commitUndo() { commits.push(page.children.map(n => n.name)); },
     importComponentByKeyAsync: async () => { throw new Error('Import failed'); }
   };
-  vm.runInNewContext(code, { figma, __html__: '', Error });
+  vm.runInNewContext(code, { figma, __html__: '', Error,
+    Date: class extends Date { static now() { return clock; } },
+    setTimeout(fn, delay) { const id = ++timerId; timers.set(id, { fn, at: clock + delay }); return id; },
+    clearTimeout(id) { timers.delete(id); }
+  });
+  function advance(ms) {
+    const end = clock + ms;
+    while (true) {
+      const next = [...timers.entries()].sort((a, b) => a[1].at - b[1].at)[0];
+      if (!next || next[1].at > end) break;
+      clock = next[1].at; timers.delete(next[0]); next[1].fn();
+    }
+    clock = end;
+  }
   function cardWithContent() {
     const component = frame('COMPONENT'); component.componentPropertyDefinitions = {};
     const definition = frame('SLOT'); definition.name = 'Content'; definition.limitViolations = []; component.appendChild(definition);
@@ -37,8 +54,50 @@ function harness(storage = new Map()) {
     const slot = frame('SLOT'); slot.name = 'Content'; slot.limitViolations = []; instance.appendChild(slot); page.appendChild(instance);
     return { component, instance, slot };
   }
-  return { figma, frame, page, messages, cardWithContent, send: m => figma.ui.onmessage(m) };
+  return { figma, frame, page, messages, cardWithContent, advance, events, timers, commits, send: m => figma.ui.onmessage(m) };
 }
+
+test('highlight runs during JEV work and a fast response applies immediately without waiting for its timer', async () => {
+  const h = harness(); await h.send({ type: 'init' });
+  const target = h.frame(); target.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+  target.absoluteBoundingBox = { x: 123, y: 456, width: 300, height: 200 };
+  h.page.appendChild(target); h.page.selection = [target];
+  const originalFills = JSON.stringify(target.fills);
+  await h.send({ type: 'prepare', libraryId: 'local', prompt: 'Hug' });
+  assert.equal(h.messages.at(-1).type, 'prepared');
+  const overlay = h.page.children.find(n => n.type === 'RECTANGLE');
+  assert.ok(overlay); assert.equal(overlay.locked, true);
+  assert.equal(overlay.parent, h.page); assert.equal(target.children.length, 0);
+  assert.equal(overlay.x, 123); assert.equal(overlay.y, 456);
+  assert.equal(target.layoutSizingHorizontal, 'FIXED');
+  h.advance(500); const opacity = overlay.opacity;
+  h.advance(500); assert.notEqual(overlay.opacity, opacity);
+  assert.equal(overlay.removed, false);
+  assert.equal(target.layoutSizingHorizontal, 'FIXED');
+  await h.send({ type: 'apply', plan: { mode: 'edit', targetId: target.id, operations: [{ id: target.id, field: 'width', value: 'HUG' }] } });
+  assert.equal(overlay.removed, true); assert.equal(h.timers.size, 0);
+  assert.equal(target.layoutSizingHorizontal, 'HUG');
+  assert.equal(JSON.stringify(target.fills), originalFills);
+  assert.equal(h.page.selection[0], target);
+  assert.equal(h.commits.length, 1);
+  assert.ok(!h.commits[0].includes('FigmaJev — temporary highlight'));
+  assert.equal(h.messages.at(-2).type, 'done');
+});
+
+test('highlight cleans up after two seconds or on close, page change and cancellation', async () => {
+  for (const event of ['close', 'currentpagechange', 'timeout', 'cancel']) {
+    const h = harness(); await h.send({ type: 'init' });
+    const target = h.frame(); target.absoluteBoundingBox = { x: 0, y: 0, width: 50, height: 50 };
+    h.page.appendChild(target); h.page.selection = [target];
+    await h.send({ type: 'prepare', libraryId: 'local' });
+    const overlay = h.page.children.find(n => n.type === 'RECTANGLE');
+    if (event === 'timeout') h.advance(2000);
+    else if (event === 'cancel') await h.send({ type: 'cancel' });
+    else h.events[event]();
+    assert.equal(overlay.removed, true); assert.equal(h.timers.size, 0);
+    assert.equal(target.layoutSizingHorizontal, 'FIXED');
+  }
+});
 
 test('connection settings survive reopening and can be cleared', async () => {
   const storage = new Map();

@@ -171,6 +171,56 @@ function setSizing(n: SceneNode, tree: Tree) {
   }
 }
 
+let stopHighlight: (() => void) | null = null;
+const HIGHLIGHT_DURATION_MS = 2000;
+
+function highlightEditedNode(target: SceneNode): Promise<boolean> {
+  stopHighlight?.();
+  if (target.removed || !target.absoluteBoundingBox) return Promise.resolve(!target.removed);
+  const page = figma.currentPage;
+  return new Promise(resolve => {
+    let overlay: RectangleNode | null = null;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let finished = false;
+    const finish = (completed = false) => {
+      if (finished) return;
+      finished = true;
+      if (timer !== undefined) clearTimeout(timer);
+      try { if (overlay && !overlay.removed) overlay.remove(); } catch { /* Decoration must not fail the edit. */ }
+      if (stopHighlight === finish) stopHighlight = null;
+      resolve(completed);
+    };
+    stopHighlight = finish;
+    try {
+      overlay = figma.createRectangle();
+      page.appendChild(overlay);
+      overlay.name = 'FigmaJev — temporary highlight';
+      overlay.locked = true;
+      overlay.fills = [{ type: 'SOLID', color: { r: 0.34, g: 0.35, b: 1 }, opacity: 0.18 }];
+      overlay.strokes = [{ type: 'SOLID', color: { r: 0.34, g: 0.35, b: 1 }, opacity: 0.65 }];
+      overlay.strokeWeight = 1;
+      overlay.cornerRadius = 6;
+      const started = Date.now();
+      const tick = () => {
+        try {
+          if (target.removed || overlay!.removed || figma.currentPage.id !== page.id) return finish();
+          const bounds = target.absoluteBoundingBox;
+          const elapsed = Date.now() - started;
+          if (!bounds || elapsed >= HIGHLIGHT_DURATION_MS) return finish(true);
+          overlay!.resize(Math.max(0.01, bounds.width), Math.max(0.01, bounds.height));
+          overlay!.x = bounds.x; overlay!.y = bounds.y;
+          overlay!.opacity = Math.sin(Math.PI * elapsed / HIGHLIGHT_DURATION_MS) * (0.4 + 0.6 * Math.sin(Math.PI * elapsed / 650) ** 2);
+          timer = setTimeout(tick, 40);
+        } catch { finish(true); }
+      };
+      tick();
+    } catch { finish(true); }
+  });
+}
+
+figma.on('close', () => stopHighlight?.());
+figma.on('currentpagechange', () => stopHighlight?.());
+
 function editableParent(parent: BaseNode | null): boolean {
   if (!parent) return false;
   if (parent.type === 'PAGE' || parent.type === 'SECTION') return true;
@@ -280,6 +330,7 @@ function appendSafely(parent: FrameNode | SlotNode, child: SceneNode) {
 }
 
 async function apply(plan: Plan) {
+  stopHighlight?.();
   const warnings: string[] = [];
   if (!pending || pending.pageId !== figma.currentPage.id) throw new Error('Strona uległa zmianie. Wygeneruj plan ponownie.');
   if (plan.mode === 'create') {
@@ -448,9 +499,11 @@ figma.ui.onmessage = async (message: any) => {
       if (pageId !== figma.currentPage.id) throw new Error('Strona uległa zmianie. Spróbuj ponownie.');
       const context = target ? await snapshot(target as SceneNode) : null;
       pending = { context, catalog, pageId }; active = true;
+      // Run concurrently with the JEV request. Applying a response stops it immediately.
+      if (target) void highlightEditedNode(target);
       send('prepared', { input: { prompt: message.prompt, structure: message.structure, catalog, context } }); return;
     }
     if (message.type === 'apply' && active) { const warnings = await apply(message.plan); active = false; console.log('RENDER RESULT', { success: true, mode: message.plan.mode, warnings }); send('done', { warnings }); await selection(); return; }
-    if (message.type === 'cancel') { pending = null; active = false; }
-  } catch (error) { active = false; pending = null; const detail = error instanceof Error ? error.message : 'Błąd wtyczki.'; console.log('RENDER RESULT', { success: false, error: detail }); send('error', { error: detail }); }
+    if (message.type === 'cancel') { stopHighlight?.(); pending = null; active = false; }
+  } catch (error) { stopHighlight?.(); active = false; pending = null; const detail = error instanceof Error ? error.message : 'Błąd wtyczki.'; console.log('RENDER RESULT', { success: false, error: detail }); send('error', { error: detail }); }
 };
