@@ -48,6 +48,14 @@ Domyślne drzewo: `["Layout", {"device":"mobile"}, ["Card", ["Container", ["Butt
 
 ## Resolution
 
+### Dokumentacja i ChatGPT
+
+Pobranie opublikowanej biblioteki zapisuje alfabetyczny katalog z instrukcją formatu do `docs/design-system.md`. Przycisk **Otwórz w GPT** odświeża dokumentację wybranej biblioteki o properties, opisy zestawów i sloty, a następnie otwiera `https://chatgpt.com/?q=…` z linkiem do dokumentacji. Nie wywołuje API GPT ani JEV. Prompt jest również dostępny w panelu do ręcznego skopiowania, jeśli przeglądarka/ChatGPT nie obsłuży parametru `q` (nie jest to gwarantowany kontrakt API).
+
+Lokalny podgląd: `http://localhost:3847/documentation` (GET bez tokenu, backend nadal nasłuchuje tylko lokalnie). Generowanie: POST `/documentation` z tokenem jak pozostałe operacje. Do dokumentacji trafiają nazwy, opisy, dostępne właściwości, sloty i warstwy tekstowe — bez kluczy API, identyfikatorów węzłów, promptów użytkownika i zaznaczenia.
+
+Po umieszczeniu `docs/design-system.md` na publicznym GitHubie/stronie ustaw `DOCUMENTATION_PUBLIC_URL` w `.env` i zrestartuj backend. Domyślnie jest to jawny placeholder `https://example.com/figmajev/design-system.md`. ChatGPT nie odczyta lokalnego endpointu: do czasu publikacji wklej mu zawartość pliku. Aktualizacja pliku lokalnie nie publikuje go automatycznie na GitHubie; aktualizuj opublikowaną kopię po zmianie DS. Plik dokumentuje ostatnio wybraną bibliotekę.
+
 `UI → katalog + compact tree → parser → jeden wybór komponentów JEV → resolved tree → istniejący renderer`
 
 JEV otrzymuje listę wymaganych elementów z intencją oraz nazwy i opisy kandydatów z Design Systemu. Zwraca wyłącznie mapę ID elementu → ID komponentu/wariantu. Bez osobnego etapu properties, wyboru natywnych prymitywów, szukania zamienników i dzielenia pytań na paczki. Brak pasującego komponentu kończy się czytelnym błędem.

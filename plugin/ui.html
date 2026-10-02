@@ -28,10 +28,12 @@
     <label for="library">Biblioteka komponentów</label>
     <div class="row"><select id="library" aria-label="Biblioteka"><option value="">Skanowanie…</option></select><button id="scan" type="button" title="Skanuj ponownie">↻</button></div>
     <p class="hint" id="catalogHint">Komponenty lokalne i instancje użyte w pliku.</p>
+    <button id="openGpt" type="button" disabled>Otwórz w GPT</button>
     <button class="primary" id="generate" type="submit" disabled>Utwórz ze struktury</button>
   </form>
   <div id="status" role="status" aria-live="polite">Wczytywanie komponentów…</div>
   <details id="result" hidden><summary>Resolved tree / wynik edycji</summary><pre id="tree"></pre></details>
+  <details id="gptDetails" hidden><summary>Prompt do GPT</summary><textarea id="gptPrompt" readonly aria-label="Prompt do skopiowania do ChatGPT"></textarea><p class="hint">Jeśli ChatGPT nie uzupełni promptu automatycznie, skopiuj go stąd.</p></details>
   <details><summary>Połączenie i biblioteki</summary>
     <label for="token">Token lokalnego serwera</label><input id="token" type="password" autocomplete="off" placeholder="FIGMAJEV_TOKEN z .env">
     <p class="hint">FIGMAJEV_TOKEN i adres biblioteki są zapamiętywane na tym urządzeniu. Serwer: localhost:3847.</p>
@@ -70,8 +72,9 @@ function status(text, error = false) { $('status').textContent = text; $('status
 function setBusy(value) {
   if (!value) clearTimeout(libraryAckTimer);
   busy = value;
-  for (const id of ['generate','scan','import','library','prompt','structure','fileKey','token','forget']) $(id).disabled = value;
+  for (const id of ['generate','scan','import','library','prompt','structure','fileKey','token','forget','openGpt']) $(id).disabled = value;
   $('generate').disabled = value || !libraries.length || selectionCount > 1;
+  $('openGpt').disabled = value || !libraries.find(l => l.id === $('library').value)?.components.length;
 }
 async function api(path, body) {
   const token = $('token').value.trim();
@@ -94,6 +97,12 @@ async function api(path, body) {
 }
 function fail(error) { send('cancel'); setBusy(false); status(error.message || String(error), true); }
 $('scan').onclick = () => { setBusy(true); status('Skanowanie pliku…'); send('scan'); };
+$('openGpt').onclick = () => {
+  if (busy || $('openGpt').disabled) return;
+  if (!$('token').value.trim()) { status('Wpisz token w sekcji „Połączenie i biblioteki”.', true); return; }
+  setBusy(true); status('Przygotowywanie dokumentacji biblioteki…');
+  send('prepare-documentation', { libraryId: $('library').value });
+};
 $('prompt').onkeydown = event => {
   if (event.key !== 'Enter' || event.shiftKey || event.isComposing) return;
   event.preventDefault();
@@ -128,6 +137,7 @@ $('import').onclick = async () => {
 function catalogHint() {
   const count = libraries.find(l => l.id === $('library').value)?.components.length || 0;
   $('catalogHint').textContent = count ? `${count} komponentów / wariantów do wyboru.` : 'Brak komponentów. Dodaj bibliotekę lub użyj natywnych kontenerów i tekstów.';
+  $('openGpt').disabled = busy || !count;
 }
 $('library').onchange = catalogHint;
 window.onmessage = async event => {
@@ -153,6 +163,15 @@ window.onmessage = async event => {
     $('createFields').hidden = selectionCount !== 0;
   }
   if (m.type === 'progress') status(m.text);
+  if (m.type === 'documentation-ready') {
+    try {
+      const data = await api('/documentation', { catalog: m.catalog, libraryName: m.libraryName });
+      $('gptPrompt').value = data.prompt; $('gptDetails').hidden = false;
+      send('open-gpt', { prompt: data.prompt });
+      setBusy(false);
+      status(`Dokumentacja ${data.componentCount} komponentów gotowa. Otwieram ChatGPT.${data.publicUrl.includes('example.com') ? ' Link do dokumentacji jest tymczasowy — podmienimy go po publikacji.' : ''}`);
+    } catch (error) { fail(error); }
+  }
   if (m.type === 'prepared') {
     planWarnings = [];
     planHasChanges = true;

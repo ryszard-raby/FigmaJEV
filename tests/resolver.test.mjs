@@ -1,4 +1,4 @@
-import test, { mock } from 'node:test';
+ import test, { mock } from 'node:test';
 import assert from 'node:assert/strict';
 import { plan } from '../server/planner.mjs';
 import { parseCompactTree, collectRequired } from '../server/compact-tree.mjs';

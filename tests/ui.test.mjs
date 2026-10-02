@@ -17,6 +17,10 @@ test('library import accepts forwarded Figma messages and ends loading', async (
     window, parent, document: { getElementById: element, querySelector: element, createElement: () => ({}) },
     AbortController, setTimeout: fn => { timers.set(++timerId, fn); return timerId; }, clearTimeout: id => timers.delete(id),
     fetch: async (url, request) => {
+      if (url === 'http://localhost:3847/documentation') {
+        assert.equal(JSON.parse(request.body).catalog[0].name, 'Card');
+        return { ok: true, json: async () => ({ prompt: 'Dokumentacja: https://example.com/docs', publicUrl: 'https://example.com/docs', componentCount: 1 }) };
+      }
       assert.equal(url, 'http://localhost:3847/library');
       assert.equal(JSON.parse(request.body).fileKey, 'iCotPXnNLa5DV1OsJEgsio');
       return { ok: true, json: async () => ({ components: [{ id: 'card', name: 'Card' }] }) };
@@ -39,6 +43,15 @@ test('library import accepts forwarded Figma messages and ends loading', async (
   assert.equal(element('library').value, 'library1');
   assert.equal(element('import').disabled, false);
   assert.equal(timers.size, 0);
+  assert.equal(element('openGpt').disabled, false);
+  element('openGpt').onclick();
+  assert.equal(sent.at(-1).type, 'prepare-documentation');
+  assert.equal(sent.at(-1).libraryId, 'library1');
+  await window.onmessage({ data: { pluginMessage: { type: 'documentation-ready', libraryName: 'Library', catalog: [{ id: 'card', name: 'Card' }] } } });
+  assert.equal(sent.at(-1).type, 'open-gpt');
+  assert.equal(sent.at(-1).prompt, element('gptPrompt').value);
+  assert.match(element('status').textContent, /tymczasowy/);
+  assert.equal(element('openGpt').disabled, false);
   element('structure').value = '["Container",["Button"]]';
   element('prompt').value = '';
   element('form').onsubmit({ preventDefault() {} });

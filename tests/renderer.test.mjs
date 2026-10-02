@@ -99,6 +99,23 @@ test('highlight cleans up after two seconds or on close, page change and cancell
   }
 });
 
+test('GPT documentation uses enriched selected library without preparing a render and opens encoded chat prompt', async () => {
+  const h = harness(); await h.send({ type: 'init' });
+  const { component } = h.cardWithContent(); component.description = 'Container for content';
+  await h.send({ type: 'library', fileKey: 'docs', components: [{ id: 'card', key: 'card', nodeId: component.id, name: 'Card' }] });
+  await h.send({ type: 'prepare-documentation', libraryId: 'docs' });
+  const result = h.messages.at(-1);
+  assert.equal(result.type, 'documentation-ready');
+  assert.equal(result.catalog[0].description, 'Container for content');
+  assert.equal(result.catalog[0].slots[0].name, 'Content');
+  assert.ok(!h.messages.some(m => m.type === 'prepared'));
+  let opened;
+  h.figma.openExternal = url => { opened = url; };
+  await h.send({ type: 'open-gpt', prompt: 'Dokumentacja: https://example.com/docs?a=1&b=2' });
+  assert.equal(new URL(opened).origin, 'https://chatgpt.com');
+  assert.equal(new URL(opened).searchParams.get('q'), 'Dokumentacja: https://example.com/docs?a=1&b=2');
+});
+
 test('connection settings survive reopening and can be cleared', async () => {
   const storage = new Map();
   const first = harness(storage); await first.send({ type: 'init' });

@@ -479,6 +479,20 @@ figma.ui.onmessage = async (message: any) => {
       await settingsWrites; return;
     }
     if (message.type === 'scan' && !active) { await scan(); return; }
+    if (message.type === 'open-gpt') {
+      if (typeof message.prompt !== 'string' || message.prompt.length > 8000) throw new Error('Nieprawidłowy prompt do GPT.');
+      figma.openExternal(`https://chatgpt.com/?q=${encodeURIComponent(message.prompt)}`);
+      return;
+    }
+    if (message.type === 'prepare-documentation' && !active) {
+      active = true;
+      const library = libraries.find(l => l.id === message.libraryId);
+      if (!library?.components.length) throw new Error('Wybierz bibliotekę z komponentami.');
+      await enrichCatalog(library.components);
+      active = false;
+      send('documentation-ready', { catalog: library.components, libraryName: library.name });
+      return;
+    }
 
     if (message.type === 'library') {
       if (active) throw new Error('Zakończ generowanie przed dodaniem biblioteki.');
