@@ -3,7 +3,7 @@ import { dirname, resolve } from 'node:path';
 import { validateCatalog } from './resolver.mjs';
 
 export const documentationPath = resolve('docs/design-system.md');
-export const DEFAULT_DOCUMENTATION_URL = 'https://example.com/figmajev/design-system.md';
+export const DEFAULT_DOCUMENTATION_URL = 'https://github.com/ryszard-raby/FigmaJEV/blob/main/docs/design-system.md';
 
 export function documentationPrompt(url = process.env.DOCUMENTATION_PUBLIC_URL || DEFAULT_DOCUMENTATION_URL) {
   const parsed = new URL(url);

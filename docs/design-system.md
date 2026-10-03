@@ -1,6 +1,6 @@
 # FigmaJev — dokumentacja struktury UI
 
-Biblioteka: "Biblioteka iCotPXnNLa5DV1OsJEgsio"
+Biblioteka: "Opublikowana biblioteka"
 Liczba komponentów i wariantów: 124.
 
 ## Jak przygotować strukturę
@@ -35,2396 +35,499 @@ Nazwy, opisy, dostępne properties i sloty pochodzą z biblioteki. Opisy są dok
 [
   {
     "name": "Button / Variant=Accent, Size=Default",
-    "description": "Button accent",
-    "slots": [],
-    "properties": {
-      "Label#71:0": {
-        "type": "TEXT"
-      },
-      "Show Label#149:0": {
-        "type": "BOOLEAN"
-      },
-      "Icon#367:21": {
-        "type": "INSTANCE_SWAP"
-      },
-      "Show icon#367:42": {
-        "type": "BOOLEAN"
-      },
-      "Do not show this icon Jev!#368:63": {
-        "type": "BOOLEAN"
-      },
-      "Variant": {
-        "type": "VARIANT",
-        "options": [
-          "Primary",
-          "Accent",
-          "Outline",
-          "Blank",
-          "Gray",
-          "Dashed",
-          "Selected"
-        ]
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "Small",
-          "Default"
-        ]
-      }
-    },
-    "textLayers": [
-      "Button text"
-    ]
+    "description": "Button accent"
   },
   {
     "name": "Button / Variant=Accent, Size=Small",
-    "description": "Button accent small",
-    "slots": [],
-    "properties": {
-      "Label#71:0": {
-        "type": "TEXT"
-      },
-      "Show Label#149:0": {
-        "type": "BOOLEAN"
-      },
-      "Icon#367:21": {
-        "type": "INSTANCE_SWAP"
-      },
-      "Show icon#367:42": {
-        "type": "BOOLEAN"
-      },
-      "Do not show this icon Jev!#368:63": {
-        "type": "BOOLEAN"
-      },
-      "Variant": {
-        "type": "VARIANT",
-        "options": [
-          "Primary",
-          "Accent",
-          "Outline",
-          "Blank",
-          "Gray",
-          "Dashed",
-          "Selected"
-        ]
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "Small",
-          "Default"
-        ]
-      }
-    },
-    "textLayers": [
-      "Button text"
-    ]
+    "description": "Button accent small"
   },
   {
     "name": "Button / Variant=Blank, Size=Default",
-    "description": "Button blank",
-    "slots": [],
-    "properties": {
-      "Label#71:0": {
-        "type": "TEXT"
-      },
-      "Show Label#149:0": {
-        "type": "BOOLEAN"
-      },
-      "Icon#367:21": {
-        "type": "INSTANCE_SWAP"
-      },
-      "Show icon#367:42": {
-        "type": "BOOLEAN"
-      },
-      "Do not show this icon Jev!#368:63": {
-        "type": "BOOLEAN"
-      },
-      "Variant": {
-        "type": "VARIANT",
-        "options": [
-          "Primary",
-          "Accent",
-          "Outline",
-          "Blank",
-          "Gray",
-          "Dashed",
-          "Selected"
-        ]
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "Small",
-          "Default"
-        ]
-      }
-    },
-    "textLayers": [
-      "Button text"
-    ]
+    "description": "Button blank"
   },
   {
     "name": "Button / Variant=Blank, Size=Small",
-    "description": "Button blank small",
-    "slots": [],
-    "properties": {
-      "Label#71:0": {
-        "type": "TEXT"
-      },
-      "Show Label#149:0": {
-        "type": "BOOLEAN"
-      },
-      "Icon#367:21": {
-        "type": "INSTANCE_SWAP"
-      },
-      "Show icon#367:42": {
-        "type": "BOOLEAN"
-      },
-      "Do not show this icon Jev!#368:63": {
-        "type": "BOOLEAN"
-      },
-      "Variant": {
-        "type": "VARIANT",
-        "options": [
-          "Primary",
-          "Accent",
-          "Outline",
-          "Blank",
-          "Gray",
-          "Dashed",
-          "Selected"
-        ]
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "Small",
-          "Default"
-        ]
-      }
-    },
-    "textLayers": [
-      "Button text"
-    ]
+    "description": "Button blank small"
   },
   {
     "name": "Button / Variant=Dashed, Size=Default",
-    "description": "Button outline",
-    "slots": [],
-    "properties": {
-      "Label#71:0": {
-        "type": "TEXT"
-      },
-      "Show Label#149:0": {
-        "type": "BOOLEAN"
-      },
-      "Icon#367:21": {
-        "type": "INSTANCE_SWAP"
-      },
-      "Show icon#367:42": {
-        "type": "BOOLEAN"
-      },
-      "Do not show this icon Jev!#368:63": {
-        "type": "BOOLEAN"
-      },
-      "Variant": {
-        "type": "VARIANT",
-        "options": [
-          "Primary",
-          "Accent",
-          "Outline",
-          "Blank",
-          "Gray",
-          "Dashed",
-          "Selected"
-        ]
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "Small",
-          "Default"
-        ]
-      }
-    },
-    "textLayers": [
-      "Button text"
-    ]
+    "description": "Button outline"
   },
   {
     "name": "Button / Variant=Dashed, Size=Small",
-    "description": "Button outline small",
-    "slots": [],
-    "properties": {
-      "Label#71:0": {
-        "type": "TEXT"
-      },
-      "Show Label#149:0": {
-        "type": "BOOLEAN"
-      },
-      "Icon#367:21": {
-        "type": "INSTANCE_SWAP"
-      },
-      "Show icon#367:42": {
-        "type": "BOOLEAN"
-      },
-      "Do not show this icon Jev!#368:63": {
-        "type": "BOOLEAN"
-      },
-      "Variant": {
-        "type": "VARIANT",
-        "options": [
-          "Primary",
-          "Accent",
-          "Outline",
-          "Blank",
-          "Gray",
-          "Dashed",
-          "Selected"
-        ]
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "Small",
-          "Default"
-        ]
-      }
-    },
-    "textLayers": [
-      "Button text"
-    ]
+    "description": "Button outline small"
   },
   {
     "name": "Button / Variant=Gray, Size=Default",
-    "description": "Button gray",
-    "slots": [],
-    "properties": {
-      "Label#71:0": {
-        "type": "TEXT"
-      },
-      "Show Label#149:0": {
-        "type": "BOOLEAN"
-      },
-      "Icon#367:21": {
-        "type": "INSTANCE_SWAP"
-      },
-      "Show icon#367:42": {
-        "type": "BOOLEAN"
-      },
-      "Do not show this icon Jev!#368:63": {
-        "type": "BOOLEAN"
-      },
-      "Variant": {
-        "type": "VARIANT",
-        "options": [
-          "Primary",
-          "Accent",
-          "Outline",
-          "Blank",
-          "Gray",
-          "Dashed",
-          "Selected"
-        ]
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "Small",
-          "Default"
-        ]
-      }
-    },
-    "textLayers": [
-      "Button text"
-    ]
+    "description": "Button gray"
   },
   {
     "name": "Button / Variant=Gray, Size=Small",
-    "description": "Button gray small",
-    "slots": [],
-    "properties": {
-      "Label#71:0": {
-        "type": "TEXT"
-      },
-      "Show Label#149:0": {
-        "type": "BOOLEAN"
-      },
-      "Icon#367:21": {
-        "type": "INSTANCE_SWAP"
-      },
-      "Show icon#367:42": {
-        "type": "BOOLEAN"
-      },
-      "Do not show this icon Jev!#368:63": {
-        "type": "BOOLEAN"
-      },
-      "Variant": {
-        "type": "VARIANT",
-        "options": [
-          "Primary",
-          "Accent",
-          "Outline",
-          "Blank",
-          "Gray",
-          "Dashed",
-          "Selected"
-        ]
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "Small",
-          "Default"
-        ]
-      }
-    },
-    "textLayers": [
-      "Button text"
-    ]
+    "description": "Button gray small"
   },
   {
     "name": "Button / Variant=Outline, Size=Default",
-    "description": "Button outline",
-    "slots": [],
-    "properties": {
-      "Label#71:0": {
-        "type": "TEXT"
-      },
-      "Show Label#149:0": {
-        "type": "BOOLEAN"
-      },
-      "Icon#367:21": {
-        "type": "INSTANCE_SWAP"
-      },
-      "Show icon#367:42": {
-        "type": "BOOLEAN"
-      },
-      "Do not show this icon Jev!#368:63": {
-        "type": "BOOLEAN"
-      },
-      "Variant": {
-        "type": "VARIANT",
-        "options": [
-          "Primary",
-          "Accent",
-          "Outline",
-          "Blank",
-          "Gray",
-          "Dashed",
-          "Selected"
-        ]
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "Small",
-          "Default"
-        ]
-      }
-    },
-    "textLayers": [
-      "Button text"
-    ]
+    "description": "Button outline"
   },
   {
     "name": "Button / Variant=Outline, Size=Small",
-    "description": "Button outline small",
-    "slots": [],
-    "properties": {
-      "Label#71:0": {
-        "type": "TEXT"
-      },
-      "Show Label#149:0": {
-        "type": "BOOLEAN"
-      },
-      "Icon#367:21": {
-        "type": "INSTANCE_SWAP"
-      },
-      "Show icon#367:42": {
-        "type": "BOOLEAN"
-      },
-      "Do not show this icon Jev!#368:63": {
-        "type": "BOOLEAN"
-      },
-      "Variant": {
-        "type": "VARIANT",
-        "options": [
-          "Primary",
-          "Accent",
-          "Outline",
-          "Blank",
-          "Gray",
-          "Dashed",
-          "Selected"
-        ]
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "Small",
-          "Default"
-        ]
-      }
-    },
-    "textLayers": [
-      "Button text"
-    ]
+    "description": "Button outline small"
   },
   {
     "name": "Button / Variant=Primary, Size=Default",
-    "description": "Przycisk akcji\nZazwyczaj pokazujemy jedną ikonę",
-    "slots": [],
-    "properties": {
-      "Label#71:0": {
-        "type": "TEXT"
-      },
-      "Show Label#149:0": {
-        "type": "BOOLEAN"
-      },
-      "Icon#367:21": {
-        "type": "INSTANCE_SWAP"
-      },
-      "Show icon#367:42": {
-        "type": "BOOLEAN"
-      },
-      "Do not show this icon Jev!#368:63": {
-        "type": "BOOLEAN"
-      },
-      "Variant": {
-        "type": "VARIANT",
-        "options": [
-          "Primary",
-          "Accent",
-          "Outline",
-          "Blank",
-          "Gray",
-          "Dashed",
-          "Selected"
-        ]
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "Small",
-          "Default"
-        ]
-      }
-    },
-    "textLayers": [
-      "Button text"
-    ]
+    "description": "Przycisk akcji\nZazwyczaj pokazujemy jedną ikonę"
   },
   {
     "name": "Button / Variant=Primary, Size=Small",
-    "description": "Przycisk akcji\nZazwyczaj pokazujemy jedną ikonę",
-    "slots": [],
-    "properties": {
-      "Label#71:0": {
-        "type": "TEXT"
-      },
-      "Show Label#149:0": {
-        "type": "BOOLEAN"
-      },
-      "Icon#367:21": {
-        "type": "INSTANCE_SWAP"
-      },
-      "Show icon#367:42": {
-        "type": "BOOLEAN"
-      },
-      "Do not show this icon Jev!#368:63": {
-        "type": "BOOLEAN"
-      },
-      "Variant": {
-        "type": "VARIANT",
-        "options": [
-          "Primary",
-          "Accent",
-          "Outline",
-          "Blank",
-          "Gray",
-          "Dashed",
-          "Selected"
-        ]
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "Small",
-          "Default"
-        ]
-      }
-    },
-    "textLayers": [
-      "Button text"
-    ]
+    "description": "Przycisk akcji\nZazwyczaj pokazujemy jedną ikonę"
   },
   {
     "name": "Button / Variant=Selected, Size=Default",
-    "description": "Button outline",
-    "slots": [],
-    "properties": {
-      "Label#71:0": {
-        "type": "TEXT"
-      },
-      "Show Label#149:0": {
-        "type": "BOOLEAN"
-      },
-      "Icon#367:21": {
-        "type": "INSTANCE_SWAP"
-      },
-      "Show icon#367:42": {
-        "type": "BOOLEAN"
-      },
-      "Do not show this icon Jev!#368:63": {
-        "type": "BOOLEAN"
-      },
-      "Variant": {
-        "type": "VARIANT",
-        "options": [
-          "Primary",
-          "Accent",
-          "Outline",
-          "Blank",
-          "Gray",
-          "Dashed",
-          "Selected"
-        ]
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "Small",
-          "Default"
-        ]
-      }
-    },
-    "textLayers": [
-      "Button text"
-    ]
+    "description": "Button outline"
   },
   {
     "name": "Button / Variant=Selected, Size=Small",
-    "description": "Button outline small",
-    "slots": [],
-    "properties": {
-      "Label#71:0": {
-        "type": "TEXT"
-      },
-      "Show Label#149:0": {
-        "type": "BOOLEAN"
-      },
-      "Icon#367:21": {
-        "type": "INSTANCE_SWAP"
-      },
-      "Show icon#367:42": {
-        "type": "BOOLEAN"
-      },
-      "Do not show this icon Jev!#368:63": {
-        "type": "BOOLEAN"
-      },
-      "Variant": {
-        "type": "VARIANT",
-        "options": [
-          "Primary",
-          "Accent",
-          "Outline",
-          "Blank",
-          "Gray",
-          "Dashed",
-          "Selected"
-        ]
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "Small",
-          "Default"
-        ]
-      }
-    },
-    "textLayers": [
-      "Button text"
-    ]
+    "description": "Button outline small"
   },
   {
     "name": "Card / Style=Border bottom",
-    "description": "'Card' jest ramą każdego nowego komponentu\nNie umieszczaj 'Card' wewnątrz inneog 'Card'\nUstaw szerokość na fill\nUstaw wysokość na hug",
-    "slots": [
-      {
-        "name": "Content"
-      }
-    ],
-    "properties": {
-      "Content#102:0": {
-        "type": "SLOT"
-      },
-      "Style": {
-        "type": "VARIANT",
-        "options": [
-          "White",
-          "Outlined",
-          "Gray",
-          "Border bottom"
-        ]
-      }
-    }
+    "description": ""
   },
   {
     "name": "Card / Style=Gray",
-    "description": "'Card' jest ramą każdego nowego komponentu\nNie umieszczaj 'Card' wewnątrz inneog 'Card'\nUstaw szerokość na fill\nUstaw wysokość na hug",
-    "slots": [
-      {
-        "name": "Content"
-      }
-    ],
-    "properties": {
-      "Content#102:0": {
-        "type": "SLOT"
-      },
-      "Style": {
-        "type": "VARIANT",
-        "options": [
-          "White",
-          "Outlined",
-          "Gray",
-          "Border bottom"
-        ]
-      }
-    }
+    "description": ""
   },
   {
     "name": "Card / Style=Outlined",
-    "description": "'Card' jest ramą każdego nowego komponentu\nNie umieszczaj 'Card' wewnątrz inneog 'Card'\nUstaw szerokość na fill\nUstaw wysokość na hug",
-    "slots": [
-      {
-        "name": "Content"
-      }
-    ],
-    "properties": {
-      "Content#102:0": {
-        "type": "SLOT"
-      },
-      "Style": {
-        "type": "VARIANT",
-        "options": [
-          "White",
-          "Outlined",
-          "Gray",
-          "Border bottom"
-        ]
-      }
-    }
+    "description": ""
   },
   {
     "name": "Card / Style=White",
-    "description": "'Card' jest ramą każdego nowego komponentu\nNie umieszczaj 'Card' wewnątrz inneog 'Card'\nUstaw szerokość na fill\nUstaw wysokość na hug",
-    "slots": [
-      {
-        "name": "Content"
-      }
-    ],
-    "properties": {
-      "Content#102:0": {
-        "type": "SLOT"
-      },
-      "Style": {
-        "type": "VARIANT",
-        "options": [
-          "White",
-          "Outlined",
-          "Gray",
-          "Border bottom"
-        ]
-      }
-    }
+    "description": ""
   },
   {
     "name": "Ceneo Header / Property 1=Desktop",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Property 1": {
-        "type": "VARIANT",
-        "options": [
-          "Desktop",
-          "Mobile"
-        ]
-      }
-    },
-    "textLayers": [
-      "Label",
-      "Button text"
-    ]
+    "description": ""
   },
   {
     "name": "Ceneo Header / Property 1=Mobile",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Property 1": {
-        "type": "VARIANT",
-        "options": [
-          "Desktop",
-          "Mobile"
-        ]
-      }
-    },
-    "textLayers": [
-      "Label",
-      "Button text"
-    ]
+    "description": ""
   },
   {
     "name": "Checkbox / Property 1=Checked",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Text#2:0": {
-        "type": "TEXT"
-      },
-      "Property 1": {
-        "type": "VARIANT",
-        "options": [
-          "Default",
-          "Checked"
-        ]
-      }
-    },
-    "textLayers": [
-      "checkbox"
-    ]
+    "description": ""
   },
   {
     "name": "Checkbox / Property 1=Default",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Text#2:0": {
-        "type": "TEXT"
-      },
-      "Property 1": {
-        "type": "VARIANT",
-        "options": [
-          "Default",
-          "Checked"
-        ]
-      }
-    },
-    "textLayers": [
-      "checkbox"
-    ]
+    "description": ""
   },
   {
     "name": "Container / Direction=Horizontal",
-    "description": "'Container' układa elementy w pionie lub poziomie\nKontener powinien być umieszczony wewnątrz 'Card'\nUstaw szerokość na 'fill'\nUstaw wysokość na 'hug'",
-    "slots": [
-      {
-        "name": "Content"
-      }
-    ],
-    "properties": {
-      "Content#316:0": {
-        "type": "SLOT"
-      },
-      "Direction": {
-        "type": "VARIANT",
-        "options": [
-          "Horizontal",
-          "Vertical"
-        ]
-      }
-    }
+    "description": ""
   },
   {
     "name": "Container / Direction=Vertical",
-    "description": "'Container' układa elementy w pionie lub poziomie\nKontener powinien być umieszczony wewnątrz 'Card'\nUstaw szerokość na 'fill'\nUstaw wysokość na 'hug'",
-    "slots": [
-      {
-        "name": "Content"
-      }
-    ],
-    "properties": {
-      "Content#316:0": {
-        "type": "SLOT"
-      },
-      "Direction": {
-        "type": "VARIANT",
-        "options": [
-          "Horizontal",
-          "Vertical"
-        ]
-      }
-    }
+    "description": ""
   },
   {
     "name": "Icon",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Icon#158:3": {
-        "type": "INSTANCE_SWAP"
-      }
-    }
+    "description": ""
   },
   {
     "name": "Icons / Alarm",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Angle down",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Angle right",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Arrow",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Box",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Campain",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Cards",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Cart empty",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Cart fill",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Cart plus",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Chart",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Check",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Comment",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Compare",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Contact",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Contact phone",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Delivery",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Filtr",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Handshake",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Heart",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Incognito",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Loader",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / minus",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / More",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Note",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Plus",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Price down",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Ranking",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Recycle",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Search",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Search alt",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Search check",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Search plus",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Send",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Set",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Setting",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Sort",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Star",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Thumb",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / Trash",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / User",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / VS",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Icons / ZO",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "Input - text",
-    "description": "Input text",
-    "slots": [],
-    "properties": {
-      "Label#69:0": {
-        "type": "TEXT"
-      }
-    },
-    "textLayers": [
-      "Label"
-    ]
+    "description": "Input text"
   },
   {
     "name": "Label / Color=Primary, Style=Filled",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Show Icon#85:0": {
-        "type": "BOOLEAN"
-      },
-      "Icon#85:3": {
-        "type": "INSTANCE_SWAP"
-      },
-      "Show Label#228:0": {
-        "type": "BOOLEAN"
-      },
-      "Label#272:0": {
-        "type": "TEXT"
-      },
-      "Color": {
-        "type": "VARIANT",
-        "options": [
-          "Primary"
-        ]
-      },
-      "Style": {
-        "type": "VARIANT",
-        "options": [
-          "Filled",
-          "Plain"
-        ]
-      }
-    },
-    "textLayers": [
-      "Label"
-    ]
+    "description": ""
   },
   {
     "name": "Label / Color=Primary, Style=Plain",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Show Icon#85:0": {
-        "type": "BOOLEAN"
-      },
-      "Icon#85:3": {
-        "type": "INSTANCE_SWAP"
-      },
-      "Show Label#228:0": {
-        "type": "BOOLEAN"
-      },
-      "Label#272:0": {
-        "type": "TEXT"
-      },
-      "Color": {
-        "type": "VARIANT",
-        "options": [
-          "Primary"
-        ]
-      },
-      "Style": {
-        "type": "VARIANT",
-        "options": [
-          "Filled",
-          "Plain"
-        ]
-      }
-    },
-    "textLayers": [
-      "Label"
-    ]
+    "description": ""
   },
   {
     "name": "Layout / Device=Desktop",
-    "description": "'Layout' ustala szerokość desktop / mobile\nStruktura widoku:Layout → Card → Container → content elements.\nNie zmieniaj szerokości 'Layout'",
-    "slots": [
-      {
-        "name": "Content"
-      }
-    ],
-    "properties": {
-      "Content#305:0": {
-        "type": "SLOT"
-      },
-      "Device": {
-        "type": "VARIANT",
-        "options": [
-          "Desktop",
-          "Mobile"
-        ]
-      }
-    }
+    "description": ""
   },
   {
     "name": "Layout / Device=Mobile",
-    "description": "'Layout' ustala szerokość desktop / mobile\nStruktura widoku:Layout → Card → Container → content elements.\nNie zmieniaj szerokości 'Layout'",
-    "slots": [
-      {
-        "name": "Content"
-      }
-    ],
-    "properties": {
-      "Content#305:0": {
-        "type": "SLOT"
-      },
-      "Device": {
-        "type": "VARIANT",
-        "options": [
-          "Desktop",
-          "Mobile"
-        ]
-      }
-    }
+    "description": ""
   },
   {
     "name": "Offer - compact / Property 1=Default",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Show expand button#455:8": {
-        "type": "BOOLEAN"
-      },
-      "Show Company Label#455:10": {
-        "type": "BOOLEAN"
-      },
-      "Show promotion#455:12": {
-        "type": "BOOLEAN"
-      },
-      "Property 1": {
-        "type": "VARIANT",
-        "options": [
-          "Default"
-        ]
-      }
-    },
-    "textLayers": [
-      "Button text",
-      "Text",
-      "Text",
-      "Text",
-      "Text",
-      "Label",
-      "Prefix",
-      "Price",
-      "Sufix",
-      "Label",
-      "Label",
-      "Label",
-      "Text",
-      "Label",
-      "Button text",
-      "Button text",
-      "Button text",
-      "Button text"
-    ]
+    "description": ""
   },
   {
     "name": "Offer / Property 1=Default",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Property 1": {
-        "type": "VARIANT",
-        "options": [
-          "Default"
-        ]
-      }
-    },
-    "textLayers": [
-      "Button text",
-      "Text",
-      "Text",
-      "Text",
-      "Text",
-      "Text",
-      "Label",
-      "Prefix",
-      "Price",
-      "Sufix",
-      "Label",
-      "Label",
-      "Label",
-      "Button text",
-      "Button text"
-    ]
+    "description": ""
   },
   {
     "name": "Photo / Property 1=Default",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Property 1": {
-        "type": "VARIANT",
-        "options": [
-          "Default"
-        ]
-      }
-    }
+    "description": ""
   },
   {
     "name": "Price",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Show Prefix#81:0": {
-        "type": "BOOLEAN"
-      }
-    },
-    "textLayers": [
-      "Prefix",
-      "Price",
-      "Sufix"
-    ]
+    "description": ""
   },
   {
     "name": "Product / Property 1=Horizontal",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Property 1": {
-        "type": "VARIANT",
-        "options": [
-          "Vertical",
-          "Horizontal"
-        ]
-      }
-    },
-    "textLayers": [
-      "Label",
-      "Text",
-      "Prefix",
-      "Price",
-      "Sufix",
-      "Label",
-      "Label",
-      "Text",
-      "Text",
-      "Text",
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "Product / Property 1=Vertical",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Property 1": {
-        "type": "VARIANT",
-        "options": [
-          "Vertical",
-          "Horizontal"
-        ]
-      }
-    },
-    "textLayers": [
-      "Label",
-      "Prefix",
-      "Price",
-      "Sufix",
-      "Label",
-      "Label",
-      "Text",
-      "Text",
-      "Text",
-      "Text",
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "Radio / Property 1=Checked",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Text#2:0": {
-        "type": "TEXT"
-      },
-      "Property 1": {
-        "type": "VARIANT",
-        "options": [
-          "Default",
-          "Checked"
-        ]
-      }
-    },
-    "textLayers": [
-      "radio button"
-    ]
+    "description": ""
   },
   {
     "name": "Radio / Property 1=Default",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Text#2:0": {
-        "type": "TEXT"
-      },
-      "Property 1": {
-        "type": "VARIANT",
-        "options": [
-          "Default",
-          "Checked"
-        ]
-      }
-    },
-    "textLayers": [
-      "radio button"
-    ]
+    "description": ""
   },
   {
     "name": "Stars / Property 1=Compact",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Property 1": {
-        "type": "VARIANT",
-        "options": [
-          "Default",
-          "Small",
-          "Compact"
-        ]
-      }
-    },
-    "textLayers": [
-      "Text",
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "Stars / Property 1=Default",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Property 1": {
-        "type": "VARIANT",
-        "options": [
-          "Default",
-          "Small",
-          "Compact"
-        ]
-      }
-    },
-    "textLayers": [
-      "Text",
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "Stars / Property 1=Small",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Property 1": {
-        "type": "VARIANT",
-        "options": [
-          "Default",
-          "Small",
-          "Compact"
-        ]
-      }
-    },
-    "textLayers": [
-      "Text",
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "Switch-alternative / Property 1=Checked",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Text#2:0": {
-        "type": "TEXT"
-      },
-      "Property 1": {
-        "type": "VARIANT",
-        "options": [
-          "Default",
-          "Checked"
-        ]
-      }
-    },
-    "textLayers": [
-      "Switch"
-    ]
+    "description": ""
   },
   {
     "name": "Switch-alternative / Property 1=Default",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Text#2:0": {
-        "type": "TEXT"
-      },
-      "Property 1": {
-        "type": "VARIANT",
-        "options": [
-          "Default",
-          "Checked"
-        ]
-      }
-    },
-    "textLayers": [
-      "Switch"
-    ]
+    "description": ""
   },
   {
     "name": "Table",
-    "description": "",
-    "slots": [],
-    "properties": {},
-    "textLayers": [
-      "Text",
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "Text / Size=2xl, Weight=Bold",
-    "description": "Użyj 'sm' dla zwykłego tekstu\nUżyj 'lg' / 'bold' dla nagłówków\nUstaw szerokość na 'fill'\nUstaw wysokość na 'hug'",
-    "slots": [],
-    "properties": {
-      "Content#73:0": {
-        "type": "TEXT"
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "xs",
-          "sm",
-          "lg",
-          "xl",
-          "2xl",
-          "3xl",
-          "base"
-        ]
-      },
-      "Weight": {
-        "type": "VARIANT",
-        "options": [
-          "Normal",
-          "Bold"
-        ]
-      }
-    },
-    "textLayers": [
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "Text / Size=2xl, Weight=Normal",
-    "description": "Użyj 'sm' dla zwykłego tekstu\nUżyj 'lg' / 'bold' dla nagłówków\nUstaw szerokość na 'fill'\nUstaw wysokość na 'hug'",
-    "slots": [],
-    "properties": {
-      "Content#73:0": {
-        "type": "TEXT"
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "xs",
-          "sm",
-          "lg",
-          "xl",
-          "2xl",
-          "3xl",
-          "base"
-        ]
-      },
-      "Weight": {
-        "type": "VARIANT",
-        "options": [
-          "Normal",
-          "Bold"
-        ]
-      }
-    },
-    "textLayers": [
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "Text / Size=3xl, Weight=Bold",
-    "description": "Użyj 'sm' dla zwykłego tekstu\nUżyj 'lg' / 'bold' dla nagłówków\nUstaw szerokość na 'fill'\nUstaw wysokość na 'hug'",
-    "slots": [],
-    "properties": {
-      "Content#73:0": {
-        "type": "TEXT"
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "xs",
-          "sm",
-          "lg",
-          "xl",
-          "2xl",
-          "3xl",
-          "base"
-        ]
-      },
-      "Weight": {
-        "type": "VARIANT",
-        "options": [
-          "Normal",
-          "Bold"
-        ]
-      }
-    },
-    "textLayers": [
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "Text / Size=3xl, Weight=Normal",
-    "description": "Użyj 'sm' dla zwykłego tekstu\nUżyj 'lg' / 'bold' dla nagłówków\nUstaw szerokość na 'fill'\nUstaw wysokość na 'hug'",
-    "slots": [],
-    "properties": {
-      "Content#73:0": {
-        "type": "TEXT"
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "xs",
-          "sm",
-          "lg",
-          "xl",
-          "2xl",
-          "3xl",
-          "base"
-        ]
-      },
-      "Weight": {
-        "type": "VARIANT",
-        "options": [
-          "Normal",
-          "Bold"
-        ]
-      }
-    },
-    "textLayers": [
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "Text / Size=base, Weight=Bold",
-    "description": "Użyj 'sm' dla zwykłego tekstu\nUżyj 'lg' / 'bold' dla nagłówków\nUstaw szerokość na 'fill'\nUstaw wysokość na 'hug'",
-    "slots": [],
-    "properties": {
-      "Content#73:0": {
-        "type": "TEXT"
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "xs",
-          "sm",
-          "lg",
-          "xl",
-          "2xl",
-          "3xl",
-          "base"
-        ]
-      },
-      "Weight": {
-        "type": "VARIANT",
-        "options": [
-          "Normal",
-          "Bold"
-        ]
-      }
-    },
-    "textLayers": [
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "Text / Size=base, Weight=Normal",
-    "description": "Użyj 'sm' dla zwykłego tekstu\nUżyj 'lg' / 'bold' dla nagłówków\nUstaw szerokość na 'fill'\nUstaw wysokość na 'hug'",
-    "slots": [],
-    "properties": {
-      "Content#73:0": {
-        "type": "TEXT"
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "xs",
-          "sm",
-          "lg",
-          "xl",
-          "2xl",
-          "3xl",
-          "base"
-        ]
-      },
-      "Weight": {
-        "type": "VARIANT",
-        "options": [
-          "Normal",
-          "Bold"
-        ]
-      }
-    },
-    "textLayers": [
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "Text / Size=lg, Weight=Bold",
-    "description": "Użyj 'sm' dla zwykłego tekstu\nUżyj 'lg' / 'bold' dla nagłówków\nUstaw szerokość na 'fill'\nUstaw wysokość na 'hug'",
-    "slots": [],
-    "properties": {
-      "Content#73:0": {
-        "type": "TEXT"
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "xs",
-          "sm",
-          "lg",
-          "xl",
-          "2xl",
-          "3xl",
-          "base"
-        ]
-      },
-      "Weight": {
-        "type": "VARIANT",
-        "options": [
-          "Normal",
-          "Bold"
-        ]
-      }
-    },
-    "textLayers": [
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "Text / Size=lg, Weight=Normal",
-    "description": "Użyj 'sm' dla zwykłego tekstu\nUżyj 'lg' / 'bold' dla nagłówków\nUstaw szerokość na 'fill'\nUstaw wysokość na 'hug'",
-    "slots": [],
-    "properties": {
-      "Content#73:0": {
-        "type": "TEXT"
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "xs",
-          "sm",
-          "lg",
-          "xl",
-          "2xl",
-          "3xl",
-          "base"
-        ]
-      },
-      "Weight": {
-        "type": "VARIANT",
-        "options": [
-          "Normal",
-          "Bold"
-        ]
-      }
-    },
-    "textLayers": [
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "Text / Size=sm, Weight=Bold",
-    "description": "Użyj 'sm' dla zwykłego tekstu\nUżyj 'lg' / 'bold' dla nagłówków\nUstaw szerokość na 'fill'\nUstaw wysokość na 'hug'",
-    "slots": [],
-    "properties": {
-      "Content#73:0": {
-        "type": "TEXT"
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "xs",
-          "sm",
-          "lg",
-          "xl",
-          "2xl",
-          "3xl",
-          "base"
-        ]
-      },
-      "Weight": {
-        "type": "VARIANT",
-        "options": [
-          "Normal",
-          "Bold"
-        ]
-      }
-    },
-    "textLayers": [
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "Text / Size=sm, Weight=Normal",
-    "description": "Użyj 'sm' dla zwykłego tekstu\nUżyj 'lg' / 'bold' dla nagłówków\nUstaw szerokość na 'fill'\nUstaw wysokość na 'hug'",
-    "slots": [],
-    "properties": {
-      "Content#73:0": {
-        "type": "TEXT"
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "xs",
-          "sm",
-          "lg",
-          "xl",
-          "2xl",
-          "3xl",
-          "base"
-        ]
-      },
-      "Weight": {
-        "type": "VARIANT",
-        "options": [
-          "Normal",
-          "Bold"
-        ]
-      }
-    },
-    "textLayers": [
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "Text / Size=xl, Weight=Bold",
-    "description": "Użyj 'sm' dla zwykłego tekstu\nUżyj 'lg' / 'bold' dla nagłówków\nUstaw szerokość na 'fill'\nUstaw wysokość na 'hug'",
-    "slots": [],
-    "properties": {
-      "Content#73:0": {
-        "type": "TEXT"
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "xs",
-          "sm",
-          "lg",
-          "xl",
-          "2xl",
-          "3xl",
-          "base"
-        ]
-      },
-      "Weight": {
-        "type": "VARIANT",
-        "options": [
-          "Normal",
-          "Bold"
-        ]
-      }
-    },
-    "textLayers": [
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "Text / Size=xl, Weight=Normal",
-    "description": "Użyj 'sm' dla zwykłego tekstu\nUżyj 'lg' / 'bold' dla nagłówków\nUstaw szerokość na 'fill'\nUstaw wysokość na 'hug'",
-    "slots": [],
-    "properties": {
-      "Content#73:0": {
-        "type": "TEXT"
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "xs",
-          "sm",
-          "lg",
-          "xl",
-          "2xl",
-          "3xl",
-          "base"
-        ]
-      },
-      "Weight": {
-        "type": "VARIANT",
-        "options": [
-          "Normal",
-          "Bold"
-        ]
-      }
-    },
-    "textLayers": [
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "Text / Size=xs, Weight=Bold",
-    "description": "Użyj 'sm' dla zwykłego tekstu\nUżyj 'lg' / 'bold' dla nagłówków\nUstaw szerokość na 'fill'\nUstaw wysokość na 'hug'",
-    "slots": [],
-    "properties": {
-      "Content#73:0": {
-        "type": "TEXT"
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "xs",
-          "sm",
-          "lg",
-          "xl",
-          "2xl",
-          "3xl",
-          "base"
-        ]
-      },
-      "Weight": {
-        "type": "VARIANT",
-        "options": [
-          "Normal",
-          "Bold"
-        ]
-      }
-    },
-    "textLayers": [
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "Text / Size=xs, Weight=Normal",
-    "description": "Użyj 'sm' dla zwykłego tekstu\nUżyj 'lg' / 'bold' dla nagłówków\nUstaw szerokość na 'fill'\nUstaw wysokość na 'hug'",
-    "slots": [],
-    "properties": {
-      "Content#73:0": {
-        "type": "TEXT"
-      },
-      "Size": {
-        "type": "VARIANT",
-        "options": [
-          "xs",
-          "sm",
-          "lg",
-          "xl",
-          "2xl",
-          "3xl",
-          "base"
-        ]
-      },
-      "Weight": {
-        "type": "VARIANT",
-        "options": [
-          "Normal",
-          "Bold"
-        ]
-      }
-    },
-    "textLayers": [
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "UI Elements / Assistant Avatar",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "UI Elements / Badge=Handshake",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Badge": {
-        "type": "VARIANT",
-        "options": [
-          "ZO",
-          "Handshake",
-          "Ranking",
-          "ZO ext",
-          "Ranking ext",
-          "Handshake ex"
-        ]
-      }
-    }
+    "description": ""
   },
   {
     "name": "UI Elements / Badge=Handshake ex",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Badge": {
-        "type": "VARIANT",
-        "options": [
-          "ZO",
-          "Handshake",
-          "Ranking",
-          "ZO ext",
-          "Ranking ext",
-          "Handshake ex"
-        ]
-      }
-    },
-    "textLayers": [
-      "Dbam o klienta"
-    ]
+    "description": ""
   },
   {
     "name": "UI Elements / Badge=Ranking",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Badge": {
-        "type": "VARIANT",
-        "options": [
-          "ZO",
-          "Handshake",
-          "Ranking",
-          "ZO ext",
-          "Ranking ext",
-          "Handshake ex"
-        ]
-      }
-    }
+    "description": ""
   },
   {
     "name": "UI Elements / Badge=Ranking ext",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Badge": {
-        "type": "VARIANT",
-        "options": [
-          "ZO",
-          "Handshake",
-          "Ranking",
-          "ZO ext",
-          "Ranking ext",
-          "Handshake ex"
-        ]
-      }
-    },
-    "textLayers": [
-      "Sklep Roku"
-    ]
+    "description": ""
   },
   {
     "name": "UI Elements / Badge=ZO",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Badge": {
-        "type": "VARIANT",
-        "options": [
-          "ZO",
-          "Handshake",
-          "Ranking",
-          "ZO ext",
-          "Ranking ext",
-          "Handshake ex"
-        ]
-      }
-    }
+    "description": ""
   },
   {
     "name": "UI Elements / Badge=ZO ext",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Badge": {
-        "type": "VARIANT",
-        "options": [
-          "ZO",
-          "Handshake",
-          "Ranking",
-          "ZO ext",
-          "Ranking ext",
-          "Handshake ex"
-        ]
-      }
-    },
-    "textLayers": [
-      "Zaufane Opinie"
-    ]
+    "description": ""
   },
   {
     "name": "UI Elements / Ceneo Logo",
-    "description": "",
-    "slots": [],
-    "properties": {}
+    "description": ""
   },
   {
     "name": "UI Elements / Energy label",
-    "description": "",
-    "slots": [],
-    "properties": {},
-    "textLayers": [
-      "Text"
-    ]
+    "description": ""
   },
   {
     "name": "UI Elements / Shop logo=allegro",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Shop logo": {
-        "type": "VARIANT",
-        "options": [
-          "allegro",
-          "best store",
-          "media markt",
-          "media expert",
-          "morele",
-          "deluxry",
-          "partner"
-        ]
-      }
-    }
+    "description": ""
   },
   {
     "name": "UI Elements / Shop logo=best store",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Shop logo": {
-        "type": "VARIANT",
-        "options": [
-          "allegro",
-          "best store",
-          "media markt",
-          "media expert",
-          "morele",
-          "deluxry",
-          "partner"
-        ]
-      }
-    }
+    "description": ""
   },
   {
     "name": "UI Elements / Shop logo=deluxry",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Shop logo": {
-        "type": "VARIANT",
-        "options": [
-          "allegro",
-          "best store",
-          "media markt",
-          "media expert",
-          "morele",
-          "deluxry",
-          "partner"
-        ]
-      }
-    }
+    "description": ""
   },
   {
     "name": "UI Elements / Shop logo=media expert",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Shop logo": {
-        "type": "VARIANT",
-        "options": [
-          "allegro",
-          "best store",
-          "media markt",
-          "media expert",
-          "morele",
-          "deluxry",
-          "partner"
-        ]
-      }
-    }
+    "description": ""
   },
   {
     "name": "UI Elements / Shop logo=media markt",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Shop logo": {
-        "type": "VARIANT",
-        "options": [
-          "allegro",
-          "best store",
-          "media markt",
-          "media expert",
-          "morele",
-          "deluxry",
-          "partner"
-        ]
-      }
-    }
+    "description": ""
   },
   {
     "name": "UI Elements / Shop logo=morele",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Shop logo": {
-        "type": "VARIANT",
-        "options": [
-          "allegro",
-          "best store",
-          "media markt",
-          "media expert",
-          "morele",
-          "deluxry",
-          "partner"
-        ]
-      }
-    }
+    "description": ""
   },
   {
     "name": "UI Elements / Shop logo=partner",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Shop logo": {
-        "type": "VARIANT",
-        "options": [
-          "allegro",
-          "best store",
-          "media markt",
-          "media expert",
-          "morele",
-          "deluxry",
-          "partner"
-        ]
-      }
-    }
+    "description": ""
   },
   {
     "name": "UI Elements / Shop promotion=Darmowa wysyłka",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Shop promotion": {
-        "type": "VARIANT",
-        "options": [
-          "Darmowa wysyłka",
-          "Wysyłka w 1 dzień",
-          "Promo tekst",
-          "Kupione ostatnio",
-          "Deposit",
-          "Discount",
-          "Shop promotion7"
-        ]
-      }
-    },
-    "textLayers": [
-      "Label"
-    ]
+    "description": ""
   },
   {
     "name": "UI Elements / Shop promotion=Deposit",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Shop promotion": {
-        "type": "VARIANT",
-        "options": [
-          "Darmowa wysyłka",
-          "Wysyłka w 1 dzień",
-          "Promo tekst",
-          "Kupione ostatnio",
-          "Deposit",
-          "Discount",
-          "Shop promotion7"
-        ]
-      }
-    },
-    "textLayers": [
-      "Label"
-    ]
+    "description": ""
   },
   {
     "name": "UI Elements / Shop promotion=Discount",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Shop promotion": {
-        "type": "VARIANT",
-        "options": [
-          "Darmowa wysyłka",
-          "Wysyłka w 1 dzień",
-          "Promo tekst",
-          "Kupione ostatnio",
-          "Deposit",
-          "Discount",
-          "Shop promotion7"
-        ]
-      }
-    },
-    "textLayers": [
-      "Label"
-    ]
+    "description": ""
   },
   {
     "name": "UI Elements / Shop promotion=Kupione ostatnio",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Shop promotion": {
-        "type": "VARIANT",
-        "options": [
-          "Darmowa wysyłka",
-          "Wysyłka w 1 dzień",
-          "Promo tekst",
-          "Kupione ostatnio",
-          "Deposit",
-          "Discount",
-          "Shop promotion7"
-        ]
-      }
-    },
-    "textLayers": [
-      "Label"
-    ]
+    "description": ""
   },
   {
     "name": "UI Elements / Shop promotion=Promo tekst",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Shop promotion": {
-        "type": "VARIANT",
-        "options": [
-          "Darmowa wysyłka",
-          "Wysyłka w 1 dzień",
-          "Promo tekst",
-          "Kupione ostatnio",
-          "Deposit",
-          "Discount",
-          "Shop promotion7"
-        ]
-      }
-    },
-    "textLayers": [
-      "Label"
-    ]
+    "description": ""
   },
   {
     "name": "UI Elements / Shop promotion=Shop promotion7",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Shop promotion": {
-        "type": "VARIANT",
-        "options": [
-          "Darmowa wysyłka",
-          "Wysyłka w 1 dzień",
-          "Promo tekst",
-          "Kupione ostatnio",
-          "Deposit",
-          "Discount",
-          "Shop promotion7"
-        ]
-      }
-    },
-    "textLayers": [
-      "Label"
-    ]
+    "description": ""
   },
   {
     "name": "UI Elements / Shop promotion=Wysyłka w 1 dzień",
-    "description": "",
-    "slots": [],
-    "properties": {
-      "Shop promotion": {
-        "type": "VARIANT",
-        "options": [
-          "Darmowa wysyłka",
-          "Wysyłka w 1 dzień",
-          "Promo tekst",
-          "Kupione ostatnio",
-          "Deposit",
-          "Discount",
-          "Shop promotion7"
-        ]
-      }
-    },
-    "textLayers": [
-      "Label"
-    ]
+    "description": ""
   }
 ]
 ```

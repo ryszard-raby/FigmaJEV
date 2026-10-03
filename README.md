@@ -54,7 +54,7 @@ Pobranie opublikowanej biblioteki zapisuje alfabetyczny katalog z instrukcją fo
 
 Lokalny podgląd: `http://localhost:3847/documentation` (GET bez tokenu, backend nadal nasłuchuje tylko lokalnie). Generowanie: POST `/documentation` z tokenem jak pozostałe operacje. Do dokumentacji trafiają nazwy, opisy, dostępne właściwości, sloty i warstwy tekstowe — bez kluczy API, identyfikatorów węzłów, promptów użytkownika i zaznaczenia.
 
-Po umieszczeniu `docs/design-system.md` na publicznym GitHubie/stronie ustaw `DOCUMENTATION_PUBLIC_URL` w `.env` i zrestartuj backend. Domyślnie jest to jawny placeholder `https://example.com/figmajev/design-system.md`. ChatGPT nie odczyta lokalnego endpointu: do czasu publikacji wklej mu zawartość pliku. Aktualizacja pliku lokalnie nie publikuje go automatycznie na GitHubie; aktualizuj opublikowaną kopię po zmianie DS. Plik dokumentuje ostatnio wybraną bibliotekę.
+Dokumentacja jest dost?pna pod adresem https://github.com/ryszard-raby/FigmaJEV/blob/main/docs/design-system.md. To domy?lny link przekazywany do GPT; mo?na go zmieni? przez `DOCUMENTATION_PUBLIC_URL` w `.env` i restart backendu. ChatGPT nie odczyta lokalnego endpointu. Aktualizacja pliku lokalnie nie publikuje go automatycznie na GitHubie; aktualizuj opublikowan? kopi? po zmianie DS. Plik dokumentuje ostatnio wybran? bibliotek?.
 
 `UI → katalog + compact tree → parser → jeden wybór komponentów JEV → resolved tree → istniejący renderer`
 
