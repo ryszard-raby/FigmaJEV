@@ -31,6 +31,9 @@
     <button id="openGpt" type="button" disabled>Otwórz w GPT</button>
     <button class="primary" id="generate" type="submit" disabled>Utwórz ze struktury</button>
   </form>
+  <button id="exportVariables" type="button">Pobierz zmienne CSS</button>
+  <p class="hint">Zmienne z otwartego pliku Figmy, wszystkie tryby i aliasy. Pełny eksport wykonaj w pliku źródłowym design systemu. Bez JEV i backendu.</p>
+  <a id="cssDownload" hidden download="figma-variables.css">Zapisz plik CSS</a>
   <div id="status" role="status" aria-live="polite">Wczytywanie komponentów…</div>
   <details id="result" hidden><summary>Resolved tree / wynik edycji</summary><pre id="tree"></pre></details>
   <details id="gptDetails" hidden><summary>Prompt do GPT</summary><textarea id="gptPrompt" readonly aria-label="Prompt do skopiowania do ChatGPT"></textarea><p class="hint">Jeśli ChatGPT nie uzupełni promptu automatycznie, skopiuj go stąd.</p></details>
@@ -72,7 +75,7 @@ function status(text, error = false) { $('status').textContent = text; $('status
 function setBusy(value) {
   if (!value) clearTimeout(libraryAckTimer);
   busy = value;
-  for (const id of ['generate','scan','import','library','prompt','structure','fileKey','token','forget','openGpt']) $(id).disabled = value;
+  for (const id of ['generate','scan','import','library','prompt','structure','fileKey','token','forget','openGpt','exportVariables']) $(id).disabled = value;
   $('generate').disabled = value || !libraries.length || selectionCount > 1;
   $('openGpt').disabled = value || !libraries.find(l => l.id === $('library').value)?.components.length;
 }
@@ -96,6 +99,11 @@ async function api(path, body) {
   } finally { clearTimeout(timeout); }
 }
 function fail(error) { send('cancel'); setBusy(false); status(error.message || String(error), true); }
+let cssDownloadUrl;
+$('exportVariables').onclick = () => {
+  if (busy) return;
+  setBusy(true); status('Pobieranie zmiennych Figmy…'); send('export-variables');
+};
 $('scan').onclick = () => { setBusy(true); status('Skanowanie pliku…'); send('scan'); };
 $('openGpt').onclick = () => {
   if (busy || $('openGpt').disabled) return;
@@ -161,6 +169,14 @@ window.onmessage = async event => {
     $('generate').disabled = busy || !libraries.length || selectionCount > 1;
     $('editFields').hidden = !hasSelection;
     $('createFields').hidden = selectionCount !== 0;
+  }
+  if (m.type === 'variables-css') {
+    try {
+      if (cssDownloadUrl) URL.revokeObjectURL(cssDownloadUrl);
+      cssDownloadUrl = URL.createObjectURL(new Blob([m.css], { type: 'text/css;charset=utf-8' }));
+      const link = $('cssDownload'); link.href = cssDownloadUrl; link.download = m.filename; link.hidden = false;
+      link.click(); setBusy(false); status('Przygotowano CSS: ' + m.count + ' zmiennych. Jeśli pobieranie nie ruszyło, kliknij „Zapisz plik CSS”.');
+    } catch (error) { fail(error); }
   }
   if (m.type === 'progress') status(m.text);
   if (m.type === 'documentation-ready') {

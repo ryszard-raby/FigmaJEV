@@ -10,7 +10,7 @@ GPT określa kompletną hierarchię UI. JEV wybiera komponenty i warianty z poni
 - Node: ["Nazwa komponentu", {"property":"wartość"}, ...dzieci]. Obiekt properties jest opcjonalny. Jeden korzeń.
 - Używaj nazw z listy, ewentualnie nazwy rodziny przed ukośnikiem (np. Button). Nie wymyślaj komponentów ani wariantów.
 - Każdy wpis tworzy osobną instancję. Zachowaj kolejność i liczbę dzieci. Nie dodawaj technicznego wrappera FigmaJev.
-- Dzieci umieszczaj w komponentach ze slotem Content. Preferuj Card jako otoczenie treści i Container do układania elementów. Nie zagnieżdżaj niepotrzebnie Card w Card.
+- Dzieci umieszczaj w komponentach ze slotem Content. Preferuj Card jako otoczenie treści i Container do układania elementów.
 - Wskazówki device, direction, type, weight, importance, purpose pomagają JEV wybrać wariant. Nie tworzą nowych właściwości ani zachowań, których nie ma w DS.
 - text zawiera dosłowny tekst. Trafia do jednoznacznego Label/Text, jedynej właściwości TEXT lub jednoznacznej warstwy tekstowej. Przy kilku polach podaj dokładną nazwę property z listy (sufiks #ID można pominąć), np. Placeholder lub Title.
 - Jawne TEXT i BOOLEAN są przypisywane po nazwie. Nie zakładaj, że value/currency/prefix automatycznie zbudują cenę ani że purpose/value narysują pasek postępu. Wykorzystuj rzeczywiście dostępne właściwości.
@@ -334,7 +334,7 @@ Nazwy, opisy, dostępne properties i sloty pochodzą z biblioteki. Opisy są dok
     "description": ""
   },
   {
-    "name": "Photo / Property 1=Default",
+    "name": "Photo/Default",
     "description": ""
   },
   {

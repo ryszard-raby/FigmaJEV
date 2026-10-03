@@ -2,11 +2,12 @@ import test, { mock } from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { readFile } from 'node:fs/promises';
-import { transform } from 'esbuild';
+import { build } from 'esbuild';
 import { plan } from '../server/planner.mjs';
 mock.method(console, 'log', () => {});
 
-const { code } = await transform(await readFile(new URL('../plugin/code.ts', import.meta.url), 'utf8'), { loader: 'ts', target: 'es2017' });
+const bundled = await build({ entryPoints: ['plugin/code.ts'], bundle: true, write: false, target: 'es2017' });
+const code = bundled.outputFiles[0].text;
 function harness(storage = new Map()) {
   let sequence = 0;
   let clock = 0; let timerId = 0;

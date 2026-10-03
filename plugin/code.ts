@@ -1,3 +1,4 @@
+import { exportVariablesCss } from './variables-css';
 type ContentSlot = { path: number[]; name: string; width: string; height: string; capacity: number; existingChildren?: { name: string; type: string }[]; settings?: SlotSettings; preferredValues?: InstanceSwapPreferredValue[] };
 type CatalogItem = { id: string; key: string; nodeId?: string; name: string; description: string; defaultSizing?: { width: string; height: string }; slots?: ContentSlot[]; properties?: ComponentPropertyDefinitions; textTargets?: { path: number[]; name: string }[] };
 type Library = { id: string; name: string; components: CatalogItem[] };
@@ -477,6 +478,13 @@ figma.ui.onmessage = async (message: any) => {
         send('settings-error', { error: 'Nie udało się zapisać ustawień na tym urządzeniu.' });
       });
       await settingsWrites; return;
+    }
+    if (message.type === 'export-variables' && !active) {
+      active = true;
+      const result = await exportVariablesCss(figma.variables);
+      active = false;
+      send('variables-css', result);
+      return;
     }
     if (message.type === 'scan' && !active) { await scan(); return; }
     if (message.type === 'open-gpt') {

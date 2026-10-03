@@ -91,3 +91,11 @@ Terminal backendu pokazuje `INPUT TREE`, `REQUIRED COMPONENTS`, `JEV REQUEST`, `
 Testy obejmują parser, hierarchię i ilości, reuse decyzji, mapowanie intencji przez JEV, edycje oraz compact tree → resolver → renderer z atrapą Figmy i JEV. Nie wykonują płatnych zapytań. Jakość mapowania rzeczywistej biblioteki i działanie slotów wymagają próby we wtyczce z prawdziwym JEV.
 
 Backend nasłuchuje na `127.0.0.1:3847` i wymaga tokenu parowania. Klucze DefAPI i REST Figmy pozostają w `.env`. Token lokalnego serwera i URL biblioteki zapamiętuje `figma.clientStorage`; usuwa je „Zapomnij zapisane dane”. Do DefAPI trafiają struktura, katalog i kontekst edycji. Logi zawierają te dane, bez nagłówków autoryzacji. Snapshot nie ma limitu liczby warstw. Pozostają limity: katalog 180 wariantów, żądanie HTTP 500 kB, planowanie 180 sekund, wywołanie JEV 30 sekund. Brak automatycznych ponowień płatnych żądań.
+
+## Eksport zmiennych CSS
+
+Przycisk **Pobierz zmienne CSS** zapisuje `figma-variables.css` bez backendu i bez JEV. Uruchom wtyczkę w pliku źródłowym design systemu. Eksport obejmuje lokalne zmienne oraz dostępne zależności aliasów. Nie korzysta z katalogu komponentów REST. Niedostępny alias zatrzymuje eksport z komunikatem.
+
+Zaimportuj CSS w aplikacji. Domyślne tryby obowiązują na `:root`; komentarze opisują atrybuty na `<html>`, np. `data-figma-theme="dark"`. Kolekcje przełączasz niezależnie. Aliasy zachowują `var(--...)`. Poprawne nazwy WEB Code syntax mają pierwszeństwo; pozostałe mają prefiks `--cd-` i nazwę zmiennej. Kolizje nazw generowanych otrzymują sufiks liczbowy. Powtórzone jawne nazwy CSS wymagają poprawy w Figmie. Kolory zapisujemy jako `#RRGGBB`, a z przezroczystością jako `#RRGGBBAA`.
+
+Kolory zachowują alpha. Liczby ze scope wyłącznie wymiarowym otrzymują px, inne pozostają bez jednostek (dla długości użyj `calc(var(--token) * 1px)`). String to cytowany tekst CSS, boolean to 1/0. Eksport obejmuje tokeny, nie style komponentów ani layouty. Fonty dostarcz osobno. Plik nie jest automatycznie publikowany na GitHubie.

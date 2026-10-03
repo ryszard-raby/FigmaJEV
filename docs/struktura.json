@@ -1,0 +1,22 @@
+[
+    "Layout",
+    {
+        "device": "mobile"
+    },
+    [
+        "Card",
+        [
+            "Container",
+            {
+                "direction": "vertical"
+            },
+            [
+                "Button",
+                {
+                    "importance": "primary",
+                    "text": "Dalej"
+                }
+            ]
+        ]
+    ]
+]
