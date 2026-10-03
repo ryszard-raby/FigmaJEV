@@ -54,8 +54,8 @@ export async function exportVariablesCss(api: VariablesAPI) {
   ];
   const attributes = new Set<string>();
   for (const collection of [...collections.values()].sort((a, b) => a.id.localeCompare(b.id))) {
-    let attribute = `data-figma-${slug(collection.name)}`; let suffix = 2;
-    while (attributes.has(attribute)) attribute = `data-figma-${slug(collection.name)}-${suffix++}`;
+    let attribute = `data-cd-${slug(collection.name)}`; let suffix = 2;
+    while (attributes.has(attribute)) attribute = `data-cd-${slug(collection.name)}-${suffix++}`;
     attributes.add(attribute);
     const modeNames = new Set<string>();
     const members = ordered.filter(v => v.variableCollectionId === collection.id).sort((a, b) => names.get(a.id)!.localeCompare(names.get(b.id)!));

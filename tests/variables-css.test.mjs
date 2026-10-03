@@ -16,7 +16,7 @@ test('exports modes, external alias dependencies, WEB names, dimensions and opac
  assert.match(css,/--brand: #00000080;/);
  assert.match(css,/--brand: #ff0000;/);
  assert.match(css,/--cd-gap: 8px/); assert.match(css,/--cd-opacity: 0.5;/);
- assert.ok(css.indexOf(':root,')<css.indexOf(':root[data-figma-theme="dark"]'));
+ assert.ok(css.indexOf(':root,')<css.indexOf(':root[data-cd-theme="dark"]'));
 });
 test('protects CSS comments and strings, resolves generated name collisions', async()=>{
  const values={light:'hello"; color:red; /*',dark:'bye'};
