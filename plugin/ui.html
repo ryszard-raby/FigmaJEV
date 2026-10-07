@@ -75,6 +75,7 @@
 
   .brand {
     flex: none;
+    line-height: 1;
     font-size: 19px;
     font-weight: 750;
     letter-spacing: -.8px;
@@ -88,6 +89,7 @@
   #form {
     flex: 1;
     min-width: 0;
+    margin: 0;
     display: flex;
     align-items: center;
     position: relative
@@ -116,43 +118,47 @@
 
   .submit {
     position: absolute;
-    right: 9px;
-    bottom: 4px;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
     width: 32px;
     height: 32px;
     padding: 0;
     background: #8054e8;
     color: #fff;
-    border: 0;
-    font-size: 0
+    border: 0
   }
 
   .submit:hover {
     background: #7145d6
   }
 
-  .submit:after {
-    content: '↑';
-    font: 22px/1 system-ui
+  .submit,
+  .settings-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center
+  }
+
+  .submit svg,
+  .settings-toggle svg {
+    width: 20px;
+    height: 20px;
+    flex: none;
+    display: block
   }
 
   .settings-toggle {
     width: 36px;
     height: 36px;
     flex: none;
-    padding: 8px;
+    padding: 0;
     border-color: transparent
   }
 
   .settings-toggle[aria-expanded="true"] {
     color: #8054e8;
     background: var(--figma-color-bg-secondary, #f1ecfb)
-  }
-
-  .settings-toggle svg {
-    width: 19px;
-    height: 19px;
-    display: block
   }
 
   #status {
@@ -331,7 +337,13 @@
       <div class="input-fields" id="createFields"><textarea class="composer" id="structure" maxlength="40000"
           spellcheck="false" aria-label="Struktura projektu JSON" placeholder="Wklej strukturę JSON…"
           rows="2"></textarea></div>
-      <button class="submit" id="generate" type="submit" aria-label="Utwórz ze struktury" title="Uruchom — Enter">Utwórz ze struktury</button>
+      <button class="submit" id="generate" type="submit" aria-label="Utwórz ze struktury" title="Uruchom — Enter">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m21 3-7 18-4-7-7-4 18-7Z" />
+          <path d="m10 14 11-11" />
+        </svg>
+      </button>
     </form>
     <button class="settings-toggle" id="settingsToggle" type="button" aria-label="Ustawienia" title="Ustawienia"
       aria-expanded="false" aria-controls="settingsPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -480,7 +492,7 @@
     if (m.type === 'selection') {
       hasSelection = Boolean(m.node); selectionCount = m.count ?? (hasSelection ? 1 : 0);
       $('selected').textContent = selectionCount > 1 ? 'Zaznacz jeden element do edycji' : m.node ? m.node.name : 'Brak zaznaczenia — tworzenie layoutu ze struktury';
-      $('generate').textContent = hasSelection ? 'Zmień zaznaczony element' : 'Utwórz ze struktury';
+      $('generate').setAttribute('aria-label', hasSelection ? 'Zmień zaznaczony element' : 'Utwórz ze struktury');
       $('generate').disabled = busy || !libraries.length || selectionCount > 1;
       $('editFields').hidden = !hasSelection;
       $('createFields').hidden = selectionCount !== 0;
