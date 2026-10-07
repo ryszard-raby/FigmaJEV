@@ -482,17 +482,17 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
       "Property 1": {
         "type": "VARIANT",
         "options": [
-          "Default",
-          "Variant2"
+          "Mobile",
+          "Desktop"
         ]
       }
     },
     "variants": [
       {
-        "name": "Property 1=Default"
+        "name": "Property 1=Desktop"
       },
       {
-        "name": "Property 1=Variant2"
+        "name": "Property 1=Mobile"
       }
     ]
   },
@@ -929,12 +929,12 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
             "type": "VARIANT",
             "options": [
               "allegro",
-              "morele",
-              "partner",
               "best store",
               "media markt",
               "media expert",
-              "deluxry"
+              "morele",
+              "deluxry",
+              "partner"
             ]
           }
         }
@@ -948,12 +948,12 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
             "type": "VARIANT",
             "options": [
               "allegro",
-              "morele",
-              "partner",
               "best store",
               "media markt",
               "media expert",
-              "deluxry"
+              "morele",
+              "deluxry",
+              "partner"
             ]
           }
         }
@@ -967,12 +967,12 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
             "type": "VARIANT",
             "options": [
               "allegro",
-              "morele",
-              "partner",
               "best store",
               "media markt",
               "media expert",
-              "deluxry"
+              "morele",
+              "deluxry",
+              "partner"
             ]
           }
         }
@@ -986,12 +986,12 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
             "type": "VARIANT",
             "options": [
               "allegro",
-              "morele",
-              "partner",
               "best store",
               "media markt",
               "media expert",
-              "deluxry"
+              "morele",
+              "deluxry",
+              "partner"
             ]
           }
         }
@@ -1005,12 +1005,12 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
             "type": "VARIANT",
             "options": [
               "allegro",
-              "morele",
-              "partner",
               "best store",
               "media markt",
               "media expert",
-              "deluxry"
+              "morele",
+              "deluxry",
+              "partner"
             ]
           }
         }
@@ -1024,12 +1024,12 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
             "type": "VARIANT",
             "options": [
               "allegro",
-              "morele",
-              "partner",
               "best store",
               "media markt",
               "media expert",
-              "deluxry"
+              "morele",
+              "deluxry",
+              "partner"
             ]
           }
         }
@@ -1043,12 +1043,12 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
             "type": "VARIANT",
             "options": [
               "allegro",
-              "morele",
-              "partner",
               "best store",
               "media markt",
               "media expert",
-              "deluxry"
+              "morele",
+              "deluxry",
+              "partner"
             ]
           }
         }
