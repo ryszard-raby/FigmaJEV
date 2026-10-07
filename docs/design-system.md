@@ -1,7 +1,7 @@
 # FigmaJev — dokumentacja struktury UI
 
 Biblioteka: "Biblioteka iCotPXnNLa5DV1OsJEgsio"
-Liczba komponentów: 21. Liczba dostępnych wpisów biblioteki (łącznie z wariantami): 126.
+Liczba komponentów: 21. Liczba dostępnych wpisów biblioteki (łącznie z wariantami): 127.
 
 ## Jak przygotować strukturę
 
@@ -139,7 +139,7 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
   },
   {
     "name": "Card",
-    "description": "'Card' jest ramą każdego nowego komponentu\nUstaw szerokość na fill\nUstaw wysokość na hug",
+    "description": "'Card' jest ramą każdego nowego komponentu\nJeżeli potrzebujesz więcej odstępu możesz użyć 'Card' wewnątrz 'Container'",
     "width": "fill",
     "height": "hug",
     "slots": [
@@ -203,7 +203,7 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
   },
   {
     "name": "Checkbox",
-    "description": "",
+    "description": "Checkbox",
     "width": "hug",
     "slots": [],
     "properties": {
@@ -231,7 +231,7 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
   },
   {
     "name": "Container",
-    "description": "'Container' układa elementy w pionie lub poziomie\nKontener powinien być umieszczony wewnątrz 'Card'\nUstaw szerokość na 'fill'\nUstaw wysokość na 'hug'",
+    "description": "'Container' układa elementy w pionie lub poziomie\nKontener powinien być umieszczony wewnątrz 'Card'",
     "width": "fill",
     "height": "hug",
     "slots": [
@@ -275,229 +275,145 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
   {
     "name": "Icons",
     "description": "",
+    "width": "fixed",
+    "height": "fixed",
     "slots": [],
     "properties": {},
     "variants": [
       {
-        "name": "Alarm",
-        "width": "fill",
-        "height": "fill"
+        "name": "Alarm"
       },
       {
-        "name": "Angle down",
-        "width": "fill",
-        "height": "fill"
+        "name": "Angle down"
       },
       {
-        "name": "Angle right",
-        "width": "fill",
-        "height": "fill"
+        "name": "Angle right"
       },
       {
-        "name": "Arrow",
-        "width": "fill",
-        "height": "fill"
+        "name": "Arrow"
       },
       {
-        "name": "Box",
-        "width": "fill",
-        "height": "fill"
+        "name": "Box"
       },
       {
-        "name": "Campain",
-        "width": "fill",
-        "height": "fill"
+        "name": "Campain"
       },
       {
-        "name": "Cards",
-        "width": "fill",
-        "height": "fill"
+        "name": "Cards"
       },
       {
-        "name": "Cart empty",
-        "width": "fill",
-        "height": "fill"
+        "name": "Cart empty"
       },
       {
-        "name": "Cart fill",
-        "width": "fill",
-        "height": "fill"
+        "name": "Cart fill"
       },
       {
-        "name": "Cart plus",
-        "width": "fill",
-        "height": "fill"
+        "name": "Cart plus"
       },
       {
-        "name": "Chart",
-        "width": "fill",
-        "height": "fill"
+        "name": "Chart"
       },
       {
-        "name": "Check",
-        "width": "fill",
-        "height": "fill"
+        "name": "Check"
       },
       {
-        "name": "Comment",
-        "width": "fill",
-        "height": "fill"
+        "name": "Comment"
       },
       {
-        "name": "Compare",
-        "width": "fill",
-        "height": "fill"
+        "name": "Compare"
       },
       {
-        "name": "Contact",
-        "width": "fill",
-        "height": "fill"
+        "name": "Contact"
       },
       {
-        "name": "Contact phone",
-        "width": "fill",
-        "height": "fill"
+        "name": "Contact phone"
       },
       {
-        "name": "Delivery",
-        "width": "fill",
-        "height": "fill"
+        "name": "Delivery"
       },
       {
-        "name": "Filtr",
-        "width": "fill",
-        "height": "fill"
+        "name": "Filtr"
       },
       {
-        "name": "Handshake",
-        "width": "fill",
-        "height": "fill"
+        "name": "Handshake"
       },
       {
-        "name": "Heart",
-        "width": "fill",
-        "height": "fill"
+        "name": "Heart"
       },
       {
-        "name": "Incognito",
-        "width": "fill",
-        "height": "fill"
+        "name": "Incognito"
       },
       {
-        "name": "Loader",
-        "width": "fill",
-        "height": "fill"
+        "name": "Loader"
       },
       {
-        "name": "minus",
-        "width": "fill",
-        "height": "fill"
+        "name": "minus"
       },
       {
-        "name": "More",
-        "width": "fill",
-        "height": "fill"
+        "name": "More"
       },
       {
-        "name": "Note",
-        "width": "fill",
-        "height": "fill"
+        "name": "Note"
       },
       {
-        "name": "Plus",
-        "width": "fill",
-        "height": "fill"
+        "name": "Plus"
       },
       {
-        "name": "Price down",
-        "width": "fill",
-        "height": "fill"
+        "name": "Price down"
       },
       {
-        "name": "Ranking",
-        "width": "fill",
-        "height": "fill"
+        "name": "Ranking"
       },
       {
-        "name": "Recycle",
-        "width": "fixed",
-        "height": "fixed"
+        "name": "Recycle"
       },
       {
-        "name": "Search",
-        "width": "fill",
-        "height": "fill"
+        "name": "Search"
       },
       {
-        "name": "Search alt",
-        "width": "fill",
-        "height": "fill"
+        "name": "Search alt"
       },
       {
-        "name": "Search check",
-        "width": "fill",
-        "height": "fill"
+        "name": "Search check"
       },
       {
-        "name": "Search plus",
-        "width": "fill",
-        "height": "fill"
+        "name": "Search plus"
       },
       {
-        "name": "Send",
-        "width": "fill",
-        "height": "fill"
+        "name": "Send"
       },
       {
-        "name": "Set",
-        "width": "fill",
-        "height": "fill"
+        "name": "Set"
       },
       {
-        "name": "Setting",
-        "width": "fill",
-        "height": "fill"
+        "name": "Setting"
       },
       {
-        "name": "Sort",
-        "width": "fill",
-        "height": "fill"
+        "name": "Sort"
       },
       {
-        "name": "Star",
-        "width": "fill",
-        "height": "fill"
+        "name": "Star"
       },
       {
-        "name": "Thumb",
-        "width": "fill",
-        "height": "fill"
+        "name": "Thumb"
       },
       {
-        "name": "Trash",
-        "width": "fill",
-        "height": "fill"
+        "name": "Trash"
       },
       {
-        "name": "User",
-        "width": "fill",
-        "height": "fill"
+        "name": "User"
       },
       {
-        "name": "VS",
-        "width": "fill",
-        "height": "fill"
+        "name": "VS"
       },
       {
-        "name": "ZO",
-        "width": "fill",
-        "height": "fill"
+        "name": "ZO"
       }
     ]
   },
   {
     "name": "Input - text",
-    "description": "Input text",
+    "description": "Input text z border",
     "width": "fixed",
     "height": "fixed",
     "slots": [],
@@ -509,7 +425,7 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
   },
   {
     "name": "Label",
-    "description": "",
+    "description": "Mały znaczek\nPreferuj wariant 'Filled'",
     "width": "hug",
     "height": "fixed",
     "slots": [],
@@ -574,6 +490,9 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
     "variants": [
       {
         "name": "Property 1=Default"
+      },
+      {
+        "name": "Property 1=Variant2"
       }
     ]
   },
@@ -632,7 +551,7 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
   },
   {
     "name": "Photo",
-    "description": "",
+    "description": "Przykładowy obrazek\nPosiada padding",
     "width": "fixed",
     "height": "fixed",
     "slots": [],
@@ -645,7 +564,7 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
   },
   {
     "name": "Price",
-    "description": "",
+    "description": "Moduł ceny\nWartość Content odnosi się do wartości dziesiętnej ceny",
     "width": "hug",
     "height": "hug",
     "slots": [],
@@ -685,7 +604,7 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
   },
   {
     "name": "Radio",
-    "description": "",
+    "description": "Radiobutton",
     "width": "hug",
     "height": "hug",
     "slots": [],
@@ -712,7 +631,7 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
   },
   {
     "name": "Stars",
-    "description": "",
+    "description": "Komponent zawiera graficzne ikony gwiazdek, wartość opinii i ilość ocen",
     "width": "hug",
     "height": "hug",
     "slots": [],
@@ -740,7 +659,7 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
   },
   {
     "name": "Switch-alternative",
-    "description": "",
+    "description": "Switch",
     "width": "hug",
     "height": "hug",
     "slots": [],
@@ -775,7 +694,7 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
   },
   {
     "name": "Text",
-    "description": "Użyj 'sm' dla zwykłego tekstu\nUżyj 'lg' / 'bold' dla nagłówków\nUstaw szerokość na 'fill'\nUstaw wysokość na 'hug'",
+    "description": "Użyj 'sm' dla zwykłego tekstu\nUżyj 'lg' / 'bold' dla nagłówków\nUżyj większych wielkość dla Hero",
     "width": "fill",
     "height": "hug",
     "slots": [],
@@ -1010,12 +929,12 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
             "type": "VARIANT",
             "options": [
               "allegro",
+              "morele",
+              "partner",
               "best store",
               "media markt",
               "media expert",
-              "morele",
-              "deluxry",
-              "partner"
+              "deluxry"
             ]
           }
         }
@@ -1029,12 +948,12 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
             "type": "VARIANT",
             "options": [
               "allegro",
+              "morele",
+              "partner",
               "best store",
               "media markt",
               "media expert",
-              "morele",
-              "deluxry",
-              "partner"
+              "deluxry"
             ]
           }
         }
@@ -1048,12 +967,12 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
             "type": "VARIANT",
             "options": [
               "allegro",
+              "morele",
+              "partner",
               "best store",
               "media markt",
               "media expert",
-              "morele",
-              "deluxry",
-              "partner"
+              "deluxry"
             ]
           }
         }
@@ -1067,12 +986,12 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
             "type": "VARIANT",
             "options": [
               "allegro",
+              "morele",
+              "partner",
               "best store",
               "media markt",
               "media expert",
-              "morele",
-              "deluxry",
-              "partner"
+              "deluxry"
             ]
           }
         }
@@ -1086,12 +1005,12 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
             "type": "VARIANT",
             "options": [
               "allegro",
+              "morele",
+              "partner",
               "best store",
               "media markt",
               "media expert",
-              "morele",
-              "deluxry",
-              "partner"
+              "deluxry"
             ]
           }
         }
@@ -1105,12 +1024,12 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
             "type": "VARIANT",
             "options": [
               "allegro",
+              "morele",
+              "partner",
               "best store",
               "media markt",
               "media expert",
-              "morele",
-              "deluxry",
-              "partner"
+              "deluxry"
             ]
           }
         }
@@ -1124,12 +1043,12 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
             "type": "VARIANT",
             "options": [
               "allegro",
+              "morele",
+              "partner",
               "best store",
               "media markt",
               "media expert",
-              "morele",
-              "deluxry",
-              "partner"
+              "deluxry"
             ]
           }
         }

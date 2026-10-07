@@ -8,7 +8,7 @@ const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
 test('library import accepts forwarded Figma messages and ends loading', async () => {
   const elements = new Map();
   function element(id) {
-    if (!elements.has(id)) elements.set(id, { value: '', textContent: '', disabled: false, classList: { toggle() {} }, replaceChildren(...children) { this.children = children; } });
+    if (!elements.has(id)) elements.set(id, { value: '', textContent: '', disabled: false, classList: { toggle() {} }, hidden: id === 'settingsPanel', setAttribute(key, value) { this[key] = value; }, focus() {}, replaceChildren(...children) { this.children = children; } });
     return elements.get(id);
   }
   const sent = []; const window = {}; const timers = new Map(); let timerId = 0;
@@ -27,6 +27,13 @@ test('library import accepts forwarded Figma messages and ends loading', async (
     }
   };
   vm.runInNewContext(script, context);
+  element('settingsToggle').onclick();
+  assert.equal(element('settingsPanel').hidden, false);
+  assert.equal(sent.at(-1).type, 'resize-ui');
+  assert.equal(sent.at(-1).expanded, true);
+  context.document.onkeydown({ key: 'Escape' });
+  assert.equal(element('settingsPanel').hidden, true);
+  assert.equal(sent.at(-1).expanded, false);
   await window.onmessage({ data: { pluginMessage: { type: 'settings', token: 'restored-token', libraryUrl: 'saved-library' } } });
   assert.equal(element('token').value, 'restored-token');
   assert.equal(element('fileKey').value, 'saved-library');

@@ -18,7 +18,7 @@ let settings: { token: string; libraryUrl: string } = { token: '', libraryUrl: '
 let settingsWrites = Promise.resolve();
 const settingsEdited = { token: false, libraryUrl: false };
 const send = (type: string, data: object = {}) => figma.ui.postMessage({ type, ...data });
-figma.showUI(__html__, { width: 420, height: 690, themeColors: true });
+figma.showUI(__html__, { width: 720, height: 80, themeColors: true });
 
 async function selection() {
   const node = figma.currentPage.selection.length === 1 ? figma.currentPage.selection[0] : null;
@@ -461,6 +461,10 @@ async function apply(plan: Plan) {
 
 figma.ui.onmessage = async (message: any) => {
   try {
+    if (message.type === 'resize-ui') {
+      figma.ui.resize(720, message.expanded === true ? 472 : 80);
+      return;
+    }
     if (message.type === 'init') {
       try {
         const saved = await figma.clientStorage.getAsync(SETTINGS_KEY);
