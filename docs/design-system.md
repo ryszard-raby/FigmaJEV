@@ -709,10 +709,28 @@ Pola width i height w katalogu opisują domyślne tryby rozmiarowania z Figmy: "
   {
     "name": "Table",
     "description": "",
-    "width": "fixed",
+    "width": "fill",
     "height": "hug",
     "slots": [],
-    "properties": {}
+    "properties": {
+      "Key#602:0": {
+        "type": "TEXT"
+      },
+      "Value#602:2": {
+        "type": "TEXT"
+      },
+      "Property 1": {
+        "type": "VARIANT",
+        "options": [
+          "Default"
+        ]
+      }
+    },
+    "variants": [
+      {
+        "name": "Property 1=Default"
+      }
+    ]
   },
   {
     "name": "Text",
