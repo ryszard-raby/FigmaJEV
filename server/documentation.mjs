@@ -65,12 +65,34 @@ GPT określa kompletną hierarchię UI. JEV wybiera komponenty i warianty z poni
 - Maksymalnie 256 elementów, 32 poziomy, 24 properties na node, 1000 znaków na wartość tekstową i 40 000 znaków JSON-a. Properties mogą być string, number lub boolean, bez zagnieżdżonych obiektów.
 - Oddaj wyłącznie poprawny JSON: bez komentarzy, wielokropków i znaczników Markdown. Jeśli potrzebujesz informacji o ekranie, zapytaj przed generowaniem.
 
-## Przykład formatu
+## Struktura JSON
+
+Formatowanie JSON-a:
+- Zawsze zwracaj JSON w formacie wieloliniowym.
+- Każdy komponent potomny umieszczaj w nowej linii.
+- Używaj wcięć pokazujących poziom zagnieżdżenia komponentów.
+- Zamykający ] komponentu umieszczaj w osobnej linii na tym samym poziomie wcięcia, na którym rozpoczyna się dany komponent.
+- Nie kompresuj drzewa do jednej linii, nawet jeśli struktura jest krótka.
+- Przed zwróceniem wyniku upewnij się, że JSON jest poprawny i może zostać bezpośrednio sparsowany przez JSON.parse().
 
 Przykład składni; użyj go tylko jeśli te komponenty istnieją w katalogu.
 
 \x60\x60\x60json
-["Layout", {"device":"mobile"}, ["Card", ["Container", {"direction":"vertical"}, ["Button", {"importance":"primary","text":"Dalej"}]]]]
+[
+  "Layout",
+  { "device": "desktop" },
+  [
+    "Container",
+    { "direction": "horizontal" },
+    [
+      "Text",
+      {
+        "text": "Przykładowy tekst",
+        "size": "base"
+      }
+    ]
+  ]
+]
 \x60\x60\x60
 
 ## Komponenty i warianty

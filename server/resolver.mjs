@@ -50,7 +50,7 @@ export async function resolveTree(input, decide) {
     const id = selected[nodeGroups.get(node.path)];
     const component = input.catalog.find(c => c.id === id);
     if (!component) throw new Error(`${node.path}: JEV nie wybrał wariantu dla ${node.name} spośród dostępnych komponentów biblioteki (unresolved).`);
-    return renderNode(node, component, node.children.map(assemble));
+    return renderNode(node, component, node.children.map(assemble), input.catalog);
   }
   const tree = assemble(root);
   console.log('RESOLVED TREE', JSON.stringify(tree));

@@ -166,7 +166,10 @@
   }
 
   #status.error {
-    color: var(--figma-color-text-danger, #c03636)
+    color: var(--figma-color-text-danger, #c03636);
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip
   }
 
   #settingsPanel {
@@ -344,11 +347,12 @@
   const $ = id => document.getElementById(id);
   const send = (type, data = {}) => parent.postMessage({ pluginMessage: { type, ...data } }, '*');
   let busy = false, hasSelection = false, selectionCount = 0, libraries = [];
+  let statusHasError = false;
   let libraryAckTimer;
   function toggleSettings(open) {
     $('settingsPanel').hidden = !open;
     $('settingsToggle').setAttribute('aria-expanded', String(open));
-    send('resize-ui', { expanded: open });
+    send('resize-ui', { expanded: open, error: $('status').className === 'error' });
   }
   $('settingsToggle').onclick = () => toggleSettings($('settingsPanel').hidden);
   document.onkeydown = event => {
@@ -374,7 +378,15 @@
   function saveConnection() {
     send('save-settings', { token: $('token').value, libraryUrl: $('fileKey').value });
   }
-  function status(text, error = false) { $('status').textContent = text; $('status').title = text; $('status').className = error ? 'error' : ''; }
+  function status(text, error = false) {
+    $('status').textContent = text;
+    $('status').title = text;
+    $('status').className = error ? 'error' : '';
+    if (error !== statusHasError) {
+      statusHasError = error;
+      send('resize-ui', { expanded: !$('settingsPanel').hidden, error });
+    }
+  }
   function setBusy(value) {
     if (!value) clearTimeout(libraryAckTimer);
     busy = value;

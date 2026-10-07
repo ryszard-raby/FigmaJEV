@@ -44,6 +44,15 @@ test('login structure resolves with one component-only call and retains copy, hi
   assert.equal(result.tree.width, 'KEEP');
 });
 
+test('semantic INSTANCE_SWAP value resolves to a catalog component key', async () => {
+  const ds = [
+    { id: 'icon', name: 'Icon', key: 'icon-key', properties: { 'Icon#158:3': { type: 'INSTANCE_SWAP' } } },
+    { id: 'user', name: 'User', key: 'user-key' }
+  ];
+  const result = await plan({ structure: ['Icon', { icon: 'user' }], catalog: ds }, async (state) => ({ [state.requiredComponents[0].id]: 'icon' }));
+  assert.equal(result.tree.properties['Icon#158:3'], 'user-key');
+});
+
 test('repeated nodes reuse component selection without dropping instances', async () => {
   const calls = [];
   const result = await plan({ structure: ['Container', ['Button'], ['Button']], catalog }, model(calls));

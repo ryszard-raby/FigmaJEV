@@ -2,7 +2,10 @@
 // Semantic hints (importance, purpose, device...) only guide component selection.
 const normalize = name => name.split('#')[0].trim().toLowerCase();
 
-export function renderNode(node, component, children) {
+const matchesComponentName = (value, component) =>
+  normalize(component.name) === normalize(value) || component.name.split('/').some(part => normalize(part) === normalize(value));
+
+export function renderNode(node, component, children, catalog = []) {
   const fail = message => { throw new Error(`${node.path}: ${message}`); };
   const sizing = axis => {
     const explicit = node.properties[axis];
@@ -25,7 +28,13 @@ export function renderNode(node, component, children) {
     // The chosen library variant already determines VARIANT properties.
     if (def.type === 'TEXT' && typeof value === 'string') properties[key] = value;
     if (def.type === 'BOOLEAN' && typeof value === 'boolean') properties[key] = value;
-    if (def.type === 'INSTANCE_SWAP' && typeof value === 'string') properties[key] = value;
+    if (def.type === 'INSTANCE_SWAP' && typeof value === 'string') {
+      const keyed = catalog.find(candidate => candidate.key === value);
+      const named = catalog.filter(candidate => candidate.key && matchesComponentName(value, candidate));
+      const replacement = keyed || (named.length === 1 ? named[0] : undefined);
+      if (!replacement) fail(`${name}: nie znaleziono jednoznacznego komponentu ${JSON.stringify(value)} w katalogu.`);
+      properties[key] = replacement.key;
+    }
   }
   const textOverrides = [];
   if (typeof node.properties.text === 'string') {

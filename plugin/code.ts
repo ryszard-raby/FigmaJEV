@@ -462,7 +462,7 @@ async function apply(plan: Plan) {
 figma.ui.onmessage = async (message: any) => {
   try {
     if (message.type === 'resize-ui') {
-      figma.ui.resize(720, message.expanded === true ? 472 : 80);
+      figma.ui.resize(720, message.expanded === true ? 472 : message.error === true ? 112 : 80);
       return;
     }
     if (message.type === 'init') {
