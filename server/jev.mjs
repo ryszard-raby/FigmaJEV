@@ -1,5 +1,5 @@
-import { logDefApi } from './file-logger.mjs';
-export { logDefApi } from './file-logger.mjs';
+import { logTypeSafe } from './file-logger.mjs';
+export { logTypeSafe } from './file-logger.mjs';
 
 export function choice(instructions, criteria) {
   return { type: 'choice', instructions, criteria };
@@ -17,17 +17,17 @@ export function validateAnswers(questions, answers) {
   return result;
 }
 
-export function createJev(apiKey, fetcher = fetch, signal, trace = {}, logger = logDefApi) {
+export function createJev(apiKey, fetcher = fetch, signal, trace = {}, logger = logTypeSafe) {
   async function requestBatch(state, questions) {
-    if (!apiKey) throw new Error('Ustaw DEFAPI_API_KEY w pliku .env serwera.');
+    if (!apiKey) throw new Error('Ustaw TYPESAFE_API_KEY w pliku .env serwera.');
     trace.requestCount = (trace.requestCount || 0) + 1;
     const metadata = { promptId: trace.promptId, requestNumber: trace.requestCount };
-    const request = { model: 'typesafe/jev-1.13', state, questions };
+    const request = { model: 'jev-1.13.0', state, questions };
     await logger('request', request, metadata);
-    console.log(`[DefAPI] request ${metadata.requestNumber}`);
+    console.log(`[TypeSafe] request ${metadata.requestNumber}`);
     let response;
     try {
-      response = await fetcher('https://api.defapi.org/api/v1/decisions', {
+      response = await fetcher('https://api.typesafe.ai/v1/systemone', {
       method: 'POST', signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(30000)]) : AbortSignal.timeout(30000),
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(request)
@@ -41,11 +41,11 @@ export function createJev(apiKey, fetcher = fetch, signal, trace = {}, logger = 
       const detail = body.split(apiKey).join('[REDACTED]').slice(0, 2000);
       await logger('error', { status: response.status, detail }, metadata);
       if (response.status === 400 && detail.includes('max_tokens_exceeded')) throw new Error('JEV: przekroczony limit tokenów żądania. Kontekst lub lista możliwości wymaga dalszego ograniczenia.');
-      throw new Error(`DefAPI: HTTP ${response.status}. ${detail || 'Serwer nie podał szczegółów.'}`);
+      throw new Error(`TypeSafe: HTTP ${response.status}. ${detail || 'Serwer nie podał szczegółów.'}`);
     }
     const data = await response.json();
     await logger('response', data, metadata);
-    console.log(`[DefAPI] response ${metadata.requestNumber}`);
+    console.log(`[TypeSafe] response ${metadata.requestNumber}`);
     return validateAnswers(questions, data.answers);
   }
   return async (state, questions) => {

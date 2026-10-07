@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
-import { createJev, logDefApi } from './jev.mjs';
+import { createJev, logTypeSafe } from './jev.mjs';
 import { plan } from './planner.mjs';
 
-export async function loggedPlan(input, { apiKey, fetcher = fetch, signal, logger = logDefApi, planner = plan } = {}) {
+export async function loggedPlan(input, { apiKey, fetcher = fetch, signal, logger = logTypeSafe, planner = plan } = {}) {
   const trace = { promptId: randomUUID(), requestCount: 0 };
   const started = Date.now();
   const metadata = { promptId: trace.promptId };

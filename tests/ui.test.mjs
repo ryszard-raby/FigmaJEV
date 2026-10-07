@@ -38,12 +38,17 @@ test('library import accepts forwarded Figma messages and ends loading', async (
   element('fileKey').value = 'https://www.figma.com/design/iCotPXnNLa5DV1OsJEgsio/CeneoDesign?node-id=13-6&p=f';
   await element('import').onclick();
   assert.equal(sent.at(-1).type, 'library');
+  assert.equal(sent.at(-1).prepareDocumentation, true);
   assert.match(element('status').textContent, /Pobrano 1/);
   await window.onmessage({ source: null, data: { pluginMessage: { type: 'libraries', selected: 'library1', libraries: [{ id: 'library1', name: 'Library', components: [{ id: 'card' }] }] } } });
   assert.equal(element('library').value, 'library1');
   assert.equal(element('import').disabled, false);
   assert.equal(timers.size, 0);
   assert.equal(element('openGpt').disabled, false);
+  const sentBeforeDocumentation = sent.length;
+  await window.onmessage({ data: { pluginMessage: { type: 'documentation-ready', openGpt: false, libraryName: 'Library', catalog: [{ id: 'card', name: 'Card' }] } } });
+  assert.equal(sent.length, sentBeforeDocumentation);
+  assert.doesNotMatch(element('status').textContent, /Otwieram ChatGPT/);
   element('openGpt').onclick();
   assert.equal(sent.at(-1).type, 'prepare-documentation');
   assert.equal(sent.at(-1).libraryId, 'library1');

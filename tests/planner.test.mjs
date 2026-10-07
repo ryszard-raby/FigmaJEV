@@ -13,11 +13,11 @@ const plan = (input, decide) => trackedPlan(input, async (state, questions) => {
   return decide(state, questions);
 });
 
-test('DefAPI endpoint, auth, model and typed response contract', async () => {
+test('TypeSafe endpoint, auth, model and typed response contract', async () => {
   const decide = createJev('test-key', async (url, req) => {
-    assert.equal(url, 'https://api.defapi.org/api/v1/decisions');
+    assert.equal(url, 'https://api.typesafe.ai/v1/systemone');
     assert.equal(req.headers.Authorization, 'Bearer test-key');
-    assert.equal(JSON.parse(req.body).model, 'typesafe/jev-1.13');
+    assert.equal(JSON.parse(req.body).model, 'jev-1.13.0');
     return { ok: true, json: async () => ({ answers: { a: { type: 'choice', choice: 'yes' } } }) };
   }, undefined, {}, async () => {});
   assert.deepEqual(await decide({}, { a: { criteria: { yes: 'Yes' } } }), { a: 'yes' });

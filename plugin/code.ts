@@ -505,7 +505,16 @@ figma.ui.onmessage = async (message: any) => {
     if (message.type === 'library') {
       if (active) throw new Error('Zakończ generowanie przed dodaniem biblioteki.');
       const lib: Library = { id: message.fileKey, name: `Biblioteka ${message.fileKey}`, components: sortComponents(message.components) };
-      libraries = libraries.filter(l => l.id !== lib.id); libraries.push(lib); send('libraries', { libraries, selected: lib.id }); return;
+      if (message.prepareDocumentation) {
+        active = true;
+        send('progress', { text: 'Pobieranie właściwości i wymiarów komponentów…' });
+        await enrichCatalog(lib.components);
+        active = false;
+      }
+      libraries = libraries.filter(l => l.id !== lib.id); libraries.push(lib);
+      send('libraries', { libraries, selected: lib.id, documentationPending: Boolean(message.prepareDocumentation) });
+      if (message.prepareDocumentation) send('documentation-ready', { catalog: lib.components, libraryName: lib.name, openGpt: false });
+      return;
     }
     if (message.type === 'prepare' && !active) {
       active = true;

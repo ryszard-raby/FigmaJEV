@@ -37,4 +37,4 @@ export function createFileLogger(directory = resolve('logs')) {
   };
 }
 
-export const logDefApi = createFileLogger();
+export const logTypeSafe = createFileLogger();

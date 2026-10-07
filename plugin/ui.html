@@ -46,7 +46,7 @@
     <p class="hint" id="settingsStatus" role="status"></p>
     <p class="hint">Wymaga FIGMA_ACCESS_TOKEN na serwerze. Figma nie udostępnia wtyczkom pełnej listy komponentów włączonych bibliotek.</p>
   </details>
-  <footer class="hint">Struktura projektu, katalog biblioteki i kontekst edycji są wysyłane do DefAPI. JEV wybiera komponenty i właściwości; hierarchię nowego layoutu określa Twoje drzewo.</footer>
+  <footer class="hint">Struktura projektu, katalog biblioteki i kontekst edycji są wysyłane do TypeSafe. JEV wybiera komponenty i właściwości; hierarchię nowego layoutu określa Twoje drzewo.</footer>
 </main>
 <script>
 const $ = id => document.getElementById(id);
@@ -138,7 +138,7 @@ $('import').onclick = async () => {
     if (!Array.isArray(data.components)) throw new Error('Serwer zwrócił nieprawidłowy katalog biblioteki.');
     status(`Pobrano ${data.components.length} komponentów. Dodawanie do listy bibliotek…`);
     libraryAckTimer = setTimeout(() => fail(new Error('Figma nie potwierdziła dodania biblioteki. Zamknij i uruchom wtyczkę ponownie po npm run build.')), 10000);
-    send('library', { fileKey, components: data.components });
+    send('library', { fileKey, components: data.components, prepareDocumentation: true });
   }
   catch (error) { fail(error); }
 };
@@ -160,7 +160,7 @@ window.onmessage = async event => {
     const selected = m.selected || $('library').value; libraries = m.libraries;
     $('library').replaceChildren(...libraries.map(l => { const o = document.createElement('option'); o.value = l.id; o.textContent = l.name; return o; }));
     if (libraries.some(l => l.id === selected)) $('library').value = selected;
-    setBusy(false); catalogHint(); status('Gotowe. Wklej strukturę projektu.');
+    setBusy(Boolean(m.documentationPending)); catalogHint(); status(m.documentationPending ? 'Zapisywanie dokumentacji biblioteki…' : 'Gotowe. Wklej strukturę projektu.');
   }
   if (m.type === 'selection') {
     hasSelection = Boolean(m.node); selectionCount = m.count ?? (hasSelection ? 1 : 0);
@@ -183,9 +183,9 @@ window.onmessage = async event => {
     try {
       const data = await api('/documentation', { catalog: m.catalog, libraryName: m.libraryName });
       $('gptPrompt').value = data.prompt; $('gptDetails').hidden = false;
-      send('open-gpt', { prompt: data.prompt });
+      if (m.openGpt !== false) send('open-gpt', { prompt: data.prompt });
       setBusy(false);
-      status(`Dokumentacja ${data.componentCount} komponentów gotowa. Otwieram ChatGPT.${data.publicUrl.includes('example.com') ? ' Link do dokumentacji jest tymczasowy — podmienimy go po publikacji.' : ''}`);
+      status(`Dokumentacja ${data.componentCount} komponentów gotowa.${m.openGpt !== false ? ' Otwieram ChatGPT.' : ''}${data.publicUrl.includes('example.com') ? ' Link do dokumentacji jest tymczasowy — podmienimy go po publikacji.' : ''}`);
     } catch (error) { fail(error); }
   }
   if (m.type === 'prepared') {

@@ -7,15 +7,17 @@ Lokalna wtyczka Figma Design: podajesz kompletne drzewo UI, JEV 1.13 wybiera kom
 Wymagania: Node.js 22.9+ i desktopowa Figma.
 
 1. `npm install`
-2. Skopiuj `.env.example` do `.env`. Ustaw `DEFAPI_API_KEY` oraz własny `FIGMAJEV_TOKEN` (minimum 20 znaków).
+2. Skopiuj `.env.example` do `.env`. Ustaw `TYPESAFE_API_KEY` oraz własny `FIGMAJEV_TOKEN` (minimum 20 znaków).
 3. `npm run build`
 4. `npm start`
 5. Figma → Plugins → Development → Import plugin from manifest → wybierz `manifest.json`.
-6. Uruchom FigmaJev. W „Połączenie i biblioteki” wpisz **FIGMAJEV_TOKEN**, nie klucz DefAPI.
+6. Uruchom FigmaJev. W „Połączenie i biblioteki” wpisz **FIGMAJEV_TOKEN**, nie klucz TypeSafe.
 
 Manifest wskazuje `dist/code.js` i `dist/ui.html`. Po zmianach wykonaj build, uruchom ponownie backend i wtyczkę.
 
 Wybierz bibliotekę z listy. Skan obejmuje lokalne komponenty oraz komponenty zdalnych instancji użytych w pliku. Pełną opublikowaną bibliotekę dodajesz przez URL lub klucz jej pliku; backend potrzebuje `FIGMA_ACCESS_TOKEN` z dostępem do biblioteki (`library_content:read`). Standardowe Plugin API nie wylicza wszystkich włączonych bibliotek komponentów.
+
+Backend korzysta z oficjalnego [API TypeSafe](https://docs.typesafe.ai/api): `POST https://api.typesafe.ai/v1/systemone`, model `jev-1.13.0`. Przy migracji dodaj w `.env` `TYPESAFE_API_KEY` z kluczem wydanym przez TypeSafe i uruchom backend ponownie. Stary `DEFAPI_API_KEY` nie jest u?ywany.
 
 ## Struktura projektu
 
@@ -90,7 +92,7 @@ Terminal backendu pokazuje `INPUT TREE`, `REQUIRED COMPONENTS`, `JEV REQUEST`, `
 
 Testy obejmują parser, hierarchię i ilości, reuse decyzji, mapowanie intencji przez JEV, edycje oraz compact tree → resolver → renderer z atrapą Figmy i JEV. Nie wykonują płatnych zapytań. Jakość mapowania rzeczywistej biblioteki i działanie slotów wymagają próby we wtyczce z prawdziwym JEV.
 
-Backend nasłuchuje na `127.0.0.1:3847` i wymaga tokenu parowania. Klucze DefAPI i REST Figmy pozostają w `.env`. Token lokalnego serwera i URL biblioteki zapamiętuje `figma.clientStorage`; usuwa je „Zapomnij zapisane dane”. Do DefAPI trafiają struktura, katalog i kontekst edycji. Logi zawierają te dane, bez nagłówków autoryzacji. Snapshot nie ma limitu liczby warstw. Pozostają limity: katalog 180 wariantów, żądanie HTTP 500 kB, planowanie 180 sekund, wywołanie JEV 30 sekund. Brak automatycznych ponowień płatnych żądań.
+Backend nasłuchuje na `127.0.0.1:3847` i wymaga tokenu parowania. Klucze TypeSafe i REST Figmy pozostają w `.env`. Token lokalnego serwera i URL biblioteki zapamiętuje `figma.clientStorage`; usuwa je „Zapomnij zapisane dane”. Do TypeSafe trafiają struktura, katalog i kontekst edycji. Logi zawierają te dane, bez nagłówków autoryzacji. Snapshot nie ma limitu liczby warstw. Pozostają limity: katalog 180 wariantów, żądanie HTTP 500 kB, planowanie 180 sekund, wywołanie JEV 30 sekund. Brak automatycznych ponowień płatnych żądań.
 
 ## Eksport zmiennych CSS
 

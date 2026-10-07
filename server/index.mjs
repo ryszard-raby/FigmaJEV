@@ -47,11 +47,10 @@ const server = http.createServer(async (req, res) => {
       if (!Array.isArray(data.meta?.components)) throw new Error('Nieprawidłowa odpowiedź biblioteki.');
       if (data.meta.components.length > 180) throw new Error('Biblioteka ma ponad 180 wariantów. Użyj mniejszej biblioteki lub instancji w pliku.');
       const components = data.meta.components.map(c => ({ id: c.key, key: c.key, name: [c.containing_frame?.name, c.name].filter(Boolean).join(' / '), description: c.description || '' })).sort((a, b) => a.name.localeCompare(b.name, 'pl', { sensitivity: 'base', numeric: true }));
-      await saveDocumentation(components, 'Opublikowana biblioteka');
       send(200, { components });
     } else {
       const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(180000)]);
-      send(200, await loggedPlan(input, { apiKey: process.env.DEFAPI_API_KEY, signal }));
+      send(200, await loggedPlan(input, { apiKey: process.env.TYPESAFE_API_KEY, signal }));
     }
   } catch (error) { send(400, { error: error instanceof Error ? error.message : 'Błąd serwera.' }); }
   finally { busy = false; }

@@ -4,6 +4,7 @@ import vm from 'node:vm';
 import { readFile } from 'node:fs/promises';
 import { build } from 'esbuild';
 import { plan } from '../server/planner.mjs';
+import { renderDocumentation } from '../server/documentation.mjs';
 mock.method(console, 'log', () => {});
 
 const bundled = await build({ entryPoints: ['plugin/code.ts'], bundle: true, write: false, target: 'es2017' });
@@ -57,6 +58,25 @@ function harness(storage = new Map()) {
   }
   return { figma, frame, page, messages, cardWithContent, advance, events, timers, commits, send: m => figma.ui.onmessage(m) };
 }
+
+test('library import enriches documentation with properties and source sizing before publishing it', async () => {
+  const h = harness(); await h.send({ type: 'init' });
+  const source = h.frame('COMPONENT');
+  source.componentPropertyDefinitions = { Label: { type: 'TEXT' } };
+  source.layoutSizingHorizontal = 'FILL'; source.layoutSizingVertical = 'HUG';
+  await h.send({ type: 'library', fileKey: 'ds', prepareDocumentation: true, components: [{ id: 'card', key: 'card', nodeId: source.id, name: 'Card' }] });
+  const message = h.messages.at(-1);
+  assert.equal(message.type, 'documentation-ready');
+  assert.equal(message.openGpt, false);
+  const text = renderDocumentation(message.catalog, message.libraryName);
+  const components = JSON.parse([...text.matchAll(/```json\n([\s\S]*?)\n```/g)].at(-1)[1]);
+  assert.deepEqual(components[0].properties, { Label: { type: 'TEXT' } });
+  assert.equal(components[0].width, 'fill');
+  assert.equal(components[0].height, 'hug');
+  await h.send({ type: 'library', fileKey: 'broken', prepareDocumentation: true, components: [{ id: 'missing', key: 'missing', name: 'Missing' }] });
+  assert.equal(h.messages.at(-1).type, 'error');
+  assert.equal(h.messages.filter(m => m.type === 'documentation-ready').length, 1);
+});
 
 test('highlight runs during JEV work and a fast response applies immediately without waiting for its timer', async () => {
   const h = harness(); await h.send({ type: 'init' });
